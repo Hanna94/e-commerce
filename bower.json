@@ -1,0 +1,30 @@
+{
+  "name": "feb",
+  "version": "0.0.1",
+  "authors": [
+    "Mr. Super <linzechao44@163.com>"
+  ],
+  "description": "feb",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "feb"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-validation": "~1.14.0",
+    "bootstrap": "~3.3.6",
+    "smalot-bootstrap-datetimepicker": "~2.3.5",
+    "mustache.js": "git://github.com/janl/mustache.js#~2.2.1",
+    "echarts": "~3.1.6"
+  },
+  "devDependencies": {}
+}

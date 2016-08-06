@@ -1,0 +1,511 @@
+/* 全局样式*/
+.mg-0 {margin: 0;}
+.mg-5 {margin: 5px;}
+.mg-10 {margin: 10px;}
+.mg-15 {margin: 15px;}
+.mg-20 {margin: 20px;}
+
+.mg-t-0 {margin-top: 0;}
+.mg-t-5 {margin-top: 5px;}
+.mg-t-10 {margin-top: 10px;}
+.mg-t-15 {margin-top: 15px;}
+.mg-t-20 {margin-top: 20px;}
+
+.mg-r-0 {margin-right: 0;}
+.mg-r-5 {margin-right: 5px;}
+.mg-r-10 {margin-right: 10px;}
+.mg-r-15 {margin-right: 15px;}
+.mg-r-20 {margin-right: 20px;}
+
+.mg-b-0 {margin-bottom: 0;}
+.mg-b-5 {margin-bottom: 5px;}
+.mg-b-10 {margin-bottom: 10px;}
+.mg-b-15 {margin-bottom: 15px;}
+.mg-b-20 {margin-bottom: 20px;}
+
+.mg-l-0 {margin-left: 0;}
+.mg-l-5 {margin-left: 5px;}
+.mg-l-10 {margin-left: 10px;}
+.mg-l-15 {margin-left: 15px;}
+.mg-l-20 {margin-left: 20px;}
+
+/* padding === pd*/
+.pd-0 {padding: 0;}
+.pd-5 {padding: 5px;}
+.pd-10 {padding: 10px;}
+.pd-15 {padding: 15px;}
+.pd-20 {padding: 20px;}
+
+.pd-t-0 {padding-top: 0;}
+.pd-t-5 {padding-top: 5px;}
+.pd-t-10 {padding-top: 10px;}
+.pd-t-15 {padding-top: 15px;}
+.pd-t-20 {padding-top: 20px;}
+
+.pd-r-0 {padding-right: 0;}
+.pd-r-5 {padding-right: 5px;}
+.pd-r-10 {padding-right: 10px;}
+.pd-r-15 {padding-right: 15px;}
+.pd-r-20 {padding-right: 20px;}
+
+.pd-b-0 {padding-bottom: 0;}
+.pd-b-5 {padding-bottom: 5px;}
+.pd-b-10 {padding-bottom: 10px;}
+.pd-b-15 {padding-bottom: 15px;}
+.pd-b-20 {padding-bottom: 20px;}
+
+.pd-l-0 {padding-left: 0;}
+.pd-l-5 {padding-left: 5px;}
+.pd-l-10 {padding-left: 10px;}
+.pd-l-15 {padding-left: 15px;}
+.pd-l-20 {padding-left: 20px;}
+
+/* border === bd*/
+.bd-t{border-top: 1px solid #CCC;}
+.bd-r{border-right: 1px solid #CCC;}
+.bd-b{border-bottom: 1px solid #CCC;}
+.bd-l{border-left: 1px solid #CCC;}
+
+.label-lightseagreen {background-color: lightseagreen;}
+.label-cadetblue {background-color: cadetblue;}
+
+.maxH100 {
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH200 {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH300 {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH400 {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH600 {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH800 {
+    max-height: 800px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW1280{
+    max-width: 1280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW800{
+    max-width: 800px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW400{
+    max-width: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.divCenter{
+    margin: 0 auto;
+}
+
+.valign-m {vertical-align: middle;}
+
+.input-none {
+    height: 20px;
+    padding: 1px 4px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    width: 400px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+}
+
+body {background-color: #fbfbfb;}
+
+/* 头部*/
+.navbar-brand img {
+    width: auto;
+    height: 40px;
+}
+
+.breadcrumb {margin-top: 50px;}
+
+/* 导航菜单*/
+.nav div {
+    position: absolute;
+    z-index: 10;
+    display: none;
+    width: 400px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 10px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: #f8f8f8;
+    font-weight: normal;
+    box-shadow: 0 2px 4px #ccc;
+}
+
+.nav li:hover > div {display: block;}
+
+/* 暂时酱紫写*/
+.nav div a {margin-right: 10px;}
+
+/* 底部*/
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding-top: 4px;
+    padding-bottom: 8px;
+    background-color: #E8F0FF;
+}
+
+/* 窗体*/
+iframe {
+    width: 100%;
+    height: 300px;
+    border: 0;
+}
+
+/* 权限的增删*/
+.modal-set-del .modal-body span {cursor: pointer;}
+.modal-set-del .modal-body span b {display: none;}
+.modal-set-del .modal-body span:hover b {display: inline-block;}
+
+/* 提示信息*/
+#alert {
+    position: fixed;
+    top: 20%;
+    z-index: 10000;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 带有标签页的模态框*/
+.modal-nav .tab-content {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-top: 0;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+/* 加载图片*/
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+#loading img {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 权限设置，角色设置的span*/
+.span-block span {display: inline-block;}
+
+/* 缩小API获取的数据内边距*/
+#API-Data {margin-top: 20px;}
+#API-Data .list-group-item {padding: 6px 10px;}
+#API-Data ul {
+    max-height: 400px;
+    overflow: auto;
+    margin-top: 20px;
+}
+
+/* 全选*/
+#select-all input {
+    float: left;
+    margin-right: 4px;
+}
+
+#select-all,
+tbody tr td:nth-child(1) label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0;
+}
+
+/* 上传图片缩略图*/
+#add-data .thumb ul {
+    margin-bottom: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+#add-data .thumb li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#data-list img,
+#add-data .thumb img {width: 100px;}
+
+#add-data .thumb li span {
+    position: absolute;
+    display: none;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    margin-left: 80px;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #f00;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#add-data .thumb li:hover span {display: block;}
+#add-data .thumb button {margin-top: 5px;}
+
+/* 自定义时间组件样式*/
+.input-group-datetime .input-group-addon {
+    border-left: 0;
+    border-right: 0;
+}
+
+/*仓库颜色*/
+.a1me{ background-color: #E295CF; }
+.a1md{ background-color: #738CD0; }
+.m2c{ background-color: #E2B962; }
+.2gve{ background-color: #A67EDE; }
+.xytg{ background-color: #51A524; }
+.xyts{ background-color: #D45252; }
+
+/*鼠标样式*/
+.def{ cursor: default; }
+.poi{ cursor: pointer; }
+
+/*按钮设置*/
+.outL{ outline: none; }
+
+/*用于浮动搜索下拉框*/
+.search-drop{
+    position: absolute;
+    z-index: 99;
+}
+
+/*用于浮动搜索下拉框的父元素，限制下拉框长度*/
+.div-re{
+    position: relative;
+}
+
+/*内容位置*/
+.text-center{
+    text-align:center;
+}
+.text-right{
+    text-align:right;
+}
+
+
+/*工单系统 - @标签*/
+.atMate{
+    font-size: 14px;
+    color: #FFF;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    -webkit-appearance: none;
+    background: 0 0;
+}
+
+/*工单系统 - 提示信息栏*/
+.prompt{
+    width: 100%;
+    max-height: 205px;
+    overflow: auto;
+    position: absolute;
+    z-index: 99;
+}
+
+/*工单系统 - form最小高度*/
+.formMinheight{
+    min-height: 55px;
+}
+
+/*订单标记颜色*/
+.uliHW{height: 20px; width: 100%;}
+
+.spC33{background-color: #C33;}
+.spC9C{background-color: #C9C;}
+.spF96{background-color: #F96;}
+.spFF0{background-color: #FF0;}
+.sp3C3{background-color: #3C3;}
+.sp9CF{background-color: #9CF;}
+.sp999{background-color: #999;}
+
+/*消息系统专用*/
+.Toolbox{
+    width:140px;
+    height: 100%;
+    background-color: rgba(219, 219, 219, 1);
+    position: absolute;
+}
+.infoList{
+    position: relative;
+    left: 150px;
+}
+#msgWid{
+    border: 1px solid #CCC;
+    position: absolute;
+}
+#msgWid .msg-title{
+    width: 100%;
+    background-color: #F2F2F2;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    overflow: hidden;
+}
+#msgWid .msg-title .msg-title-left{
+    width: 90%;
+    height: 100%;
+    float: left;
+}
+#msgWid .msg-title .msg-title-left h3{
+    font-weight: bold;
+}
+#msgWid .msg-title .msg-title-right{
+    width: 10%;
+    float: right;
+    font-size: 15px;
+    text-align: right;
+}
+#msgWid .msg-content{
+    width: 100%;
+    min-height: 200px;
+    max-height: 500px;
+    overflow: auto;
+}
+#msgWid .msg-content .msg-message-left{
+    background-color: rgba(184, 217, 250, 1);
+    float: left;
+    margin: 10px;
+    max-width: 80%;
+    padding: 5px;
+    border-radius: 5px;
+    clear: both;
+}
+#msgWid .msg-content .msg-message-right{
+    background-color: rgba(147, 243, 114, 1);
+    float: right;
+    margin: 10px;
+    max-width: 80%;
+    padding: 5px;
+    border-radius: 5px;
+    clear: both;
+}
+#msgWid .msg-content .msg-message-right .msg-message-title{
+    width: 100%;
+    text-align: right;
+}
+#msgWid .msg-input{
+    height: 200px;
+    width: 100%;
+}
+#msgWid .msg-input .inputHead{
+    height: 30px;
+    width: 100%;
+    border-top: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    background-color: #F2F2F2;
+}
+#msgWid .msg-input .inputBody{
+    height: 130px;
+    width: 100%;
+}
+#msgWid .msg-input .inputBody textarea{
+    width: 100%;
+    height: 100%;
+    border: none;
+    font-size: 14px;
+    outline: none;
+}
+#msgWid .msg-input .inputFoot{
+    height: 40px;
+    width: 100%;
+    border-top: 1px solid #CCC;
+    background-color: #F2F2F2;
+}
+#msgWid .msg-input .inputFoot button{
+    margin: 2px;
+}
+#userInfo{
+    width: 400px;
+    position: absolute;
+    left: 0;
+}
+.pad{
+    width: 100%;
+    border: 1px solid #CCC;
+    padding: 10px;
+}
+.text-r{
+    text-align: right;
+}
+.tdStyle {
+    height: 18px;
+    padding-left: 10px
+}
+tr.tr-pd-8{
+    border-bottom: 1px solid #CCC;
+}
+.tr-pd-8 td{
+    padding-right: 8px;
+}
+.bg-title{
+    background:rgba(218, 239, 252, 1);
+}
+
+/*返回顶部按钮*/
+.topBtn{
+    width: 30px; 
+    height: 30px; 
+    position: fixed; 
+    right: 45px; 
+    bottom: 150px; 
+    text-align: center; 
+    padding: 5px;
+}
+.topBtn span.glyphicon{
+    font-size: 10px; 
+}
+.topBtnColor02{
+    background-color: rgba(192, 192, 192, 0.2); 
+}
+.topBtnColor07{
+    background-color: rgba(192, 192, 192, 0.7); 
+}
