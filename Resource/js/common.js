@@ -840,7 +840,7 @@ common.reset = function(reform, resetBtn){
  * [setHeight]:召唤下拉列表的滚动条高度参数，初始为空
  * [MenbersArr]:成员的数据，数组格式
  * [poundsArr]:团队的数据，数组格式
- * [atType]:用来区分是at还是share
+ * [atOrShare]:用来区分是at还是share
  */
 common.at = {}; 
 common.at.inputCheck = function(inputSelect, atList, atForm, Spinner, keySelect, setHeight, MenbersArr, poundsArr, atOrShare){
