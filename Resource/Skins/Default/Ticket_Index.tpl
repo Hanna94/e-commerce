@@ -4,9 +4,6 @@
     <!-- 内容-->
     <div id="data-list" class="container-fluid">
         <header>
-            <div class="btn-group pull-right">
-                <a href="?Do=Create"><button class="btn btn-default">新建工单</button></a>
-            </div>
         </header>
 
         <ul class="nav nav-tabs">
