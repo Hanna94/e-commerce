@@ -139,6 +139,35 @@
                         <div class="product-search-result list-group col-sm-12 maxH400"></div>
                     </div>
 
+                    <!-- 快递信息 -->
+                    <div id="ShippingCarrier" class="col-sm-12">
+                        <hr class="mg-t-5 mg-b-10">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <table class="table table-striped table-bordered table-hover table-condensed">
+                                    <thead>
+                                        <th>单号</th>
+                                        <th>备注</th>
+                                        <th>时间</th>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <select class="form-control expSel"></select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <input class="form-control order" type="text" placeholder="快递单号"/></input>
+                                <input class="form-control remark" type="text" placeholder="备注"/></input>
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-default btn-sm expBtn" type="button" >提交</button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     
                     <!-- 备注 -->
                     <div class="col-sm-12">
@@ -330,6 +359,20 @@
                         $payAmount.find('.text-success').text('已支付：');
                         $payAmount.find('.text-danger').text('待支付：');
 
+                        // 快递
+                        // SCU = ShippingCarrierUsed
+                        var num, tempHtml = '',
+                            SCUArray = d.ShippingCarrierUsed.split(',');
+                        for (var num in SCUArray) {
+                            tempHtml += '<option value=' + SCUArray[num] + '>' + SCUArray[num] + '</option>'
+                        }
+                        $('.expSel').html(tempHtml);
+
+                        $('#ShippingCarrier tbody').html(Mustache.render(
+                            '{{#Waybill}}<tr>' +
+                            '<td>{{ShipmentTrackingNumber}}</td>' +
+                            '<td>{{Remark}}</td><td>{{Date}}</td></tr>{{/Waybill}}', d));
+
                         // 产品
                         $productGroup.find('tbody').html(Mustache.render(tmInitProduct, d));
 
@@ -346,6 +389,8 @@
 
                 //如果为新建采购单，则删除申请支付的模块，因为新建采购单时没有采购单ID
                 $payApply.remove();
+                //如果为新建采购单，则删除快递模块
+                $('#ShippingCarrier').remove();
             }
 
             // 获取供应商数据方法
@@ -543,6 +588,31 @@
                                         window.location.reload();
                                     }
                                 });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // 提交快递信息
+            $('#ShippingCarrier .expBtn').on('click', function(){
+                $.ajax({
+                    url: '/Purchase/API/?Do=WaybillSave',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        DataID: op.DataID,
+                        ShippingCarrierUsed: $('#ShippingCarrier .expSel').val(),
+                        ShipmentTrackingNumber: $('#ShippingCarrier .order').val(),
+                        Remark: $('#ShippingCarrier .remark').val()
+                    },
+                    success: function(data){
+                        common.alert({
+                            type: 'success',
+                            title: '快递信息',
+                            msg: '提交成功，系统反馈：' + data.Message,
+                            cb: function(){
+                                window.location.reload();
                             }
                         });
                     }
