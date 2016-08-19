@@ -86,8 +86,8 @@
                         <!-- BEGIN 数据列表 ATTRIB= -->
                         <tr data-id="{DataID}" data-tag="{Tag}">
                             <td><label class="checkbox-inline"><input type="checkbox">{DataID}</label></td>
-                            <td>{OrderID}</td>
-                            <td>{ReferenceID}</td>
+                            <td><span class="orderID">{OrderID}</span></td>
+                            <td><span class="orderID">{ReferenceID}</span></td>
                             <td>{Quantity}</td>
                             <td>{Receive}</td>
                             <td class="waybill-status"><i class="hidden">{Status}</i></td>
@@ -170,8 +170,8 @@
                     success: function(data){
                         $('#modal-create tbody:eq(0)').html(Mustache.render(
                             '<tr data-id="{{DataID}}">' +
-                            '<td>{{OrderID}}</td>' +
-                            '<td>{{ReferenceID}}</td>' +
+                            '<td><span class="orderID">{{OrderID}}</span></td>' +
+                            '<td><span class="orderID">{{ReferenceID}}</span></td>' +
                             '<td>{{Quantity}}</td>' +
                             '<td>{{Receive}}</td>' +
                             '<td>{{Status}}</td>' +
@@ -187,6 +187,7 @@
                             '<td><button class="btn btn-success btn-sm" type="button">收货</button></td>' +
                             '</tr>{{/DataList}}', data
                         ));
+                        common.Rendering.order($('#modal-create'));
                     }
                 });
             }
@@ -229,6 +230,8 @@
                     }
                 });
             });
+
+            common.Rendering.order($('#data-list'));
 
             // 回顶部按钮
             common.topBtn();

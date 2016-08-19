@@ -575,17 +575,17 @@
                             url: '/Purchase/API/?Do=MessageSave',
                             type: 'post',
                             data: {
-                                DataID: null,
+                                DataID: op.DataID || null,
                                 FID: data.DataID,
-                                Content: $remarkTextarea.val()
+                                Content: $remarkTextarea.val() || null
                             },
-                            success: function(data){
+                            success: function(msgData){
                                 common.alert({
                                     type: 'success',
                                     title: '保存采购单',
                                     msg: '成功，' + data.Message,
                                     cb: function(){
-                                        window.location.reload();
+                                        window.location.href = '?Do=Edit&DataID=' + data.DataID;
                                     }
                                 });
                             }
