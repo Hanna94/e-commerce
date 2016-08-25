@@ -12,11 +12,19 @@
                 <div class="panel-body">
                     <!-- 供应商查询 -->
                     <div class="form-group form-group-sm">
-                        <label class="col-sm-2 control-label">选择供应商</label>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="text" data-sid="" id="SupplierName" readonly="readonly" />
+                        <label class="col-xs-12 col-sm-2 col-md-1 col-lg-1 control-label">选择供应商</label>
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <div class="input-group">
+                                <input class="form-control" type="text" data-sid="" id="SupplierName" readonly="readonly" />
+                                <span class="input-group-btn">
+                                    <a href="javescriot:;" target="_blank" class="btn btn-default btn-sm" type="button">查看</a>
+                                </span>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-1 remind">
+                            <span class="text-danger hidden">信息不足！</span>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" id="Supplier-input" placeholder="供应商ID、名称">
                                 <span class="input-group-btn">
@@ -201,7 +209,7 @@
     <!-- 供应商列表模板 -->
     <template id="temp-supplier">
         {{#DataList}}
-        <a data-id="{{DataID}}" class="list-group-item pd-5">{{Name}}</a>
+        <a data-id="{{DataID}}" data-integrality="{{integrality}}" class="list-group-item pd-5">{{Name}}</a>
         {{/DataList}}
     </template>
 
@@ -350,6 +358,14 @@
                         // 供应商
                         $supName.val(d.Supplier.Name);
                         $supName.attr('data-sid', d.Supplier.DataID);
+                        if (d.Supplier.Contacts == "B2C代付") {
+                            checkPaymentInfo(false);
+                        } else if (d.Supplier.BankName == '' || d.Supplier.AccountName == ''
+                            || d.Supplier.AccountNumber == '') {
+                            checkPaymentInfo(true);
+                        } else {
+                            checkPaymentInfo(false);
+                        }
 
                         // 申请支付
                         $payApply.find('tbody').html(Mustache.render(tmPayApply, d));
@@ -393,6 +409,19 @@
                 $('#ShippingCarrier').remove();
             }
 
+            //支付性信息完整性判断
+            function checkPaymentInfo (judge) {
+                if (judge) {
+                    $('.remind span').removeClass('hidden');
+                    $AmountBtn.attr({disabled: 'disabled', title: '信息不足，不予支付！'});
+                } else {
+                    $('.remind span').addClass('hidden');
+                    $AmountBtn.removeAttr('disabled');
+                }
+                $supName.next().find('a')
+                .attr('href', '/Purchase/Supplier.aspx?Do=Edit&DataID=' + $supName.data('sid'));
+            }
+
             // 获取供应商数据方法
             function getSup(di, kw){
                 di ? di = di : di = '';
@@ -405,6 +434,10 @@
                         if (data.DataList.length === 0) {
                             $supList.html('<p>无搜索结果！</p>');
                         }else{
+                            data.DataList.forEach(function(val) {
+                                val.integrality = val.BankName == '' ||
+                                val.AccountName == '' || val.AccountNumber == '' ? 0 : 1;
+                            });
                             $supList.html(Mustache.render(tmSupplier, data));
                         }
                     }
@@ -421,6 +454,11 @@
                 var ts = $(this);
                 $supName.attr('data-sid', ts.data('id')).val(ts.text());
                 // 点选完供应商清空列表和输入框
+                if (ts.data('integrality') == 0) {
+                    checkPaymentInfo(true);
+                } else {
+                    checkPaymentInfo(false);
+                }
                 $supList.empty();
                 $supInput.val('');
             });
