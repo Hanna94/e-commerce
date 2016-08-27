@@ -173,7 +173,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <div class="col-sm-12">
-                                <input class="form-control-static" type="file" name="StrFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, application/vnd.ms-excel" value="上传附件">
+                                <input id="StrFileUp" class="form-control-static" type="file" name="StrFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, application/vnd.ms-excel" value="上传附件">
                             </div>
                             <div class="col-sm-12">
                                 <p class="help-block">
@@ -184,7 +184,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary">确定</button>
+                        <button type="button" class="btn btn-primary">确定</button>
                     </div>
                 </form>
             </div>
@@ -232,6 +232,16 @@
                 $allTagPanel.html(all);
                 $activeTagPanel.html(active);
             }
+
+            // 上传附件
+            $('#modal-upload .modal-footer').on('click', '.btn-primary', function() {
+                common.ajaxFE({
+                    URL: '?Do=Up',
+                    title: '上传附件',
+                    type: 'post',
+                    FE: 'StrFileUp'
+                });
+            });
 
             // 添加数据
             $('.btn-add-data').on('click', function () {

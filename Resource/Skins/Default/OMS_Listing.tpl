@@ -4,34 +4,6 @@
     
     <!-- 内容-->
     <div id="data-list" class="container-fluid">
-        <header>
-            <!-- <div class="btn-group btn-group-sm pull-right">
-                <button data-toggle="modal" data-target="#modal-create" class="btn btn-success btn-modal-create" type="button"><span class="glyphicon glyphicon-plus-sign"></span> 手工建单</button>
-
-                <button data-toggle="modal" data-target="#modal-upload" class="btn btn-success" type="button"><span class="glyphicon glyphicon-upload"></span> 上传</button>
-
-                <div class="btn-group btn-group-sm hidden">
-                    <button data-name="Confirmed" class="btn btn-default btn-status-alter option-status-alter" type="button" disabled><span class="glyphicon glyphicon-eye-open"></span> <span data-val="已审核">审核</span></button>
-                </div>
-
-                <div class="btn-group btn-group-sm hidden">
-                    <button data-name="OutStock" data-toggle="dropdown" class="btn btn-warning dropdown-toggle btn-status-alter" type="button" disabled><span class="glyphicon glyphicon-flash"></span> 缺货</button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="option-status-alter" data-val="正常"><a href="javascript:;">有货</a></li>
-                        <li class="option-status-alter" data-val="缺货"><a href="javascript:;"><span class="text-danger">缺货</span></a></li>
-                    </ul>
-                </div>
-
-                <div class="btn-group btn-group-sm hidden">
-                    <button data-name="Cancel" data-toggle="dropdown" class="btn btn-danger dropdown-toggle btn-status-alter" type="button" disabled><span class="glyphicon glyphicon-remove"></span> 取消</button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="option-status-alter" data-val="正常"><a href="javascript:;">正常发货</a></li>
-                        <li class="option-status-alter" data-val="取消发货"><a href="javascript:;"><span class="text-danger">取消发货</span></a></li>
-                    </ul>
-                </div>
-            </div> -->
-        </header>
-
         <ul class="nav nav-tabs">
             <li><a href="?Do=All">全部商品</a></li>
             <li><a href="?Do=Auction">拍卖商品</a></li>
