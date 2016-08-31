@@ -12,8 +12,8 @@
                 <div class="panel-body">
                     <!-- 供应商查询 -->
                     <div class="form-group form-group-sm">
-                        <label class="col-xs-12 col-sm-2 col-md-1 col-lg-1 control-label">选择供应商</label>
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                        <label class="col-xs-12 col-sm-2 control-label">选择供应商</label>
+                        <div class="col-xs-12 col-sm-3">
                             <div class="input-group">
                                 <input class="form-control" type="text" data-sid="" id="SupplierName" readonly="readonly" />
                                 <span class="input-group-btn">
@@ -21,10 +21,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-1 remind">
-                            <span class="text-danger hidden">信息不足！</span>
-                        </div>
-                        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-4">
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" id="Supplier-input" placeholder="供应商ID、名称">
                                 <span class="input-group-btn">
@@ -32,7 +29,11 @@
                                 </span>
                             </div>
                         </div>
+                        <div class="col-xs-12 col-sm-3 remind">
+                            <span class="text-danger hidden">此供应商信息不完整，请补充后提交！</span>
+                        </div>
                     </div>
+                    
                     <!-- 供应商列表 -->
                     <div class="Supplier-group maxH300"></div>
                     
@@ -410,16 +411,16 @@
             }
 
             //支付性信息完整性判断
-            function checkPaymentInfo (judge) {
+            function checkPaymentInfo (judge, dataid) {
                 if (judge) {
                     $('.remind span').removeClass('hidden');
-                    $AmountBtn.attr({disabled: 'disabled', title: '信息不足，不予支付！'});
+                    $AmountBtn.attr({disabled: 'disabled', title: '此供应商信息不完整，请补充后提交！'});
                 } else {
                     $('.remind span').addClass('hidden');
                     $AmountBtn.removeAttr('disabled');
                 }
                 $supName.next().find('a')
-                .attr('href', '/Purchase/Supplier.aspx?Do=Edit&DataID=' + $supName.data('sid'));
+                .attr('href', '/Purchase/Supplier.aspx?Do=Edit&DataID=' + dataid);
             }
 
             // 获取供应商数据方法
@@ -455,9 +456,9 @@
                 $supName.attr('data-sid', ts.data('id')).val(ts.text());
                 // 点选完供应商清空列表和输入框
                 if (ts.data('integrality') == 0) {
-                    checkPaymentInfo(true);
+                    checkPaymentInfo(true, ts.data('id'));
                 } else {
-                    checkPaymentInfo(false);
+                    checkPaymentInfo(false, ts.data('id'));
                 }
                 $supList.empty();
                 $supInput.val('');
