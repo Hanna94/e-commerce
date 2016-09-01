@@ -235,7 +235,7 @@
         {{/Finance}}
     </template>
 
-    <!-- 初始化产品模板 -->
+    <!-- 初始化产品模板 初始状态-->
     <template id="temp-init-product">
         {{#Product}}
         <tr class="{{SkuID}}" data-sid="{{SkuID}}">
@@ -244,6 +244,18 @@
             <td><input class="number form-control input-xs" type="text" placeholder="数量" value="{{Quantity}}"></td>
             <td><input class="price form-control" type="text" placeholder="价格" value="{{Price}}"></td>
             <td><span data-sta="edit" class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
+        </tr>
+        {{/Product}}
+    </template>
+
+    <!-- 初始化产品模板 非初始状态-->
+    <template id="temp-notinit-product">
+        {{#Product}}
+        <tr class="{{SkuID}}" data-sid="{{SkuID}}">
+            <td><span class="sku"></span>{{ProductSKU}}</td>
+            <td><span class="name">{{ProductName}}</span></td>
+            <td>{{Quantity}}</td>
+            <td>{{Price}}</td>
         </tr>
         {{/Product}}
     </template>
@@ -391,7 +403,16 @@
                             '<td>{{Remark}}</td><td>{{Date}}</td></tr>{{/Waybill}}', d));
 
                         // 产品
-                        $productGroup.find('tbody').html(Mustache.render(tmInitProduct, d));
+                        if(d.Order.Status != '初始') {
+                            $productGroup.find('thead tr:eq(0) th:last').remove(); //删除操作一列
+                            $btnSearch.closest('div.col-sm-6').remove(); //删除搜索按钮
+                            $AmountSaved.attr('readonly', 'readonly');  //折扣金额改为只读
+                            $ShipCost.attr('readonly', 'readonly'); //运费金额改为只读
+                            $productGroup.find('tbody')
+                            .html(Mustache.render($('#temp-notinit-product').html(), d));
+                        } else {
+                            $productGroup.find('tbody').html(Mustache.render(tmInitProduct, d));
+                        }
 
                         // 折扣和运费金额
                         $AmountSaved.val(d.Order.AmountSaved);
@@ -553,7 +574,6 @@
             $AmountBtn.on('click', function(){
                 var type = 'Purchase',
                     title = '关于【' + $supName.val() + '】的【' + $productGroup.find('tbody tr:eq(0) td:eq(1)').text() + '】等的付款申请';
-                // console.log($('#dataSave').attr('data-OrderID'));
                 $.ajax({
                     url: '/Finance/API/?Do=Create',
                     type: 'post',
