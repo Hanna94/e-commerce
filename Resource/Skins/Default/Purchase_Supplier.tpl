@@ -22,9 +22,9 @@
                 <col>
             </colgroup>
             <thead>
-                <th>编号</th>
-                <th>供应商</th>
-                <th>联系人</th>
+                <th>编号{当前页}</th>
+                <th>供应商{总条数}</th>
+                <th>联系人{每页条数}</th>
                 <th>电话</th>
                 <th>地址</th>
                 <th>银行信息</th>
@@ -47,6 +47,7 @@
                 </tr>
                 <!-- END 数据列表 -->
             </tbody>
+            <tfoot><tr><td colspan="10"></td></tr></tfoot>
         </table>
     </div>
 
@@ -77,8 +78,11 @@
                 });
             }
 
-
+            <!-- BEGIN 分页脚本 ATTRIB= -->
+            common.showPage({当前页}, {总条数}, {每页条数});
+            <!-- END 分页脚本 -->
         });
+
     </script>
 </body>
 </html>
