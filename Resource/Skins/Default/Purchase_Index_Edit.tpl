@@ -371,13 +371,14 @@
                         // 供应商
                         $supName.val(d.Supplier.Name);
                         $supName.attr('data-sid', d.Supplier.DataID);
+                        console.log(d.Supplier.Contacts);
                         if (d.Supplier.Contacts == "B2C代付") {
-                            checkPaymentInfo(false);
+                            checkPaymentInfo(false, d.Supplier.DataID);
                         } else if (d.Supplier.BankName == '' || d.Supplier.AccountName == ''
                             || d.Supplier.AccountNumber == '') {
-                            checkPaymentInfo(true);
+                            checkPaymentInfo(true, d.Supplier.DataID);
                         } else {
-                            checkPaymentInfo(false);
+                            checkPaymentInfo(false, d.Supplier.DataID);
                         }
 
                         // 申请支付
@@ -457,8 +458,8 @@
                             $supList.html('<p>无搜索结果！</p>');
                         }else{
                             data.DataList.forEach(function(val) {
-                                val.integrality = val.Contacts != "B2C代付" || (val.BankName == '' ||
-                                val.AccountName == '' || val.AccountNumber == '') ? 0 : 1;
+                                val.integrality = val.Contacts != "B2C代付" && (val.BankName == '' ||
+                                val.AccountName == '' || val.AccountNumber == '') ? true : false;
                             });
                             $supList.html(Mustache.render(tmSupplier, data));
                         }
@@ -476,7 +477,7 @@
                 var ts = $(this);
                 $supName.attr('data-sid', ts.data('id')).val(ts.text());
                 // 点选完供应商清空列表和输入框
-                if (ts.data('integrality') == 0) {
+                if (ts.data('integrality') == true) {
                     checkPaymentInfo(true, ts.data('id'));
                 } else {
                     checkPaymentInfo(false, ts.data('id'));
