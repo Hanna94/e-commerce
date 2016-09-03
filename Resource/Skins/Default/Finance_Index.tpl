@@ -64,7 +64,10 @@
                             <td>{Amount}</td>
                             <td>{Status}</td>
                             <td>{Date}</td>
-                            <td><a href="/Finance/?Do=Edit&OrderID={OrderID}&DataID={DataID}" target="_blank"><span class="glyphicon glyphicon-eye-open poi"></span></a></td>
+                            <td>
+                                <a href="/Finance/?Do=Edit&OrderID={OrderID}&DataID={DataID}" target="_blank"><span class="glyphicon glyphicon-eye-open poi"></span></a>
+                                <span data-oid="{OrderID}" class="text-danger glyphicon glyphicon-fire poi"></span>
+                            </td>
                         </tr>
                         <!-- END 数据列表 -->
                     </tbody>
@@ -96,6 +99,30 @@
                 $AuditBtn.addClass('hide');
                 $CancelBtn.addClass('hide');
             }
+
+            // 如果不是待支付标签页，则删除检查按钮
+            if (op.Do != 'UnPaid') {
+                $dataList.find('tbody .glyphicon-fire').remove();
+            }
+            // 点击检查按钮
+            $dataList.find('.glyphicon-fire').on('click', function() {
+                $.ajax({
+                    url: '/Finance/API/?Do=PaymentCheck&OrderID=' + $(this).closest('tr')
+                        .find('.orderID').text(),
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data) {
+                        common.alert({
+                            type: 'success',
+                            title: '检查支付',
+                            msg: '完成，后台反馈：' + data.Message,
+                            cb: function(){
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
 
             // 状态渲染
             (function(){

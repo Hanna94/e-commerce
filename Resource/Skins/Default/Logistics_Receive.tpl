@@ -216,7 +216,7 @@
                             title: '检查收货单',
                             msg: '完成，后台反馈：' + data.Message,
                             cb: function(){
-                                // location.reload();
+                                location.reload();
                             }
                         });
                     }
