@@ -703,10 +703,13 @@
                     type: 'post',
                     dataType: 'json',
                     success: function(data) {
+                        var typeTitle, msgTitle;
+                        typeTitle = data.Ack ? 'success' : 'error';
+                        msgTitle = data.Ack ? '成功' : '失败';
                         common.alert({
-                            type: 'success',
+                            type: typeTitle,
                             title: '强制创建收货单',
-                            msg: '成功，系统反馈：' + data.Message,
+                            msg: msgTitle + '，系统反馈：' + data.Message,
                             cb: function() {
                                 window.location.reload();
                             }
