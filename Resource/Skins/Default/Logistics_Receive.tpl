@@ -86,7 +86,10 @@
                             <td>{Receive}</td>
                             <td class="waybill-status"><i>{Status}</i></td>
                             <td>{Date}</td>
-                            <td><span data-id="{DataID}" class="text-success glyphicon glyphicon-eye-open"></span></td>
+                            <td>
+                                <span data-id="{DataID}" class="text-success glyphicon glyphicon-eye-open poi"></span>
+                                <span data-oid="{OrderID}" class="text-danger glyphicon glyphicon-fire poi"></span>
+                            </td>
                         </tr>
                         <!-- END 数据列表 -->
                     </tbody>
@@ -152,6 +155,13 @@
         (function() {
             'use strict';
 
+            var op = common.URL.parse();
+
+            // 如果不是待收货页面，则删除检查收货按钮
+            if (op.Do != 'UnReceive') {
+                $('#data-list tbody span.glyphicon-fire').remove();
+            }
+
             // 查询指定收货单方法
             function eachList($this){
                 $.ajax({
@@ -187,9 +197,30 @@
             }
 
             // 查询指定收货单
-            $('.tab-content table tbody tr').on('click', 'span', function(){
+            $('.tab-content table tbody tr').on('click', 'span.glyphicon-eye-open', function(){
                 $('#modal-create').modal('show');
                 eachList($(this).closest('tr').attr('data-id'));
+            });
+
+            // 检查收货单
+            $('#data-list tbody span.glyphicon-fire').on('click', function(){
+                $.ajax({
+                    url: '/Logistics/API/?Do=ReceiveCheck&DataID='
+                    + $(this).closest('tr').data('id') + '&OrderID='
+                    + $(this).closest('tr').find('.orderID:eq(0)').text(),
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data) {
+                        common.alert({
+                            type: 'success',
+                            title: '检查收货单',
+                            msg: '完成，后台反馈：' + data.Message,
+                            cb: function(){
+                                // location.reload();
+                            }
+                        });
+                    }
+                });
             });
 
             // 确认收货
@@ -225,6 +256,7 @@
                 });
             });
 
+            // 渲染单号
             common.Rendering.order($('#data-list'));
 
             // 回顶部按钮
