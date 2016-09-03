@@ -415,6 +415,11 @@
                             $productGroup.find('tbody').html(Mustache.render(tmInitProduct, d));
                         }
 
+                        // 如果支付状态为完成，则删除支付框
+                        if (d.Order.PaymentStatus == '完成') {
+                            $Amount.closest('div.col-sm-4').remove();
+                        }
+
                         // 折扣和运费金额
                         $AmountSaved.val(d.Order.AmountSaved);
                         $ShipCost.val(d.Order.ShipCost);
