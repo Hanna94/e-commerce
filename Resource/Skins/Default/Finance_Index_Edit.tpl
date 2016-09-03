@@ -10,7 +10,7 @@
                         <th>编号</th>
                         <th>单号</th>
                         <th>发起人</th>
-                        <th>请款说明</th>
+                        <th id="ReferenceID">请款说明</th>
                         <th>付款类型</th>
                         <th>总金额</th>
                         <th>状态</th>
@@ -84,7 +84,7 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <div id="Fin-Amount" class="col-sm-3 pull-right">
+            <div id="Fin-Order" class="col-sm-3 pull-right">
                 <table class="table table-striped table-bordered table-hover table-condensed">
                     <thead>
                         <th>项目名称</th>
@@ -115,7 +115,9 @@
 
     <!-- 供应商财务信息 -->
     <template id="tm-Supplier">
+        
         {{#Supplier}}
+        <tr><td>联系人</td><td><span style="color:red; font-weight:bold;">{{Contacts}}</span></td></tr>
         <tr><td>开户银行</td><td>{{BankName}}</td></tr>
         <tr><td>开户名</td><td>{{AccountName}}</td></tr>
         <tr><td>账号</td><td>{{AccountNumber}}</td></tr>
@@ -139,7 +141,7 @@
     </template>
 
     <!-- 折扣&运费 -->
-    <template id="tm-Amount">
+    <template id="tm-Order">
         {{#Order}}
         <tr><td>折扣</td><td>{{AmountSaved}}</td></tr>
         <tr><td>运费</td><td>{{ShipCost}}</td></tr>
@@ -174,12 +176,12 @@
                 $dataList = $('#data-list'),
                 $FinFinance = $('#Fin-Finance'), //Finance列表
                 tmFinance = $('#tm-Finance').html(), //Finance列表数据模板
-                $FinSupplier = $('#Fin-Supplier'), //供应商信息表
-                tmSupplier = $('#tm-Supplier').html(), //供应商信息模板
+                $FinSupplier = $('#Fin-Supplier'), //供应商财务信息表
+                tmSupplier = $('#tm-Supplier').html(), //供应商财务信息模板
                 $FinProduct = $('#Fin-Product'), //产品列表
                 tmProduct = $('#tm-Product'), //产品列表数据模板
-                $FinAmount = $('#Fin-Amount'), //折扣和运费列表
-                tmAmount = $('#tm-Amount').html(), //折扣和运费数据模板
+                $FinOrder = $('#Fin-Order'), //折扣和运费列表
+                tmOrder = $('#tm-Order').html(), //折扣和运费数据模板
                 $FinPaymentList = $('#Fin-PaymentList'), //支付单
                 tmPaymentList = $('#tm-PaymentList').html(), //支付单模板
                 $FinPayment = $('#Fin-Payment'), //上传单据模块
@@ -193,7 +195,8 @@
                 success: function(data){
                     var d = data;
                     $FinFinance.find('tbody').html(Mustache.render(tmFinance, d)); //Finance
-                    $FinSupplier.find('tbody').html(Mustache.render(tmSupplier, d)); //供应商信息表
+                    $('#ReferenceID').append('  [<span class="orderID">' + d.Finance.ReferenceID + '</span>]'); //采购单号
+                    $FinSupplier.find('tbody').html(Mustache.render(tmSupplier, d)); //供应商财务信息表
 
                     //供应商账号渲染
                     (function(){
@@ -217,14 +220,14 @@
                     $FinProduct.find('tbody').html(Mustache.render(tmProduct.html(), d))
                     .append('<tr><td colspan="5" class="text-right">所有项目汇总：' + col + '</td></tr>');
 
-                    $FinAmount.find('tbody').html(Mustache.render(tmAmount, d)); //折扣与运费
+                    $FinOrder.find('tbody').html(Mustache.render(tmOrder, d)); //折扣与运费
 
                     // 支付单
                     $FinPaymentList.find('tbody').html(Mustache.render(tmPaymentList, d));
 
                     // 支付单据大图显示
-                    $FinPayment.find('tbody img').on('click', function(){
-                        $imgModal.find('.modal-content').empty().html('div.<img src="' + $(this).data('url') + '" />');
+                    $FinPaymentList.find('tbody img').on('click', function(){
+                        $imgModal.find('.modal-content').empty().html('<img src="' + $(this).data('url') + '" />');
                         $imgModal.modal('show');
                     });
 
