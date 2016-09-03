@@ -614,7 +614,7 @@
                     productJson.Product = [];
                 $productGroup.find('tbody tr').each(function(i, n){
                     var ts = $(this),
-                        temp = {"SkuID": ts.data('sid'), "Quantity": parseInt(ts.find('.number').val()), "Price": parseInt(ts.find('.price').val())};
+                        temp = {"SkuID": ts.data('sid'), "Quantity": parseFloat(ts.find('.number').val()), "Price": parseFloat(ts.find('.price').val())};
                     productJson.Product.push(temp);
                 });
 

@@ -58,7 +58,7 @@
                         <!-- BEGIN 数据列表 ATTRIB= -->
                         <tr data-did="{DataID}" data-sid="{SupplierID}">
                             <td><input type="checkbox" />{DataID}</td>
-                            <td>{OrderID}</td>
+                            <td><span class="orderID">{OrderID}</span></td>
                             <td>{SupplierName}</td>
                             <td><span data-val="in" class="glyphicon glyphicon-zoom-in poi"></span><span class="RemarkFold hide"><br/>{SupplierRemark}</span></td>
                             <td>{Amount}</td>
@@ -192,6 +192,9 @@
                         flag = flag > 0 ? flag : 0;
                     tar.find('td:eq(' + num + ')').html('<span class="label ' + style[flag] + '" >' + val + '</span>');
                 }
+
+                // 采购单号渲染
+                common.Rendering.order($dataList);
 
             })();
 
