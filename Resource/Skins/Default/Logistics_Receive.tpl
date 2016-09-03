@@ -4,12 +4,6 @@
     
     <!-- 内容-->
     <div id="data-list" class="container-fluid">
-       <!--  <header>
-            <div class="btn-group btn-group-sm pull-right">
-                <button data-toggle="modal" data-target="#modal-create" class="btn btn-success btn-modal-create" type="button"><span class="glyphicon glyphicon-plus-sign"></span> 创建快递单</button>
-            </div>
-        </header> -->
-
         <ul class="nav nav-tabs">
             <li><a href="?Do=All">全部</a></li>
             <li><a href="?Do=UnReceive">待收货</a></li>
@@ -213,7 +207,7 @@
                     dataType: 'json',
                     data: {
                         DataID: $(this).closest('tr').attr('data-id'),
-                        FID: $('#modal-create .modal-body tbody:eq(1) tr').attr('data-id'),
+                        FID: $('#modal-create .modal-body tbody:eq(0) tr').attr('data-id'),
                         Receive: $(this).closest('tr').find('input').val()
                     },
                     success: function(data){
