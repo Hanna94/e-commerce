@@ -172,7 +172,7 @@
                                 <input class="form-control remark" type="text" placeholder="备注"/></input>
                             </div>
                             <div class="col-sm-1">
-                                <button class="btn btn-default btn-sm expBtn" type="button" >提交</button>
+                                <button class="btn btn-default btn-sm expBtn" type="button" >快递提交</button>
                             </div>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                                 <div class="input-group input-group-sm">
                                     <textarea rows="1" name="Remark" class="form-control"></textarea>
                                     <span class="input-group-btn">
-                                        <input type="submit" class="btn btn-default" value="提交" />
+                                        <input type="submit" class="btn btn-default" value="备注提交" />
                                         <input type="reset" class="btn btn-default hidden" value="取消" />
                                     </span>
                                 </div>
@@ -201,7 +201,7 @@
                     </div>
                 </div>
                 <div class="panel-footer clearfix">
-                    <button class="btn btn-default pull-right" type="button">提交</button>
+                    <button class="btn btn-default pull-right" type="button">采购单提交</button>
                 </div>
             </div>
         </form>
@@ -488,7 +488,11 @@
 
             // 搜索产品
             $btnSearch.on('click', function(){
-                selectProduct($inputSearch.val());
+                if ($('#SupplierName').val() == '' || $('#SupplierName').val() == null) {
+                    alert('请先选择供应商！');
+                } else {
+                    selectProduct($inputSearch.val());
+                }
             });
 
             // 清空产品列表
