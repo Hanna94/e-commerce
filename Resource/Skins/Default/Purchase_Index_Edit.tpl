@@ -7,7 +7,9 @@
         <form action="javascript:;" class="form-horizontal">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">采购单的编辑</h3>
+                    <h3 class="panel-title">采购单的编辑
+                    <button class="btn btn-default btn-xs pull-right create">强制创建收货单</button></h3>
+
                 </div>
                 <div class="panel-body">
                     <!-- 供应商查询 -->
@@ -687,6 +689,25 @@
                             title: '快递信息',
                             msg: '提交成功，系统反馈：' + data.Message,
                             cb: function(){
+                                window.location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+
+            // 强制创建收货单
+            $PE.find('.panel-title button.create').on('click', function() {
+                $.ajax({
+                    url: '/Purchase/API/?Do=ReceiveCreate&OrderID=' + $('#dataSave').attr('data-OrderID'),
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data) {
+                        common.alert({
+                            type: 'success',
+                            title: '强制创建收货单',
+                            msg: '成功，系统反馈：' + data.Message,
+                            cb: function() {
                                 window.location.reload();
                             }
                         });
