@@ -365,6 +365,9 @@
                             d.Product[i].Price = d.Product[i].Price.replace(',', '');
                         }
 
+                        $PE.find('.panel-heading .panel-title')
+                        .append('  <span class="orderID">' + d.Order.OrderID + '</span>');
+
                         //存储dataID和OrderID
                         $('body').append('<input id="dataSave" type="hidden" data-DataID="' + d.DataID + '" data-OrderID="' + d.Order.OrderID + '" >');
 
@@ -423,6 +426,9 @@
                         // 折扣和运费金额
                         $AmountSaved.val(d.Order.AmountSaved);
                         $ShipCost.val(d.Order.ShipCost);
+
+                        // 单号渲染
+                        common.Rendering.order($PE);
                     }
                 });
                 

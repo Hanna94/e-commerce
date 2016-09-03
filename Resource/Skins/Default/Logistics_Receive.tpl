@@ -84,7 +84,7 @@
                             <td><span class="orderID">{ReferenceID}</span></td>
                             <td>{Quantity}</td>
                             <td>{Receive}</td>
-                            <td class="waybill-status"><i class="hidden">{Status}</i></td>
+                            <td class="waybill-status"><i>{Status}</i></td>
                             <td>{Date}</td>
                             <td><span data-id="{DataID}" class="text-success glyphicon glyphicon-eye-open"></span></td>
                         </tr>
