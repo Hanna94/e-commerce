@@ -375,7 +375,7 @@
         {{#Product}}
          <div class="row mg-b-5">
              <div class="col-sm-1">
-                 <input type="checkbox" id="{{DataID}}">
+                 <input type="checkbox" id="{{DataID}}" data-wid="{{WID}}">
              </div>
              <div class="col-sm-4" title="{{SKU}}">
                  <label for="{{DataID}}">{{Name}}</label>
@@ -684,7 +684,8 @@
                                 return a.Quantity - b.Quantity;
                             });
 
-                            $tagTransaction.find('.item[data-id="' + dataList.SkuID + '"]').append(Mustache.render(htmlStrokMess, dataList));
+                            $tagTransaction.find('.item[data-id="' + dataList.SkuID + '"]')
+                            .append(Mustache.render(htmlStrokMess, dataList));
                         }
 
                         // 自动选择库存
@@ -705,7 +706,7 @@
 
                         // 满足时帮忙勾上库存编码
                         if (meet) {
-                            autoSelect();
+                            autoSelect(logistics.WID?logistics.WID:stock.WID);
                         }
 
                         // 是否有推荐库存
@@ -728,33 +729,32 @@
             }
 
             // 自动选择库存
-            function autoSelect() {
+            function autoSelect(wid) {
                 $tagTransaction.find('.item').each(function() {
                     var $this = $(this),
                         sum = +$this.data('sum'),
-                        $row = $this.find('.row'),
-                        count = 0;
+                        $row = $this.find('.row');
 
                     $row.each(function() {
                         var $that = $(this),
                             $inputText = $that.find('input[type="text"]'),
                             $inputCheckbox = $that.find('input[type="checkbox"]'),
-                            max = +$that.find('.stock').text();
+                            max = +$that.find('.stock').text(),
+                            cWid = +$inputCheckbox.attr('data-wid');
 
-                        // 库存大于总数，并且count为0
-                        if (max >= sum && !count) {
-                            $inputText.val(sum);
-                            $inputCheckbox.prop('checked', true);
-                            return false;
-
-                        } if (count + max <= sum) {
-                            $inputText.val(max);
+                        // 匹配相同的WID，勾选
+                        if (cWid === +wid) {
+                            console.log(+$inputCheckbox.attr('data-wid'));
                             $inputCheckbox.prop('checked', true);
 
-                        } else {
-                            $inputText.val(sum - count).change();
-                            $inputCheckbox.prop('checked', true);
-                            return false;
+                            // 自动填写库存
+                            if (max >= sum) {
+                                $inputText.val(sum); //库存量大于需求量的时候，填写需求量
+                            } else if (max <= sum) {
+                                $inputText.val(max); //需求量大于库存量的时候，强制为库存量
+                            } else {
+                                $inputText.val(sum).change();
+                            }
                         }
                     });
                 });
