@@ -77,7 +77,10 @@
                                 <th>库存SKU</th>
                                 <th>尺寸</th>
                                 <th>重量</th>
-                                <th>库存数量</th>
+                                <th>实际库存</th>
+                                <th>冻结库存</th>
+                                <th>可用库存</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -88,11 +91,14 @@
                                 <td>{SKU}</td>
                                 <td>{Size}</td>
                                 <td>{Weight}</td>
+                                <td>{AllQuantity}</td>
+                                <td>{LockQuantity}</td>
                                 <td>{Quantity}</td>
+                                <td><span data-id="{DataID}" class="glyphicon glyphicon-list-alt poi" title="库存日志"></span></td>
                             </tr>
                             <!-- END 数据列表 -->
                         </tbody>
-                        <tfoot><tr><td colspan="6"></td></tr></tfoot>
+                        <tfoot><tr><td colspan="9"></td></tr></tfoot>
                     </table>
                 </div>
             </div>
@@ -102,13 +108,16 @@
     <!-- 库存信息-->
     <template id="temp-stock-list">
         {{#DataList}}
-        <tr data-id="{DataID}">
+        <tr data-id="{{DataID}}">
             <td title="{{Name}}" class="label-set"><span class="code label">{{Code}}</span> <span class="state label">{{Location}}</span></td>
             <td>{{InsideNo}}</td>
             <td>{{SKU}}</td>
             <td>{{Size}}</td>
             <td>{{Weight}}</td>
+            <td>{{AllQuantity}}</td>
+            <td>{{LockQuantity}}</td>
             <td>{{Quantity}}</td>
+            <td><span data-id="{{DataID}}" class="glyphicon glyphicon-list-alt poi" title="库存日志"></span></td>
         </tr>
         {{/DataList}}
     </template>
@@ -192,7 +201,9 @@
                     title: '“获取库存信息”操作：',
                     msg: data.Message || '暂无数据！'
                 });
+                return;
             }
+            // 插入冻结库存的数据
             $dataList.find('tbody').html(Mustache.render(tempStockList, data));
             $dataList.find('.label-set').each(function() {
                 var $this = $(this);
