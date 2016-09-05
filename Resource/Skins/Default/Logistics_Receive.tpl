@@ -247,7 +247,15 @@
                                 type: 'success',
                                 title: '确认收货/更新数量',
                                 msg: '完成，后台反馈：' + data.Message,
-                                cb: function(){
+                                cb: function() {
+                                    eachList($('#modal-create .modal-body tbody:eq(0) tr:eq(0)').attr('data-id'));
+                                }
+                            });
+                        } else {
+                            common.alert({
+                                title: '确认收货/更新数量',
+                                msg: '失败，后台反馈：' + data.Message,
+                                cb: function() {
                                     eachList($('#modal-create .modal-body tbody:eq(0) tr:eq(0)').attr('data-id'));
                                 }
                             });
