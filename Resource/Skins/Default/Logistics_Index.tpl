@@ -844,6 +844,7 @@
                     $formStockPost.on('submit', function() {
                         // 检测数量不能超过发货数量、可以少于
                         var validate = true,
+                            isPostStock = true,
                             lis = '';
                         $tagTransaction.find('.item').each(function() {
                             var $this = $(this),
@@ -854,6 +855,10 @@
                             $stock.each(function() {
                                 count += +$(this).find('input[type="text"]').val();
                             });
+
+                            if (sum > +$stock.find('.stock').text()) {
+                                isPostStock = false;
+                            }
 
                             if (sum < count) {
                                 lis += '<li>' + $this.find('.name').text() + '</li>';
@@ -875,7 +880,7 @@
                                     DataID: $modalStockPost.data('id'),
                                     WID: $wrehouse.val(),
                                     FreightServiceID: $service.val(),
-                                    Stock: getStockData()
+                                    Stock: isPostStock ? getStockData() : []
                                 }),
                                 good: function(data) {
                                     common.alert({
