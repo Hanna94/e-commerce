@@ -674,7 +674,7 @@
                             var i = 0,
                             dataList,
                             len = data.DataList.length,
-                            stock = data.Stock[0],
+                            stock = data.Stock,
                             meet = true; // 默认库存满足产品个数
 
                         for (; i < len; i++) {
@@ -706,12 +706,15 @@
 
                         // 满足时帮忙勾上库存编码
                         if (meet) {
-                            autoSelect(logistics.WID?logistics.WID:stock.WID);
+                            autoSelect(logistics.WID?logistics.WID:stock[0].WID);
                         }
 
                         // 是否有推荐库存
                         if (stock) {
-                            $wrehouse.find('option[value="' + stock.WID + '"]').text(stock.Code + ' [' + stock.Quantity + ']');
+                            $.each(stock, function(index, val){
+                                $wrehouse.find('option[value="' + val.WID + '"]')
+                                .text(val.Code + ' [' + val.Quantity + ']');
+                            });
                         }
 
                         // 智能判断仓库
@@ -741,6 +744,10 @@
                             $inputCheckbox = $that.find('input[type="checkbox"]'),
                             max = +$that.find('.stock').text(),
                             cWid = +$inputCheckbox.attr('data-wid');
+
+                        // 先取消所有选择，重置库存数量
+                        $inputCheckbox.prop('checked', false);
+                        $inputText.val(0);
 
                         // 匹配相同的WID，勾选
                         if (cWid === +wid) {
@@ -809,7 +816,7 @@
 
                     // 选择仓库获取货代
                     $wrehouse.on('change', function () {
-                        getFreight($(this).val(), function(data) {
+                        getFreight($formStockPost.find('select[name="Wrehouse"]').val(), function(data) {
                             freightList = data.DataList;
                             $freight.html(Mustache.render(htmlFreight, data));
 
@@ -819,6 +826,7 @@
                             }
 
                             $freight.change();
+                            autoSelect($formStockPost.find('select[name="Wrehouse"]').val());
                         });
                     });
 
