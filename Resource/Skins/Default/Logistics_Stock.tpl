@@ -249,6 +249,7 @@
                 title: '获取产品库存信息',
                 URL: '/Logistics/Logistics.aspx?Do=GetStockBySkuID&DataID=' + $listGroupItem.data('id'),
                 good: function(data) {
+                    $dataList.find('tbody').empty(); //渲染数据前，先清空上一次搜索数据
                     renderList(data, $listGroupItem.find('.name').text());
                 }
             });
