@@ -74,6 +74,7 @@
                                         <th>金额</th>
                                         <th>状态</th>
                                         <th>时间</th>
+                                        <th>单据</th>
                                     </thead>
                                     <tbody></tbody>   
                                  </table>
@@ -376,7 +377,6 @@
                         // 供应商
                         $supName.val(d.Supplier.Name);
                         $supName.attr('data-sid', d.Supplier.DataID);
-                        console.log(d.Supplier.Contacts);
                         if (d.Supplier.Contacts == "B2C代付") {
                             checkPaymentInfo(false, d.Supplier.DataID);
                         } else if (d.Supplier.BankName == '' || d.Supplier.AccountName == ''
@@ -563,7 +563,6 @@
             // 移除产品
             $productGroup.on('click', '.btn-remove', function () {
                 var $formGroup = $(this).closest('tr');
-                console.log($(this).data('sta'));
                 if ($(this).data('sta') !== 'add') {
                     common.ajax({
                         title: '移除产品',

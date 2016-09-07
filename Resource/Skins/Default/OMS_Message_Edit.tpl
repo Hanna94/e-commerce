@@ -103,7 +103,7 @@
                         <label>请选择要上传的图片:</label>
                     </div>
                     <div class="form-group attachments">
-                        <input type="file" id="StrFile" name="StrFile" multiple="multiple" />
+                        <input type="file" id="imgupload" name="StrFile" multiple="multiple" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -492,7 +492,7 @@
                     common.ajaxFE({
                         title: '图片上传',
                         URL: '/OMS/API/eBay.aspx?Do=UploadImages',
-                        FE: 'StrFile',
+                        FE: 'imgupload',
                         dataType: 'json',
                         type: 'post',
                         data: {
@@ -516,7 +516,10 @@
                             
                         },
                         no: function(data, status, e){
-                            console.log("图片上传失败：" + e);
+                            common.alert({
+                                title: '[图片上传]操作：',
+                                msg: '失败！系统反馈：' + data.Message
+                            }); 
                         }
                     });
                 });

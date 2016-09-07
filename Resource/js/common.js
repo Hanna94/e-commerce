@@ -44,10 +44,12 @@ common.alert = function(option) {
 };
 /**
  * 提示信息组合
+ * author  Harry.H
  * @param  {json}     data 
  * @param  {string}   title
  * @param  {number}   time  
- * @param  {Function} cb  
+ * @param  {Function} cb
+ * date    2016-09-07
  */
 common.alertIf = function(data, title, time, cb){
     if (data.Ack) {
@@ -55,14 +57,14 @@ common.alertIf = function(data, title, time, cb){
             type: 'success',
             title: title,
             msg: '成功，系统反馈：' + data.Message,
-            time: time,
+            time: time || null,
             cb
         });
     } else {
         common.alert({
             title: title,
             msg: '成功，系统反馈：' + data.Message,
-            time: time,
+            time: time || null,
             cb
         });
     }

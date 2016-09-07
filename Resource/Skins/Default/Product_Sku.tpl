@@ -5,7 +5,7 @@
     <article class="container-fluid">
         <header>
             <div class="btn-group btn-group-sm pull-right">
-                <button type="button" class="btn btn-success btn-batch" data-toggle="modal" data-target="#batch-panel" disabled><span class="glyphicon glyphicon-indent-left"></span> 批量操作</button>
+<!--                 <button type="button" class="btn btn-success btn-batch" data-toggle="modal" data-target="#batch-panel" disabled><span class="glyphicon glyphicon-indent-left"></span> 批量操作</button> -->
                 <button type="button" class="btn btn-success btn-add-data" data-toggle="modal" data-target="#add-data"><span class="glyphicon glyphicon-plus-sign"></span> 添加数据</button>
             </div>
         </header>
@@ -45,8 +45,8 @@
                         <a class="btn-edit" href="javascript:;" title="编辑"><span class="glyphicon glyphicon-pencil"></span></a>
                         &nbsp;&nbsp;
                         <a class="btn-bind-freight" href="javascript:;" title="绑定货代服务"><span class="glyphicon glyphicon-plane text-success"></span></a>
-                        &nbsp;&nbsp;
-                        <a class="btn-del" href="javascript:;" title="删除"><span class="glyphicon glyphicon-remove text-danger"></span></a>
+                        <!-- &nbsp;&nbsp;
+                        <a class="btn-del" href="javascript:;" title="删除"><span class="glyphicon glyphicon-remove text-danger"></span></a> -->
                     </td>
 				</tr>
 				<!-- END 数据列表 -->
@@ -327,22 +327,22 @@
                 }
             });
             // 批量删除SKU
-            $batchPanel.find('.btn-batch-del-sku').on('click', function () {
-                if (confirm('您确定要删除这些SKU？')) {
-                    common.ajax({
-                        title: '批量删除SKU',
-                        URL: '?Do=Del&SPUID={SPUID}&DataID=' + common.getChecked($dataList.find('tbody'), 'tr', 'data-id'),
-                        good: function (data) {
-                            common.alert({
-                                type: 'success',
-                                title: '“批量删除SKU”操作：',
-                                msg: data.Message || '成功！'
-                            });
-                            $batchPanel.modal('hide');
-                        }
-                    });
-                }
-            });
+            // $batchPanel.find('.btn-batch-del-sku').on('click', function () {
+            //     if (confirm('您确定要删除这些SKU？')) {
+            //         common.ajax({
+            //             title: '批量删除SKU',
+            //             URL: '?Do=Del&SPUID={SPUID}&DataID=' + common.getChecked($dataList.find('tbody'), 'tr', 'data-id'),
+            //             good: function (data) {
+            //                 common.alert({
+            //                     type: 'success',
+            //                     title: '“批量删除SKU”操作：',
+            //                     msg: data.Message || '成功！'
+            //                 });
+            //                 $batchPanel.modal('hide');
+            //             }
+            //         });
+            //     }
+            // });
             $dataList.find('tbody').on('change', 'input[type="checkbox"]', function() {
                 $btnBatch.prop('disabled', !!!$dataList.find('tbody input:checked').length);
             });
