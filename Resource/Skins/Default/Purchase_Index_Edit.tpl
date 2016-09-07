@@ -210,6 +210,13 @@
         </form>
     </div>
 
+    <!-- 图片模态框 -->
+    <div id="imgModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+
     <!-- 供应商列表模板 -->
     <template id="temp-supplier">
         {{#DataList}}
@@ -234,6 +241,7 @@
             <td>{{Amount}}</td>
             <td>{{Status}}</td>
             <td>{{Date}}</td>
+            <td></td>
         </tr>
         {{/Finance}}
     </template>
@@ -333,6 +341,7 @@
                 $Amount = $('#Amount'), //申请金额的输入框
                 $AmountBtn = $('#AmountBtn'), //申请金额按钮
                 tmPayApply = $('#temp-PayApply').html(), //申请资金列表的模板
+                $imgModal = $('#imgModal'), //图片模态框
                 $btnSearch = $PE.find('.btn-search'), //产品搜索按钮
                 $btnEmpty = $PE.find('.btn-empty'), //产品列表清空按钮
                 $pResult = $('.p-search-res'), //搜索到的产品显示
@@ -388,6 +397,26 @@
 
                         // 申请支付
                         $payApply.find('tbody').html(Mustache.render(tmPayApply, d));
+
+                        // 单据
+                        $.ajax({
+                            url: '/Finance/API/?Do=Query&OrderID=' + d.Finance.OrderID + '&DataID=' + d.DataID,
+                            dataType: 'json',
+                            type: 'get',
+                            success: function(data) {
+                                var imgtmp = '{{#Payment}}'
+                                +'<img class="poi" src="{{File}}" title="{{OrderID}}" style="width:auto;height:20px;"/>'
+                                +'{{/Payment}}';
+                                $payApply.find('tbody td:last').html(Mustache.render(imgtmp, data));
+
+                                // 单据图片放大
+                                $payApply.find('tbody td:last img').on('click', function(){
+                                    console.log(111);
+                                    $imgModal.find('.modal-content').empty().html('<img src="' + $(this).attr('src') + '" />');
+                                    $imgModal.modal('show');
+                                });
+                            }
+                        });
 
                         //总金额、已支付、待支付
                         $payAmount.find('.text-def').text('总金额：' + d.Order.Amount);
@@ -563,6 +592,7 @@
             // 移除产品
             $productGroup.on('click', '.btn-remove', function () {
                 var $formGroup = $(this).closest('tr');
+                console.log($(this).data('sta'));
                 if ($(this).data('sta') !== 'add') {
                     common.ajax({
                         title: '移除产品',
