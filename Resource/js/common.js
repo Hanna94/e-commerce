@@ -42,6 +42,31 @@ common.alert = function(option) {
         clearTimeout(timeout);
     }, option.time || 3000);
 };
+/**
+ * 提示信息组合
+ * @param  {json}     data 
+ * @param  {string}   title
+ * @param  {number}   time  
+ * @param  {Function} cb  
+ */
+common.alertIf = function(data, title, time, cb){
+    if (data.Ack) {
+        common.alert({
+            type: 'success',
+            title: title,
+            msg: '成功，系统反馈：' + data.Message,
+            time: time,
+            cb
+        });
+    } else {
+        common.alert({
+            title: title,
+            msg: '成功，系统反馈：' + data.Message,
+            time: time,
+            cb
+        });
+    }
+}
 
 /**
  * 提示信息模态框

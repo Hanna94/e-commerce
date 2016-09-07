@@ -501,11 +501,19 @@
                         ok: function(data, status, e){
                             $imgUpload.modal('hide');
                             imgMedie = data.Media;
-                            common.alert({
-                                type: 'success',
-                                title: '[图片上传]操作：',
-                                msg: data.Message || '失败！提示：' + e
-                            });
+                            if (data.Ack) {
+                               common.alert({
+                                   type: 'success',
+                                   title: '[图片上传]操作：',
+                                   msg: '成功！系统反馈：' + data.Message
+                               }); 
+                           }else{
+                                common.alert({
+                                    title: '[图片上传]操作：',
+                                    msg: '失败！系统反馈：' + data.Message
+                                }); 
+                           }
+                            
                         },
                         no: function(data, status, e){
                             console.log("图片上传失败：" + e);
