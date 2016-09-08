@@ -8,8 +8,6 @@
             <div class="btn-group btn-group-sm pull-right">
                 <button class="btn btn-success btn-upload-file" data-toggle="modal" data-target="#modal-upload" type="button"><span class="glyphicon glyphicon-upload"></span> 上传</button>
 
-
-
                 <!-- 待交运页面-->
                 <div class="btn-group btn-group-sm UnStock-panel">
                     <button data-name="UnStock" class="btn btn-default btn-status-alter option-status-alter" type="button" disabled><span class="glyphicon glyphicon-eye-open"></span> <span data-val="待配货">待配货</span></button>
@@ -18,6 +16,7 @@
                 <!-- 待配货页面-->
                 <div class="btn-group btn-group-sm default-panel">
                     <button data-name="UnConfirmed" class="btn btn-default btn-status-alter option-status-alter" type="button" disabled><span class="glyphicon glyphicon-eye-open"></span> <span class="option-status-alter" data-val="待审核">待审核</span></button>
+                    <button id="outOfStock" class="btn btn-info" type="button"><span class="glyphicon glyphicon-download-alt"></span> 导出缺货表</button>
                 </div>
 
                 <div class="btn-group btn-group-sm execute-panel">
@@ -1243,6 +1242,24 @@
                         }
                     });
                 }
+            });
+
+            // 下载缺货表 
+            $('#outOfStock').on('click', function(){
+                $.ajax({
+                    url: '/Logistics/Logistics.aspx?Do=LogisticsDownloadOutOfStock&WID=10',
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data){
+                        common.alertIf({
+                            data:data,
+                            title:'下载缺货表',
+                            cb:function(){
+                                window.open(data.File);
+                            }
+                        });
+                    }
+                });
             });
             $upW.on('change', function() {
                 getFreight($(this).val(), function(data) {

@@ -51,21 +51,19 @@ common.alert = function(option) {
  * @param  {Function} cb
  * date    2016-09-07
  */
-common.alertIf = function(data, title, time, cb){
-    if (data.Ack) {
+common.alertIf = function(option){
+    if (option.data.Ack) {
         common.alert({
             type: 'success',
-            title: title,
-            msg: '成功，系统反馈：' + data.Message,
-            time: time || null,
-            cb
+            title: option.title,
+            msg: '成功，系统反馈：' + option.data.Message,
+            time: option.time || null,
+            cb: option.cb
         });
     } else {
         common.alert({
-            title: title,
-            msg: '成功，系统反馈：' + data.Message,
-            time: time || null,
-            cb
+            title: option.title,
+            msg: '失败，系统反馈：' + option.data.Message
         });
     }
 }
