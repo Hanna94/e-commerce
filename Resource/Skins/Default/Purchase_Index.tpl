@@ -14,6 +14,7 @@
             </div>
         </header>
         <ul class="nav nav-tabs">
+            <li><a href="?Do=All">全部</a></li>
             <li><a href="?Do=UnExecute">待处理</a></li>
             <li><a href="?Do=NoPaid">待付款</a></li>
             <li><a href="?Do=UnStock">待收货</a></li>
