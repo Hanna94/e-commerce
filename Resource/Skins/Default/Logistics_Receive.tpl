@@ -13,8 +13,7 @@
 
         <div class="tab-content">
             <div class="tab-pane active">
-                <form id="form-filter" class="form-inline mg-t-10 mg-b-10" action="javascript:;">
-                    <input class="do" type="hidden" name="Do" value="unconfirmed">
+                <form id="form-filter" class="form-inline mg-t-10 mg-b-10" action="?">
                     
                     <div class="row mg-b-5"> <!-- 第一行-->
                         <div class="col-sm-12">
