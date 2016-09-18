@@ -53,15 +53,15 @@
         </header>
 
         <ul class="nav nav-tabs">
-            <li><a href="?Do=AllShip">全部</a></li>
-            <li><a href="?Do=UnDistribution">待配货</a></li>
-            <li><a href="?Do=UnPost">待交运</a></li>
-            <li><a href="?Do=UnOutStock">待出库</a></li>
-			<li><a href="?Do=OutStock">已出库</a></li>
-            <li><a href="?Do=CutOff">截单</a></li>
-            <li><a href="?Do=Cancel">取消</a></li>
-            <li><a href="?Do=UnCost">待结算</a></li>
-			<li><a href="?Do=UnTracking">无挂号</a></li>
+            <li><a href="?Do=AllShip&QueryLimitNumber=100">全部</a></li>
+            <li><a href="?Do=UnDistribution&QueryLimitNumber=100">待配货</a></li>
+            <li><a href="?Do=UnPost&QueryLimitNumber=100">待交运</a></li>
+            <li><a href="?Do=UnOutStock&QueryLimitNumber=100">待出库</a></li>
+			<li><a href="?Do=OutStock&QueryLimitNumber=100">已出库</a></li>
+            <li><a href="?Do=CutOff&QueryLimitNumber=100">截单</a></li>
+            <li><a href="?Do=Cancel&QueryLimitNumber=100">取消</a></li>
+            <li><a href="?Do=UnCost&QueryLimitNumber=100">待结算</a></li>
+			<li><a href="?Do=UnTracking&QueryLimitNumber=100">无挂号</a></li>
         </ul>
 
         <div class="tab-content">
