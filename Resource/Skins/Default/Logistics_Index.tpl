@@ -65,9 +65,9 @@
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane active">
+            <!-- <div class="tab-pane active"> -->
                 <form id="form-search" class="form-inline mg-t-10 mg-b-10" action="?">
-                    <input class="do" type="hidden" name="Do" value="unpost">
+                    <input class="do" type="hidden" name="Do" value="UnPost">
 
                     <div class="form-group form-group-sm">
                         <select class="form-control" name="WID">
@@ -192,7 +192,7 @@
                         <tfoot><tr><td colspan="13"></td></tr></tfoot>
                     </table>
                 </div>
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 
@@ -1331,6 +1331,9 @@
 
                 });
             }());
+
+            // 标签页定位
+            $dataList.find('.nav a[href*="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
