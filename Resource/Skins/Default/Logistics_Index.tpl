@@ -53,15 +53,15 @@
         </header>
 
         <ul class="nav nav-tabs">
-            <li><a href="?Do=AllShip&QueryLimitNumber=100">全部</a></li>
-            <li><a href="?Do=UnDistribution&QueryLimitNumber=100">待配货</a></li>
-            <li><a href="?Do=UnPost&QueryLimitNumber=100">待交运</a></li>
-            <li><a href="?Do=UnOutStock&QueryLimitNumber=100">待出库</a></li>
-			<li><a href="?Do=OutStock&QueryLimitNumber=100">已出库</a></li>
-            <li><a href="?Do=CutOff&QueryLimitNumber=100">截单</a></li>
-            <li><a href="?Do=Cancel&QueryLimitNumber=100">取消</a></li>
-            <li><a href="?Do=UnCost&QueryLimitNumber=100">待结算</a></li>
-			<li><a href="?Do=UnTracking&QueryLimitNumber=100">无挂号</a></li>
+            <li><a href="?Do=AllShip">全部</a></li>
+            <li><a href="?Do=UnDistribution">待配货</a></li>
+            <li><a href="?Do=UnPost">待交运</a></li>
+            <li><a href="?Do=UnOutStock">待出库</a></li>
+			<li><a href="?Do=OutStock">已出库</a></li>
+            <li><a href="?Do=CutOff">截单</a></li>
+            <li><a href="?Do=Cancel">取消</a></li>
+            <li><a href="?Do=UnCost">待结算</a></li>
+			<li><a href="?Do=UnTracking">无挂号</a></li>
         </ul>
 
         <div class="tab-content">
@@ -113,6 +113,21 @@
                                 <li><span data-val="6" class="btn sp9CF uliHW"></span></li>
                                 <li><span data-val="7" class="btn sp999 uliHW"></span></li>
                             </ul>
+                        </div>
+                    </div>
+
+                    <div id="countrySelect" class="form-group">
+                        <div class="input-froup input-group-sm div-re">
+                            <input class="form-control" name="Country" type="text" placeholder="收货国家" />
+                            <div class="prompt prompt-send hidden">
+                                <ul class="list-group">
+                                    <li class="list-group-item poi">United Kingdom</li>
+                                    <li class="list-group-item poi">Australia</li>
+                                    <li class="list-group-item poi">Germany</li>
+                                    <li class="list-group-item poi">United States</li>
+                                    <li class="list-group-item poi">Other</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -501,6 +516,36 @@
                     });
                     ts.closest('.signDropdown').find('label').attr('class', ts.attr('class'));
                 });
+            })();
+
+            //国家搜索按钮
+            (function(){
+                var $countrySelect = $('#countrySelect');
+
+                //国家输入框初始化
+                if (oParam.Country) {
+                    var tmCou = oParam.Country.replace('+', ' ');
+                    $countrySelect.find('input').val(tmCou);
+                }
+
+                // 点击输入框显示下拉框
+                $countrySelect.find('input').on('click', function(){
+                    $countrySelect.find('div.prompt').removeClass('hidden');
+                });
+                // 输入内容移除下拉框，删除内容显示下拉框
+                $countrySelect.find('input')[0].oninput = function(){
+                    if ($(this).val() !== '' && $(this).val() !== null) {
+                        $countrySelect.find('div.prompt').addClass('hidden');
+                    }else{
+                        $countrySelect.find('div.prompt').removeClass('hidden');
+                    }
+                }
+                // 点击选项填充内容，然后隐藏下拉
+                $countrySelect.find('li').on('click', function(){
+                    $countrySelect.find('input').val($(this).text());
+                    $countrySelect.find('div.prompt').addClass('hidden');
+                });
+
             })();
 
             // 上传物流单
@@ -1328,12 +1373,11 @@
                     var ts = $(this),
                         add = ts.find('td:eq(9)').text();
                     ts.find('td:eq(9)').html(add.replace(/(Packstation|packstation|Postnummer)/, '<span class="bg-primary">$1</span>'));
-
                 });
             }());
 
             // 标签页定位
-            $dataList.find('.nav a[href*="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
+            $dataList.find('.nav a[href="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
