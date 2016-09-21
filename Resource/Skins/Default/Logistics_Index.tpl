@@ -476,7 +476,7 @@
 
             // 初始化页面
             $formSearch.find('.do').val(oParam.Do);
-            $formSearch.find('input[type="text"]').val(decodeURI((oParam.KeyWord || '').replace(/\++/g, ' ')));
+            $formSearch.find('input[name="KeyWord"]').val(decodeURI((oParam.KeyWord || '').replace(/\++/g, ' ')));
 
             // 颜色筛选
             (function(){
@@ -525,7 +525,7 @@
                 //国家输入框初始化
                 if (oParam.Country) {
                     var tmCou = oParam.Country.replace('+', ' ');
-                    $countrySelect.find('input').val(tmCou);
+                    $countrySelect.find('input[name="Country"]').val(tmCou);
                 }
 
                 // 点击输入框显示下拉框
