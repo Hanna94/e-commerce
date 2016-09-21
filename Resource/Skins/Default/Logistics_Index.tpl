@@ -377,7 +377,7 @@
     <template id="temp-strok-post-sku">
         {{#Product}}
         <div class="item mg-b-20" data-id="{{SkuID}}" data-sum="{{Quantity}}">
-            <h5 class="name" title="{{SKU}}">{{Name}} * {{Quantity}}
+            <h5 class="name" title="{{SKU}}">[<span class="text-primary">{{SKU}}</span>]{{Name}} * {{Quantity}}
                 <small class="pd-l-20 text-info">{{Size}}cm<sup>3</sup> <span class="pd-l-20 text-success">{{Weight}}g</span></small>
             </h5>
             <hr class="mg-t-0 mg-b-5">
