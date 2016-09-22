@@ -466,7 +466,7 @@
 
             // SPU检测
             (function() {
-                $addDataPanel.on('blur', '#SPU', function() {
+                $addDataPanel.on('blur', '#Name', function() {
                     $.ajax({
                         url: '/Product/Product.aspx?Do=SpuCheck&Name=' + $(this).val(),
                         type: 'get',
