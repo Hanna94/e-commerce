@@ -166,7 +166,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="reset" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="submit" class="btn btn-primary">提交</button>
+						<button type="submit" class="btn btn-primary" disabled>提交</button>
 					</div>
 				</form>
 			</div>
@@ -464,6 +464,29 @@
                 });
             }());
 
+            // SPU检测
+            (function() {
+                $addDataPanel.on('blur', '#SPU', function() {
+                    $.ajax({
+                        url: '/Product/Product.aspx?Do=SpuCheck&Name=' + $(this).val(),
+                        type: 'get',
+                        dataType: 'json',
+                        success: function(d) {
+                            common.alertIf({
+                                title: 'SPU检测',
+                                data: d,
+                                time: 1000,
+                                tcb: function(){
+                                    $addDataPanel.find('button[type="submit"]').removeAttr('disabled');
+                                },
+                                fcb: function(){
+                                    $addDataPanel.find('button[type="submit"]').attr('disabled', 'disabled');
+                                }
+                            });
+                        }
+                    });
+                });
+            })();
             // 授权团队
             (function () {
                 var $panelAccreditTeam = $('#accredit-team'),

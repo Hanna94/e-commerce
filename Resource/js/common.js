@@ -48,7 +48,8 @@ common.alert = function(option) {
  * @param  {json}     data 
  * @param  {string}   title
  * @param  {number}   time  
- * @param  {Function} cb
+ * @param  {Function} tcb   成功时执行的方法
+ * @param  {Function} fcb   失败时执行的方法
  * date    2016-09-07
  */
 common.alertIf = function(option){
@@ -58,12 +59,13 @@ common.alertIf = function(option){
             title: option.title,
             msg: '成功，系统反馈：' + option.data.Message,
             time: option.time || null,
-            cb: option.cb
+            cb: option.tcb
         });
     } else {
         common.alert({
             title: option.title,
-            msg: '失败，系统反馈：' + option.data.Message
+            msg: '失败，系统反馈：' + option.data.Message,
+            cb: option.fcb
         });
     }
 }
