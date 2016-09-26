@@ -104,11 +104,43 @@
                                 <textarea id="Remark" rows="1" class="form-control"></textarea>
                             </div>
                         </div>
-                        <div class="form-group form-group-sm">
-                            <div class="col-sm-12">
-                                <p class="form-control-static text-danger">该商品包含以下产品：</p>
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab-cp" data-toggle="tab">CP(本地仓)</a></li>
+                            <li><a href="#tab-ep" data-toggle="tab">EP(英国仓)</a></li>
+                            <li><a href="#tab-dp" data-toggle="tab">DP(德国仓)</a></li>
+                            <li><a href="#tab-ap" data-toggle="tab">AP(澳洲仓)</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="tab-cp">
+                                <div class="form-group form-group-sm">
+                                    <div class="col-sm-12">
+                                        <p class="form-control-static text-danger">该商品包含以下产品：CP</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tab-ep">
+                                <div class="form-group form-group-sm">
+                                    <div class="col-sm-12">
+                                        <p class="form-control-static text-danger">该商品包含以下产品：EP</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tab-dp">
+                                <div class="form-group form-group-sm">
+                                    <div class="col-sm-12">
+                                        <p class="form-control-static text-danger">该商品包含以下产品：DP</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tab-ap">
+                                <div class="form-group form-group-sm">
+                                    <div class="col-sm-12">
+                                        <p class="form-control-static text-danger">该商品包含以下产品：AP</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        
                         <div class="product-group maxH300"></div>
 
                         <h5>产品查询：</h5>

@@ -466,27 +466,32 @@
 
             // SPU检测
             (function() {
+
                 $addDataPanel.on('blur', '#Name', function() {
-                    $.ajax({
-                        url: '/Product/Product.aspx?Do=SpuCheck&Name=' + $(this).val(),
-                        type: 'get',
-                        dataType: 'json',
-                        success: function(d) {
-                            common.alertIf({
-                                title: 'SPU检测',
-                                data: d,
-                                time: 1000,
-                                tcb: function(){
-                                    $addDataPanel.find('button[type="submit"]').removeAttr('disabled');
-                                },
-                                fcb: function(){
-                                    $addDataPanel.find('button[type="submit"]').attr('disabled', 'disabled');
-                                }
-                            });
-                        }
-                    });
+                    var judge = parseInt($addDataPanel.find('#DataID').val());
+                    if (isNaN(judge)) {
+                        $.ajax({
+                            url: '/Product/Product.aspx?Do=SpuCheck&Name=' + $(this).val(),
+                            type: 'get',
+                            dataType: 'json',
+                            success: function(d) {
+                                common.alertIf({
+                                    title: 'SPU检测',
+                                    data: d,
+                                    time: 1000,
+                                    tcb: function(){
+                                        $addDataPanel.find('button[type="submit"]').removeAttr('disabled');
+                                    },
+                                    fcb: function(){
+                                        $addDataPanel.find('button[type="submit"]').attr('disabled', 'disabled');
+                                    }
+                                });
+                            }
+                        });    
+                    }
                 });
             })();
+
             // 授权团队
             (function () {
                 var $panelAccreditTeam = $('#accredit-team'),
