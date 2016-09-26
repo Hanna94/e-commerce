@@ -1299,7 +1299,8 @@
                         common.alertIf({
                             data:data,
                             title:'下载缺货表',
-                            cb:function(){
+                            time: 1000,
+                            tcb:function(){
                                 window.open(data.File);
                             }
                         });
