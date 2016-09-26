@@ -298,6 +298,32 @@
             $('.btn-add-data').on('click', function () {
                 $tag.prev().find('a').tab('show');
                 $tag.addClass('disabled');
+                $addDataPanel.find('button[type="submit"]').attr('disabled', 'disabled');
+                
+                // SPU检测
+                $addDataPanel.on('blur', '#Name', function() {
+                    var judge = parseInt($addDataPanel.find('#DataID').val());
+                    if (isNaN(judge)) {
+                        $.ajax({
+                            url: '/Product/Product.aspx?Do=SpuCheck&Name=' + $(this).val(),
+                            type: 'get',
+                            dataType: 'json',
+                            success: function(d) {
+                                common.alertIf({
+                                    title: 'SPU检测',
+                                    data: d,
+                                    time: 1000,
+                                    tcb: function(){
+                                        $addDataPanel.find('button[type="submit"]').removeAttr('disabled');
+                                    },
+                                    fcb: function(){
+                                        $addDataPanel.find('button[type="submit"]').attr('disabled', 'disabled');
+                                    }
+                                });
+                            }
+                        });    
+                    }
+                });
             });
 
             // 批量操作的按钮限制
@@ -390,6 +416,7 @@
                     return !$tag.hasClass('disabled');
                 });
                 $dataList.on('click', '.btn-edit', function() {
+                    $addDataPanel.find('button[type="submit"]').removeAttr('disabled');
                     editId = $(this).closest('tr').data('id');
                     // 编辑操作
                     common.ajax({
@@ -463,34 +490,6 @@
                     });
                 });
             }());
-
-            // SPU检测
-            (function() {
-
-                $addDataPanel.on('blur', '#Name', function() {
-                    var judge = parseInt($addDataPanel.find('#DataID').val());
-                    if (isNaN(judge)) {
-                        $.ajax({
-                            url: '/Product/Product.aspx?Do=SpuCheck&Name=' + $(this).val(),
-                            type: 'get',
-                            dataType: 'json',
-                            success: function(d) {
-                                common.alertIf({
-                                    title: 'SPU检测',
-                                    data: d,
-                                    time: 1000,
-                                    tcb: function(){
-                                        $addDataPanel.find('button[type="submit"]').removeAttr('disabled');
-                                    },
-                                    fcb: function(){
-                                        $addDataPanel.find('button[type="submit"]').attr('disabled', 'disabled');
-                                    }
-                                });
-                            }
-                        });    
-                    }
-                });
-            })();
 
             // 授权团队
             (function () {
