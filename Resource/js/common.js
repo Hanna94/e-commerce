@@ -616,6 +616,7 @@ common.ajaxFE = function(fe){
                     title: '“' + fe.title + '”操作：',
                     msg: data.Message || '失败！提示：' + e
                 });
+                console.log(data);
             }
         },
         error: function(data, status, e){

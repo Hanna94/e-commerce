@@ -18,13 +18,13 @@
                 <div class="msg-content"></div>
                 <div class="msg-input">
                     <div class="inputHead pd-t-5 pd-l-5">
-                        <a href="javascript:;" data-toggle="modal" data-target="#imgUpload" >上传图片</a>
+                        <button class="btn btn-link btn-xs" data-toggle="modal" data-target="#imgUpload" >上传图片</button>
                     </div>
                     <div class="inputBody">
                         <textarea name="Content"></textarea>
                     </div>
                     <div class="inputFoot">
-                        <button class="btn btn-default pull-right" type="button">确认</button>
+                        <button class="btn btn-default pull-right sendEmail" type="button">确认</button>
                     </div>
                 </div>
             </div>
@@ -104,6 +104,9 @@
                     </div>
                     <div class="form-group attachments">
                         <input type="file" id="imgupload" name="StrFile" multiple="multiple" />
+                    </div>
+                    <div class="form-group">
+                        <span class="text-danger">注：该功能可同时上传最多5张图片；上传错图片只需要重新上传一次覆盖即可。</span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -493,40 +496,28 @@
                         title: '图片上传',
                         URL: '/OMS/API/eBay.aspx?Do=UploadImages',
                         FE: 'imgupload',
-                        dataType: 'json',
                         type: 'post',
                         data: {
                             DataID: dataShopID
                         },
                         ok: function(data, status, e){
+                            common.alert({
+                                type: 'success',
+                                title: '图片上传',
+                                msg: '成功：' + data.Message,
+                                time: 1000
+                            });
                             $imgUpload.modal('hide');
                             imgMedie = data.Media;
-                            if (data.Ack) {
-                               common.alert({
-                                   type: 'success',
-                                   title: '[图片上传]操作：',
-                                   msg: '成功！系统反馈：' + data.Message
-                               }); 
-                           }else{
-                                common.alert({
-                                    title: '[图片上传]操作：',
-                                    msg: '失败！系统反馈：' + data.Message
-                                }); 
-                           }
-                            
-                        },
-                        no: function(data, status, e){
-                            common.alert({
-                                title: '[图片上传]操作：',
-                                msg: '失败！系统反馈：' + data.Message
-                            }); 
+                            thumbnail();
                         }
                     });
                 });
 
                 // 上传数据
-                $msgInput.find('button').on('click', function(){
+                $msgInput.find('.sendEmail').on('click', function(){
                     var text = $msgInput.find('textarea').val();
+                    text = text.replace(/\n/g, '<br />');
                     $.ajax({
                         url: '/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=' + oParam.MessageID,
                         type: 'post',
@@ -567,13 +558,41 @@
                     });
                 });
 
+                // 上传图片后显示缩略图
+                function thumbnail() {
+                    var $imgAppendArea = $msgInput.find('.inputHead');
+                    $imgAppendArea.find('img').remove(); // 每次遍历前清空其他图片
+                    // 分割图片链接数组
+                    var imgArray = [];
+                    imgArray = imgMedie.split(',');
+
+                    // 遍历图片标签
+                    var imgFragment = document.createDocumentFragment();
+                    $.each(imgArray, function(index, object) {
+                        var imgElement = $('<img>');
+                        imgElement.attr({
+                            'src': object,
+                            'style': 'width:15px; height: 15px; margin-right: 5px;',
+                            'data-html': 'true',
+                            'data-trigger': 'hover',
+                            'data-container': 'body',
+                            'data-toggle': 'popover',
+                            'data-placement': 'top',
+                            'data-content': '<img src =\'' + object + '\' style=\'max-width: 244px;\'>'
+                        });
+                        imgFragment.appendChild(imgElement[0]);
+                    });
+                    $imgAppendArea.append(imgFragment); // 把预览图插入到上传图片按钮后边
+                    $("[data-toggle='popover']").popover(); // 启动缩略图预览
+                }
+
                 // 点击切换备注备注
-                function orderChange(){
+                function orderChange() {
                     var $remarkTr = $userInfo.find('#u-order tbody tr'),
                         dataDataID;
-                    $remarkTr.on('click', 'span.glyphicon-tag', function(){
+                    $remarkTr.on('click', 'span.glyphicon-tag', function() {
                         var ts = $(this);
-                        $remarkTr.each(function(){
+                        $remarkTr.each(function() {
                             $(this).find('span.glyphicon-tag').removeAttr('style');
                         });
                         ts.attr('style', 'color: rgba(92, 184, 92, 1)');
