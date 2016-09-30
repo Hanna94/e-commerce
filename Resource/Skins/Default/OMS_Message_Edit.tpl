@@ -19,6 +19,7 @@
                 <div class="msg-input">
                     <div class="inputHead pd-t-5 pd-l-5">
                         <button class="btn btn-link btn-xs" data-toggle="modal" data-target="#imgUpload" >上传图片</button>
+                        <button id="imgRemove" class="btn btn-link btn-xs">清空图片</button>
                     </div>
                     <div class="inputBody">
                         <textarea name="Content"></textarea>
@@ -512,6 +513,12 @@
                             thumbnail();
                         }
                     });
+                });
+
+                // 清除图片
+                $('#imgRemove').on('click', function(){
+                    imgMedie = '';
+                    $imgAppendArea.find('img').remove();
                 });
 
                 // 上传数据
