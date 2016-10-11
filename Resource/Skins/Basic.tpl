@@ -1,7 +1,6 @@
 <!-- 此为基准模版，请使用标准 UTF-8 编码 -->
 
-[页面属性]
-<!DOCTYPE html>
+[页面属性]<!DOCTYPE html>
 <html lang="cmn-Hans">
 <head>
 	<meta charset="utf-8">
@@ -407,15 +406,18 @@
 
                 });
 
-                // SendTo模块召唤处理
-                common.at.inputCheck($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, allMenbers, allpounds, "PostName");
-                common.at.keydownFun($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, "PostName");
-                common.at.removeMate($atList, $workForm);
+                if ($workSend.length > 0) { //如果获取元素为空，则不执行召唤程序
+                    // SendTo模块召唤处理
+                    common.at.inputCheck($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, allMenbers, allpounds, "PostName");
+                    common.at.keydownFun($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, "PostName");
+                    common.at.removeMate($atList, $workForm);
 
-                // shareTo模块召唤处理
-                common.at.inputCheck($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, allMenbers, allpounds, "ShareName");
-                common.at.keydownFun($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, "ShareName");
-                common.at.removeMate($shareList, $workForm);
+                    // shareTo模块召唤处理
+                    common.at.inputCheck($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, allMenbers, allpounds, "ShareName");
+                    common.at.keydownFun($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, "ShareName");
+                    common.at.removeMate($shareList, $workForm);
+                }
+
             })();
 
         });
