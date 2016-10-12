@@ -5,6 +5,9 @@
     <article class="container-fluid">
         <header>
             <div class="btn-group btn-group-sm pull-right">
+                <button type="button" class="btn btn-default btn-sm btn-download-data">
+                    <span class="glyphicon glyphicon-download-alt"></span> 库存导出
+                </button>
                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#take-goods">
                     <span class="glyphicon glyphicon-upload"></span> 收货入库
                 </button>
@@ -250,7 +253,8 @@
                 $tg = $('#tg-upload-Code'),
                 tempCode = $('#temp-Code').html(),
                 $togForm = $('#takeout-goods form'),
-                $tgForm = $('#take-goods form');
+                $tgForm = $('#take-goods form'),
+                $btnDownloadData = $('.btn-download-data'); //库存导出按钮
 
             //盘点出库和收货入库的列表
             common.ajax({
@@ -264,6 +268,32 @@
                     $tg.find('option[value="10"]').prop('selected', true);
                 }
             });
+
+            // 库存导出
+            (function(){
+                $btnDownloadData.on('click', function(){
+                    var ts = $(this);
+                    if (confirm('库存导出操作可能需要1~2分钟时间，期间请耐心等待')) {
+                        common.loading.show(); // 显示加载图
+                        ts.attr('disabled', 'disabled').text('处理中...');
+                        $.ajax({
+                            url: '/Report/Api/File.aspx?Do=WarehouseStock&WID=10',
+                            type: 'GET',
+                            success: function(data){
+                                common.alertIf({
+                                    title: '库存导出',
+                                    data: data,
+                                    tcb: function(){
+                                        common.loading.hide();
+                                        ts.removeAttr('disabled').text('库存导出');
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    
+                });
+            })();
 
             //出库入库文件上传操作
             (function(){
