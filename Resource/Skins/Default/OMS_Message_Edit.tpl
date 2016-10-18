@@ -524,7 +524,8 @@
                 // 上传数据
                 $msgInput.find('.sendEmail').on('click', function(){
                     var text = $msgInput.find('textarea').val();
-                    text = text.replace(/\n/g, '<br />');
+                    text = text.replace(/\n/g, ' \\n');
+                    console.log(text);
                     $.ajax({
                         url: '/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=' + oParam.MessageID,
                         type: 'post',

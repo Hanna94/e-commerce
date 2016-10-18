@@ -8,7 +8,7 @@
             <div class="btn-group btn-group-sm pull-right">
                 <button data-toggle="modal" data-target="#modal-create" class="btn btn-success btn-modal-create" type="button"><span class="glyphicon glyphicon-plus-sign"></span> 手工建单</button>
 
-                <button data-toggle="modal" data-target="#modal-upload" class="btn btn-success" type="button"><span class="glyphicon glyphicon-upload"></span> 上传</button>
+                <button data-toggle="modal" data-target="#modal-upload" class="btn btn-success amazon-order" type="button"><span class="glyphicon glyphicon-upload"></span> Amazon订单</button>
 
                 <div class="btn-group btn-group-sm hidden">
                     <button data-name="Confirmed" class="btn btn-default btn-status-alter option-status-alter" type="button" disabled><span class="glyphicon glyphicon-eye-open"></span> <span data-val="已审核">审核</span></button>
@@ -228,28 +228,21 @@
     <div id="modal-upload" class="modal fade" tabIndex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form  class="form-horizontal" method="post" action="?Do=Up" enctype="multipart/form-data">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        <h4 class="modal-title">上传附件</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <input class="form-control-static" type="file" name="StrFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, application/vnd.ms-excel" value="上传附件">
-                            </div>
-                            <div class="col-sm-12">
-                                <p class="help-block">
-                                    <strong class="text-info">提示：</strong><a href="##">请点击这里下载Excel模板。</a>
-                                </p>
-                            </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">Amazon订单</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <input id="amazon-order" class="form-control-static" type="file" name="StrFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, application/vnd.ms-excel" value="上传">
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary">确定</button>
-                    </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="amazon-order-upload" type="button" class="btn btn-primary">确定</button>
+                </div>
             </div>
         </div>
     </div>
@@ -372,7 +365,9 @@
                 $openTab = $('#openTab'), //批量打开编辑页面的按钮
                 $confBtn = $dataList.find('button[data-name="Confirmed"]'),
                 shopID = oParam.ShopID,
-                $selDD = $('#selectDropdown'); //选择需要查询的颜色的按钮
+                $selDD = $('#selectDropdown'), //选择需要查询的颜色的按钮
+                $amazonOrder = $('.amazon-order'), //上传Amazon订单的按钮
+                $amazonOrderUpload = $('#amazon-order-upload'); //上传Amazon订单的确定按钮
 
             $formFilter.find('.do').val(oParam.Do);
             $formFilter.find('input[name="KeyWord"]').val(decodeURI((oParam.KeyWord || '').replace(/\++/g, ' ')));
@@ -630,11 +625,31 @@
                 });
             });
 
+            // Amazon订单
+            (function(){
+                $amazonOrderUpload.on('click', function(){
+                    common.ajaxFE({
+                        title: 'Amazon订单',
+                        type: 'POST',
+                        URL: '/OMS/Api/?Do=UpLoadAmazonOrder&ShopID=20',
+                        FE: 'amazon-order',
+                        ok: function(data, status, e){
+                            common.alertIf({
+                                data: data,
+                                title: 'Amazon订单',
+                                time: 2000
+                            });
+                        }
+                    });
+                });
+            })();
+
             // 回顶部按钮
             common.topBtn();
 
             // 限制审核按钮只在[待处理订单]分页显示
             oParam.Do !== 'UnConfirmed' ? $confBtn.closest('div').addClass('hidden') : $confBtn.closest('div').removeClass('hidden');
+            oParam.Do !== 'UnConfirmed' ? $amazonOrder.addClass('hidden') : $amazonOrder.removeClass('hidden');
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
