@@ -638,7 +638,10 @@
                             common.alertIf({
                                 data: data,
                                 title: 'Amazon订单',
-                                time: 2000
+                                time: 2000,
+                                tcb: function(){
+                                    $('#modal-upload').modal('hide');
+                                }
                             });
                         }
                     });
