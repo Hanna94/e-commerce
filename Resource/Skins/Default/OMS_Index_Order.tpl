@@ -631,8 +631,9 @@
                     common.ajaxFE({
                         title: 'Amazon订单',
                         type: 'POST',
-                        URL: '/OMS/Api/?Do=UpLoadAmazonOrder&ShopID=20',
+                        URL: '/OMS/Api/?Do=UpLoadAmazonOrder',
                         FE: 'amazon-order',
+                        data: {ShopID : 20},
                         ok: function(data, status, e){
                             common.alertIf({
                                 data: data,

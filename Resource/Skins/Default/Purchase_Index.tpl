@@ -44,7 +44,7 @@
                         <col>
                     </colgroup>
                     <thead>
-                        <th><!-- <input id="callAll" type="checkbox" /> -->编号</th>
+                        <th>编号</th>
                         <th>单号</th>
                         <th>供应商名称</th>
                         <th>供应商备注</th>
@@ -61,7 +61,12 @@
                             <td><input type="checkbox" />{DataID}</td>
                             <td><span class="orderID">{OrderID}</span></td>
                             <td>{SupplierName}</td>
-                            <td><span data-val="in" class="glyphicon glyphicon-zoom-in poi"></span><span class="RemarkFold hide"><br/>{SupplierRemark}</span></td>
+                            <td>
+                                <button type="button" class="btn btn-default btn-xs" 
+                                data-container="body" data-toggle="popover"
+                                data-trigger="click" data-content="{SupplierRemark}">
+                                <span data-val="in" class="glyphicon glyphicon-tag poi"></button>
+                            </td>
                             <td>{Amount}</td>
                             <td>{Status}</td>
                             <td>{PaymentStatus}</td>
@@ -154,23 +159,6 @@
 
             })();
 
-            // 显示和隐藏银行信息和备注
-            $dataList.find('tbody tr').each(function(){
-                // 供应商备注
-                funFold($(this).find('td:eq(3) .glyphicon'), '.RemarkFold');
-            });
-
-            // 显示与隐藏方法
-            function funFold(tar, cla){
-                tar.on('click', function(){
-                    if ($(this).attr('data-val') === 'in') {
-                        $(this).removeClass('glyphicon-zoom-in').addClass('glyphicon-zoom-out').attr('data-val', 'out').closest('td').find(cla).removeClass('hide');
-                    }else{
-                        $(this).removeClass('glyphicon-zoom-out').addClass('glyphicon-zoom-in').attr('data-val', 'in').closest('td').find(cla).addClass('hide');
-                    }
-                });
-            }
-
             // 采购单、支付、收货状态渲染
             (function(){
                 //采购单状态
@@ -201,6 +189,9 @@
 
             // 标签页定位
             $dataList.find('.nav a[href="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
+
+            //启动弹出框
+            $("[data-toggle='popover']").popover(); 
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
