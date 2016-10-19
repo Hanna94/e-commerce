@@ -22,9 +22,9 @@
                 <col>
             </colgroup>
             <thead>
-                <th>编号{当前页}</th>
-                <th>供应商{总条数}</th>
-                <th>联系人{每页条数}</th>
+                <th>编号</th>
+                <th>供应商</th>
+                <th>联系人</th>
                 <th>电话</th>
                 <th>地址</th>
                 <th>银行信息</th>
@@ -40,8 +40,20 @@
                     <td>{Contacts}</td>
                     <td>{Phone}</td>
                     <td>{Location}</td>
-                    <td><span data-val="in" class="glyphicon glyphicon-zoom-in poi"></span><span class="PaymentFold hide"><br/>银行名称：{BankName}<br/>银行户名：{AccountName}<br/>银行账号：{AccountNumber}</span></td>
-                    <td><span data-val="in" class="glyphicon glyphicon-zoom-in poi"></span><span class="RemarkFold hide"><br/>{Remark}</span></td>
+                    <td>
+                        <button type="button" class="btn btn-default btn-xs" 
+                        data-container="body" data-toggle="popover" data-html="true"
+                        data-trigger="click" data-placement="left"
+                        data-content="银行：{BankName}<br/>户名：{AccountName}<br/>账号：{AccountNumber}">
+                        <span data-val="in" class="glyphicon glyphicon-tag poi"></button>
+                    </td>
+                    <td>
+                        <button id="supplier-remark" type="button" class="btn btn-default btn-xs supplier-remark" 
+                        data-container="body" data-toggle="popover"
+                        data-trigger="click" data-placement="left"
+                        data-content="{Remark}">
+                        <span data-val="in" class="glyphicon glyphicon-tag poi"></button>
+                    </td>
                     <td>{Date}</td>
                     <td><a href="?Do=Edit&DataID={DataID}" target="_blank"><span class="glyphicon glyphicon-pencil"></span></a></td>
                 </tr>
@@ -58,25 +70,18 @@
             'use strict';
 
             var $dataList = $('#data-list');
+            var $supRemark = $('.supplier-remark'); // 备注标签button
 
-            // 显示和隐藏银行信息和备注
-            $dataList.find('tbody tr').each(function(){
-                // 银行信息
-                funFold($(this).find('td:eq(5) .glyphicon'), '.PaymentFold');
-                // 备注
-                funFold($(this).find('td:eq(6) .glyphicon'), '.RemarkFold');
+            // 判断备注信息是否为空，为空则删除标签
+            $supRemark.each(function() {
+                var supRemarkVal = $(this).attr('data-content');
+                if (supRemarkVal == '' || supRemarkVal == null) {
+                    $(this).remove();
+                }
             });
 
-            // 显示与隐藏方法
-            function funFold(tar, cla){
-                tar.on('click', function(){
-                    if ($(this).attr('data-val') === 'in') {
-                        $(this).removeClass('glyphicon-zoom-in').addClass('glyphicon-zoom-out').attr('data-val', 'out').closest('td').find(cla).removeClass('hide');
-                    }else{
-                        $(this).removeClass('glyphicon-zoom-out').addClass('glyphicon-zoom-in').attr('data-val', 'in').closest('td').find(cla).addClass('hide');
-                    }
-                });
-            }
+            //启动浮动框
+            $("[data-toggle='popover']").popover();
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});

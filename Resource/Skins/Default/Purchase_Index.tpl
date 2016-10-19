@@ -62,7 +62,7 @@
                             <td><span class="orderID">{OrderID}</span></td>
                             <td>{SupplierName}</td>
                             <td>
-                                <button type="button" class="btn btn-default btn-xs" 
+                                <button type="button" class="btn btn-default btn-xs pur-remark" 
                                 data-container="body" data-toggle="popover"
                                 data-trigger="click" data-content="{SupplierRemark}">
                                 <span data-val="in" class="glyphicon glyphicon-tag poi"></button>
@@ -92,7 +92,8 @@
                 $dataList = $('#data-list'),
                 $auditBtn = $('.auditBtn'), //审核按钮
                 $reauditBtn = $('.reauditBtn'), //取消审核按钮
-                $repurchaseBtn = $('.repurchaseBtn'); //取消采购按钮
+                $repurchaseBtn = $('.repurchaseBtn'), //取消采购按钮
+                $purRemark = $('.pur-remark'); // 供应商备注浮动框按钮
 
             // 根据标签页不同，显示不同按钮
             switch (op.Do) {
@@ -185,6 +186,16 @@
                 // 采购单号渲染
                 common.Rendering.order($dataList);
 
+            })();
+
+            // 判断备注是否为空，为空则删除
+            (function(){
+                $purRemark.each(function() {
+                    var purRemarkVal = $(this).attr('data-content');
+                    if (purRemarkVal == '' || purRemarkVal == null) {
+                        $(this).remove();
+                    }
+                });
             })();
 
             // 标签页定位
