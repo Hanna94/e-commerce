@@ -456,8 +456,8 @@
         {{#Logistics}}
         <tr>
             <td>{{Warehouse.Code}}：<a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>
-            <td>{{Freight.ISP}}：{{Freight.InsideOrder}}</td>
-            <td>{{Freight.Service.Support}}：{{Freight.Service.TrackingNumber}}</td>
+            <td>{{Freight.ISP}}:{{Freight.InsideOrder}}</td>
+            <td>{{Freight.Service.Support}}:{{Freight.Service.TrackingNumber}}</td>
             <td>{{CreatedDate}}</td>
             <td><span class="glyphicon glyphicon-list-alt" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-log"></span></td>
         </tr>
