@@ -3,8 +3,10 @@
     {页顶导航}{/页顶导航}
     <!-- 内容-->
     <article class="container-fluid">
-        <header>
-            <button class="btn btn-success btn-sm btn-add-data pull-right" data-toggle="modal" data-target="#add-data"><span class="glyphicon glyphicon-plus-sign"></span> 添加数据</button>
+        <header class="btn-group pull-right">
+            <button class="btn btn-primary btn-sm btn-sortable"><span class="glyphicon glyphicon-sort"></span> 拖动排序</button>
+            <button class="btn btn-warning btn-sm btn-sortable-confirm hide"><span class="glyphicon glyphicon-ok"></span> 确认</button>
+            <button class="btn btn-success btn-sm btn-add-data" data-toggle="modal" data-target="#add-data"><span class="glyphicon glyphicon-plus-sign"></span> 添加数据</button>
         </header>
 
         <!-- 数据列表-->
@@ -23,9 +25,9 @@
                     <th>操作</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tbody-sortable">
                 <!-- BEGIN 数据列表 ATTRIB= -->
-                <tr data-id="{DataID}">
+                <tr data-id="{DataID}" class="ui-state-default">
                     <td>{DataID}</td>
                     <td>{Code}</td>
                     <td>{Name}</td>
@@ -125,11 +127,27 @@
 
     {页面底部}{/页面底部}
 
+    <script src="/Resource/js/jquery-ui.min.js"></script>
     <script>
         (function () {
             'use strict';
             var $addDataPanel = $('#add-data'),
-                $dataList = $('#data-list');
+                $dataList = $('#data-list'),
+                $sortableBtn = $('.btn-sortable'), // 排序按钮
+                $sortableCancelBtn = $('.btn-sortable-confirm'); // 确认排序按钮
+
+            $sortableBtn.on('click', function() {
+                $('#tbody-sortable').sortable();
+                $('#tbody-sortable').disableSelection();
+                $(this).addClass('hide');
+                $sortableCancelBtn.removeClass('hide');
+            });
+
+            $sortableCancelBtn.on('click', function() {
+                $('#tbody-sortable').unbind();
+                $(this).addClass('hide');
+                $sortableBtn.removeClass('hide');
+            });
 
             // 设置
             common.setSizeModel($('#form-group-size'));

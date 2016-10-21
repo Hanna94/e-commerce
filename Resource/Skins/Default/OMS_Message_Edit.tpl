@@ -22,11 +22,21 @@
                         <button id="imgRemove" class="btn btn-link btn-xs">清空图片</button>
                     </div>
                     <div class="inputBody">
-                        <textarea name="Content"></textarea>
+                        <textarea id="msg-input-content" name="Content"></textarea>
                     </div>
                     <div class="inputFoot">
                         <button class="btn btn-default pull-right sendEmail" type="button">确认</button>
                     </div>
+                    <!-- 测试区 -->
+                    <form action="/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=83158820711" method="post">
+                        <div class="inputHead pd-t-5 pd-l-5">这里是测试专用的输入框，请勿在这里回复</div>
+                        <div class="inputBody">
+                            <textarea name="Content"></textarea>
+                        </div>
+                        <div class="inputFoot">
+                            <button class="btn btn-danger" type="submit" disabled="disabled">测试用提交</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div id="userInfo">
@@ -523,8 +533,8 @@
 
                 // 上传数据
                 $msgInput.find('.sendEmail').on('click', function(){
-                    var text = $msgInput.find('textarea').val();
-                    text = text.replace(/\n/g, ' \\n');
+                    var text = $('#msg-input-content').val();
+                    text = text.replace(/\n/g, '&#x000A');
                     console.log(text);
                     $.ajax({
                         url: '/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=' + oParam.MessageID,

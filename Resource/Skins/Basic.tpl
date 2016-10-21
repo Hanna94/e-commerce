@@ -9,7 +9,8 @@
     <link href="/Resource/css/bootstrap.css" rel="stylesheet">
 	<link href="/Resource/css/bt-theme.css" rel="stylesheet">
 	<link href="/Resource/css/datetimepicker.css" rel="stylesheet">
-	<link href="/Resource/css/main.css" rel="stylesheet">
+    <link href="/Resource/css/main.css" rel="stylesheet">
+	<link href="/Resource/css/jquery-ui.min.css" rel="stylesheet">
     <script src="/Resource/js/jquery.js"></script>
 </head>
 [/页面属性]
