@@ -136,6 +136,7 @@
                 $sortableBtn = $('.btn-sortable'), // 排序按钮
                 $sortableCancelBtn = $('.btn-sortable-confirm'); // 确认排序按钮
 
+            // 启动排序功能
             $sortableBtn.on('click', function() {
                 $('#tbody-sortable').sortable();
                 $('#tbody-sortable').disableSelection();
@@ -144,9 +145,7 @@
             });
 
             $sortableCancelBtn.on('click', function() {
-                $('#tbody-sortable').unbind();
-                $(this).addClass('hide');
-                $sortableBtn.removeClass('hide');
+                location.reload();
             });
 
             // 设置
