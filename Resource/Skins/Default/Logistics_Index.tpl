@@ -218,7 +218,7 @@
                 <form class="form-horizontal" method="post" action="javascript:;">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        <h4 class="modal-title">配货交运 <small class="orderID"></small><small class="buyer"></small></h4>
+                        <h4 class="modal-title">配货交运 <small class="orderID"></small><small class="buyer"></small><small class="shop"></small></h4>
                     </div>
                     <div class="modal-body">
                         <table class="table table-hover table-bordered table-condensed table-striped mg-b-0">
@@ -685,6 +685,7 @@
                 $modalStockPost.find('.BuyerMessage').html(data.Order[0].BuyerCheckoutMessage);
                 $modalStockPost.find('.orderID').text(logistics.OrderID);
                 $modalStockPost.find('.buyer').text(' [' + logistics.Buyer + ']');
+                $modalStockPost.find('.shop').text(' [' + data.Order[0].Shop + ']');
 
                 // 配货交运单号高亮
                 common.Rendering.order($modalStockPost);
