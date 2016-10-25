@@ -114,7 +114,7 @@
                             title: '“提交出库复核”操作：',
                             type: 'success',
                             msg: data.Message || '成功！',
-                            time: 6000,
+                            time: 3000,
                             cb: function() {
                                 location.reload();
                             }
