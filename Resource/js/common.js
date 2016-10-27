@@ -536,7 +536,7 @@ common.formSearch = function () {
  * [String] URL: 请求路径
  * [JSON] data: 请求携带的参数
  * [String] type: 请求类型，默认get
- * [boolean] notload: 是否显示加载图，默认false
+ * [boolean] notload: 是否显示加载图，默认true
  * [Function] good: 成功并且状态为true执行的方法
  * [Function] bad: 成功并且状态为false执行的方法
  * [Function] error: 失败执行的方法
@@ -1074,3 +1074,8 @@ common.topBtn = function(winDiv){
     }); 
  }
  
+
+// 调试用输出
+var cl = function(content){
+    console.log(content);
+}
