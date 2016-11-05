@@ -783,6 +783,9 @@
                         sum = +$this.data('sum'),
                         $row = $this.find('.row');
 
+                    // 重复性检测数值
+                    var dittoCheck = 0;
+
                     $row.each(function() {
                         var $that = $(this),
                             $inputText = $that.find('input[type="text"]'),
@@ -795,9 +798,10 @@
                         $inputText.val(0);
 
                         // 匹配相同的WID，勾选
-                        if (cWid === +wid) {
+                        if (cWid === +wid && dittoCheck == 0) {
                             console.log(+$inputCheckbox.attr('data-wid'));
                             $inputCheckbox.prop('checked', true);
+                            dittoCheck++;
 
                             // 自动填写库存
                             if (max >= sum) {
