@@ -22,7 +22,6 @@
                     </select>
                 </div>
                 <div class="form-group form-group-sm mg-l-20">
-                    <div class="input-group input-group-sm">
                         <input type="text" class="form-control" placeholder="Search..." name="KeyWord">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">查询</button>

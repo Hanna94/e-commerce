@@ -111,7 +111,10 @@
                                     </div>
                                     <div class="form-group form-group-sm btn-box">
                                         <div class="col-sm-offset-2 col-xs-10">
-                                            <button type="submit" class="btn btn-default btn-sm">提交</button>
+                                            <div class="btn-group">
+                                                <button type="submit" class="btn btn-default btn-sm">提交</button>
+                                                <button id="btn-ebay-address-copy" type="button" class="btn btn-default btn-sm">复制地址</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -171,7 +174,10 @@
                                     </div>
                                     <div class="form-group form-group-sm btn-box">
                                         <div class="col-sm-offset-2 col-xs-10">
-                                            <button type="submit" class="btn btn-default btn-sm">提交</button>
+                                            <div class="btn-group">
+                                                <button type="submit" class="btn btn-default btn-sm">提交</button>
+                                                <button id="btn-paypal-address-copy" type="button" class="btn btn-default btn-sm">复制地址</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -478,9 +484,13 @@
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
     <script>
         (function () {
             'use strict';
+
+            // 加载Flash按钮
+            ZeroClipboard.config({swfPath: '/Resource/flash/ZeroClipboard.swf'});
 
             // 修改订单状态类型
             function statusTypeTransition(state) {
@@ -629,6 +639,7 @@
                     $eBayAddress.find('.ZIP').val(eBayAddress.ZIP);
                     $eBayAddress.find('.Country').val(eBayAddress.Country);
                     $eBayAddress.find('.Phone').val(eBayAddress.Phone);
+                    AddressCopyBtn(eBayAddress, 'ebay');
 
                     // paypal地址
                     $paypalAddress.find('.TID').val(paypalAddress.DataID);
@@ -641,8 +652,42 @@
                     $paypalAddress.find('.ZIP').val(paypalAddress.ZIP);
                     $paypalAddress.find('.Country').val(paypalAddress.Country);
                     $paypalAddress.find('.Phone').val(paypalAddress.Phone);
+                    AddressCopyBtn(paypalAddress, 'paypal');
                 }
             });
+
+            /**
+             * 拼装并复制地址到剪切板
+             * @param JSON    address 地址信息
+             * @param String  type    地址信息
+             */
+            function AddressCopyBtn(address, type) {
+                if (address.length != 0) {
+                    cl(address.length);
+                    cl(type);
+                    var _data = type == 'ebay' ? address : address[0];
+                    var $btn = $('#btn-' + type + '-address-copy');
+                    var _address = [];
+                    _address.push(_data.Name, _data.Street1, _data.Street2, 
+                                _data.City, _data.State, _data.ZIP, 
+                                _data.Country, _data.Phone);
+
+                    // 删除数组中空元素
+                    for(var i = 0; i < _address.length; i++) {
+                        if (_address[i].length == 0) {
+                            _address.splice(i, 1);
+                            i--;
+                        }
+                    }
+
+                    // 把删除空元素后的数组组合成字符串,提供复制
+                    var copy = _address.join(',');
+                    var clip = new ZeroClipboard($btn);
+                    clip.on('copy', function() {
+                        clip.setText(copy);
+                    });
+                }
+            }
 
             //更新备注封装
             function RFremark(){
