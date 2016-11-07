@@ -22,6 +22,7 @@
                     </select>
                 </div>
                 <div class="form-group form-group-sm mg-l-20">
+                    <div class="input-group input-group-sm">
                         <input type="text" class="form-control" placeholder="Search..." name="KeyWord">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">查询</button>
@@ -1270,7 +1271,7 @@
 
 // ================================================ SKU部分 =================================================
 
-// ================================================ 公共方法 =================================================
+// ================================================ 公共方法 ================================================
             
             /**
              * 检查产品尺寸输入是否符合格式，不符合强制转换
@@ -1279,6 +1280,7 @@
             function SizeCheck(input) {
                 var val = input.val();
                 var valArray = val.split('*');
+                valArray = valArray.sort(function(a, b){return b - a});
                 var loopNum = 3 - valArray.length;
                 if (loopNum > 0) {
                     for(var i = 0; i < loopNum; i++) {
