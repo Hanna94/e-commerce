@@ -738,7 +738,9 @@
                 
                 // 获取用户填写的spu信息
                 function GetUserInput(title){
+                    // 检查产品尺寸输入是否符合格式，不符合强制转换
                     var sizeString = SizeCheck($modalSpu.find('#basic-spu-size'));
+                    
                     var spuData = {
                         'Title': title,
                         'DataID': spuid,
