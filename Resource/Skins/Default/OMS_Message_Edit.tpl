@@ -167,7 +167,7 @@
         {{#PayPal}}
         <tr><td class="text-r">邮箱:</td><td class="tdStyle"></td></tr>
         <tr><td class="text-r">客户名:</td><td class="tdStyle">{{Name}}</td></tr>
-        <tr><td class="text-r" valign="top">订单地址:</td><td class="tdStyle">{{Street1}},{{Street2}},{{City}},{{State}},{{Country}}({{ZIP}})</td></tr>
+        <tr><td class="text-r" valign="top">订单地址:</td><td class="tdStyle">{{Street1}},{{Street2}},{{City}},{{State}},({{ZIP}}){{Country}}</td></tr>
         {{/PayPal}}
         {{#eBay}}
         <tr><td class="text-r">客户电话:</td><td class="tdStyle">{{Phone}}</td></tr>

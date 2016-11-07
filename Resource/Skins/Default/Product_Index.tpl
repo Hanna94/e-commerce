@@ -1316,7 +1316,7 @@
             (function() {
                 var $spuCode = $dataList.find('.btn-spu-edit');
                 $spuCode.each(function() {
-                    if (!$(this).data('code')) {
+                        if (!$(this).data('code')) {
                         $(this).closest('td').empty();
                     }
                 });
