@@ -663,10 +663,13 @@
              */
             function AddressCopyBtn(address, type) {
                 if (address.length != 0) {
-                    cl(address.length);
-                    cl(type);
-                    var _data = type == 'ebay' ? address : address[0];
+                    var _data = address;
                     var $btn = $('#btn-' + type + '-address-copy');
+                    // 用ebay的电话取代paypal的电话
+                    if (type == 'paypal') {
+                        _data.Phone = $eBayAddress.find('.Phone').val();
+                    }
+
                     var _address = [];
                     _address.push(_data.Name, _data.Street1, _data.Street2, 
                                 _data.City, _data.State, _data.ZIP, 
