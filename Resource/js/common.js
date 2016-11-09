@@ -734,6 +734,18 @@ common.init();
  * [deleteURL]:删除接口，如没有传入参数则使用默认
  */
 
+// 所有方法再封装一次
+common.remarkFunction = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL) {
+    // 更新备注封装
+    common.remarkUpdate(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
+    // 提交备注信息
+    common.remarkSave(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
+    // 判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
+    common.editAndDel(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
+    // 编辑备注的[取消]按钮事件
+    common.reset(reform, resetBtn);
+}
+
 //提交备注信息
 common.remarkSave = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL){
     reform.find('input[type="submit"]').on('click', function(){
