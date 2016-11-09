@@ -72,28 +72,6 @@
             </div>
         </div>
 
-        <!-- 备注 -->
-        <div class="col-sm-12">
-            <hr class="mg-t-5 mg-b-10">
-            <div id="fin-remark" class="form-group">
-                <div id="fin-remark-form" class="col-sm-12">
-                    <div class="input-group input-group-sm">
-                        <textarea rows="1" name="Remark" class="form-control"></textarea>
-                        <span class="input-group-btn">
-                            <input type="submit" class="btn btn-default" value="备注提交" />
-                            <input type="reset" class="btn btn-default hidden" value="取消" />
-                        </span>
-                    </div>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="maxH300 col-sm-12 mg-t-10">
-                    <table class="table table-striped table-condensed">
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
         <div class="row">
             <div id="Fin-Product" class="col-sm-8">
                 <table class="table table-striped table-bordered table-hover table-condensed">
@@ -115,6 +93,31 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 备注 -->
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="fin-remark" class="form-group">
+                    <div id="fin-remark-form" class="col-sm-12">
+                        <div class="input-group input-group-sm">
+                            <textarea rows="1" name="Remark" class="form-control"></textarea>
+                            <span class="input-group-btn">
+                                <input type="submit" class="btn btn-default" value="备注提交" />
+                                <input type="reset" class="btn btn-default hidden" value="取消" />
+                            </span>
+                        </div>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="maxH300 col-sm-12 mg-t-10">
+                        <table class="table table-striped table-condensed">
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -358,6 +361,9 @@
                     }
                 });
             });
+
+            // 备注方法
+            // common.remarkFunction();
 
 
         }());
