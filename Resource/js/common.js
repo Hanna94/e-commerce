@@ -339,15 +339,24 @@ common.loading.self.on('click', function () {
 /**
  * 设置分页
  */
-common.showPage = function (active, count, size) {
+common.showPage = function (active, count, size, type) {
     var oParam = common.URL.parse(),
         $dataList = $('#data-list');
 
-    common.setPaging($dataList.find('tfoot td'), active || 1, count, size, function(page, size) {
-        oParam.Page = page;
-        oParam.QueryLimitNumber = size;
-        location.search = common.URL.stringify(oParam);
-    });
+    if (type == 'mini') {
+        common.miniPaging($dataList.find('tfoot td'), active || 1, count, size, function(page, size) {
+            oParam.Page = page;
+            oParam.QueryLimitNumber = size;
+            location.search = common.URL.stringify(oParam);
+        });
+    } else {
+        common.setPaging($dataList.find('tfoot td'), active || 1, count, size, function(page, size) {
+            oParam.Page = page;
+            oParam.QueryLimitNumber = size;
+            location.search = common.URL.stringify(oParam);
+        });
+    }
+    
 };
 
 /*
