@@ -679,7 +679,9 @@
                     // 渲染日志列表
                     var _dataID = $(this).closest('tr').data('id');
                     var log = GetLog(_dataID);
-                    $('#modal-log tbody').html(Mustache.render($('#tmp-spu-log').html(), log));
+                    if (log) {
+                        $('#modal-log tbody').html(Mustache.render($('#tmp-spu-log').html(), log));
+                    }
                     $('#modal-log').modal('show');
                 });
 
@@ -822,7 +824,9 @@
 
                             // 渲染日志列表
                             var log = GetLog(editId);
-                            $modalSpu.find('#spu-nav-log tbody').html(Mustache.render($('#tmp-spu-log').html(), log));
+                            if (log) {
+                                $modalSpu.find('#spu-nav-log tbody').html(Mustache.render($('#tmp-spu-log').html(), log));
+                            }
 
                             // 默认第一个标签页显示
                             if (!isShow) {
@@ -1028,7 +1032,11 @@
                         dataType: 'JSON',
                         async: false,
                         success: function(d) {
-                            _log = d;
+                            if (typeof(d) == 'object') {
+                                _log = d;
+                            } else {
+                                _log = false;
+                            }
                         }
                     });
                     return _log;
