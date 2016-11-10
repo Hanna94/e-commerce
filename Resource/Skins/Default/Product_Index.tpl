@@ -711,6 +711,7 @@
                                     common.alert({
                                         type: 'success',
                                         title: '检测无重复，可以使用！',
+                                        time: 500,
                                         msg: '',
                                         cb: function(){
                                             $modalSpu.find('#spu-edit-save').removeAttr('disabled');
