@@ -1224,6 +1224,7 @@
                             common.alert({
                                 type: 'success',
                                 title: 'SKU添加',
+                                time: 1000,
                                 msg: '成功，' + d.Message,
                                 cb: function() {
                                     // 成功后刷新数据
@@ -1337,8 +1338,14 @@
             // 列表SKU可复制
             (function() {
                 ZeroClipboard.config({swfPath: '/Resource/flash/ZeroClipboard.swf'});
-                var copyTarget = $dataList.find('.copy');
-                var clip = new ZeroClipboard(copyTarget);
+                var $copyTarget = $dataList.find('.copy');
+                var clip = new ZeroClipboard($copyTarget);
+
+                // 添加鼠标滑过效果
+                $copyTarget.on({
+                    mousemove: function() {$(this).addClass('bg-primary')},
+                    mouseout: function() {$(this).removeClass('bg-primary')}
+                });
             })();
 
             // 搜索
