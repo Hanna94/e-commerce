@@ -151,10 +151,31 @@
             var $dataList = $('#data-list');
             var last30Day = Last30Days();
 
+            // 图表数据
+            var eData;
+
+            // 查看SKU概况
+            (function() {
+                $('.btn-sku-see').on('click', function() {
+
+                    // 近30日售出情况报表
+                    common.ajax({
+                        title: '加载SKU数据',
+                        URL: '/Report/Api/?Do=SkuSaleAnalyze&SkuID=3201',
+                        type: 'GET',
+                        good: function(d) {
+                            eData = DataProcess(d);
+                            Last30DaysSell(eData);
+                        }
+                    });
+
+                });
+            })();
+
 // ==================================================== 图表 ============================================== //
 
             // 近30日售出情况报表
-            (function() {
+            function Last30DaysSell(eData) {
                 
                 // 柱线复合图配置
                 var barLineOption = {
@@ -177,45 +198,47 @@
                             type: 'value',
                             name: '金额',
                             axisLabel: {
-                                formatter: '${value}'
+                                formatter: '£{value}'
                             }
                         },
                         {
                             type: 'value',
-                            name: '订单数',
+                            name: '订单量',
                             axisLabel: {
-                                formatter: '{value} 件'
+                                formatter: '{value}'
                             }
                         }
                     ],
                     series: [{
                         name: '金额',
                         type: 'bar',
-                        data: (function() {
-                            var res = [];
-                            for (var i = 0; i < 30; i++) {
-                                res.push(Math.floor(Math.random() * 2200));
-                            }
-                            return res;
-                        })()
+                        data: eData.SSAmount
+                        // (function() {
+                        //     var res = [];
+                        //     for (var i = 0; i < 30; i++) {
+                        //         res.push(Math.floor(Math.random() * 2200));
+                        //     }
+                        //     return res;
+                        // })()
                     }, {
-                        name: '订单数',
+                        name: '订单量',
                         type: 'line',
                         yAxisIndex: 1,
-                        data: (function() {
-                            var res = [];
-                            for (var i = 0; i < 30; i++) {
-                                res.push(Math.floor(Math.random() * 90));
-                            }
-                            return res;
-                        })()
+                        data: eData.SSQuantity
+                        // (function() {
+                        //     var res = [];
+                        //     for (var i = 0; i < 30; i++) {
+                        //         res.push(Math.floor(Math.random() * 90));
+                        //     }
+                        //     return res;
+                        // })()
                     }]
                 };
 
                 var $eLast30DaysSell = echarts.init($('#echarts-last-30-days-sell')[0]);
                 $eLast30DaysSell.setOption(barLineOption);
 
-            })();
+            }
 
             // 本月售出情况报表
             // (function() {
@@ -254,7 +277,7 @@
                             type: 'value',
                             name: 'Listing',
                             axisLabel: {
-                                formatter: '${value}'
+                                formatter: '{value}'
                             }
                         },
                         {
@@ -579,6 +602,42 @@
             // 随机金额
             function randomNum(){
                 return parseInt(Math.random() * 10000);
+            }
+
+            /**
+             * 处理获取到的数据
+             * @param {Object} data 获取到的数据
+             */
+            function DataProcess(data) {
+                var optionData = {
+                    "SkuID": 0,
+                    "FullSKU": "",
+                    "FullName": "",
+                    "TeamID": 0,
+                    'SSAmount': [],
+                    'SSQuantity': [],
+                    'SLQuantity': [],
+                    'SLStock': [],
+                    'SLQuantitySold': [],
+                    'DAccount': [],
+                    'DSite': [],
+                    'DItem': [],
+                    'DQuantity': [],
+                    'DQuantitySold': []
+                };
+                optionData.SkuID = data.Basic.SkuID;
+                optionData.FullSKU = data.Basic.FullSKU;
+                optionData.FullName = data.Basic.FullName;
+                optionData.TeamID = data.Basic.TeamID;
+                for(var i = 0; i < 30; i++) {
+                    optionData.SSAmount.push(parseFloat(data.SkuSale[i].Amount));
+                    optionData.SSQuantity.push(data.SkuSale[i].Quantity);
+                    optionData.SLQuantity.push(data.SkuListing[i].Quantity);
+                    optionData.SLStock.push(data.SkuListing[i].Stock);
+                    optionData.SLQuantitySold.push(data.SkuListing[i].QuantitySold);
+                }
+
+                return optionData;
             }
 
             /**
