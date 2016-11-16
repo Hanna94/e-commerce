@@ -630,7 +630,7 @@
                 optionData.FullName = data.Basic.FullName;
                 optionData.TeamID = data.Basic.TeamID;
                 for(var i = 0; i < 30; i++) {
-                    optionData.SSAmount.push(parseFloat(data.SkuSale[i].Amount));
+                    optionData.SSAmount.push(data.SkuSale[i].Amount.replace(',', ''));
                     optionData.SSQuantity.push(data.SkuSale[i].Quantity);
                     optionData.SLQuantity.push(data.SkuListing[i].Quantity);
                     optionData.SLStock.push(data.SkuListing[i].Stock);
