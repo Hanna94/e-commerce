@@ -4,12 +4,6 @@
     <!-- 正文外围 -->
     <div class="container-fluid">
         <header>
-            <!-- 按钮预留 -->
-            <!-- <div class="btn-group btn-group-sm pull-right">
-                <button id="btn-batch" class="btn btn-default hide" type="button" disabled>批量操作</button>
-                <button class="btn btn-default" type="button" disabled>导出报表</button>
-                <button id="add-spu-data" class="btn btn-default" type="button">添加数据</button>
-            </div> -->
             <form id="form-search" action="?" class="form-inline pull-right pull-right mg-r-20">
                 <input id="url-do" name="Do" type="hidden" value="All">
                 <input id="url-tag" name="TagID" type="hidden" value="">
@@ -43,13 +37,8 @@
 
         <div class="tab-content">
             <div class="tab-pane active">
-                <div class="tags mg-10">
-                    <!-- BEGIN TAG列表 ATTRIB= -->
-                    <span class="label label-default poi btn-tag" data-id='{DataID}'>{Name}</span>
-                    <!-- END TAG列表 -->
-                </div>
                 <!-- 数据列表-->
-                <div class="row">
+                <div class="row mg-t-5">
                     <!-- 数据表 -->
                     <div class="col-sm-3">
                         <table id="data-list" class="table table-hover table-bordered table-striped table-condensed">
@@ -77,44 +66,23 @@
                         </table>
                     </div>
                     <!-- 数据图 -->
-                    <div class="col-sm-9">
+                    <div id="echarts" class="col-sm-9">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="panel-title">#3232H2O233-默认款水货-Def的图表</h4>
+                                <h4 class="panel-title">点选左边Sku查看该Sku概况</h4>
                             </div>
                             <div class="panel-body">
-                                <div class="row">
+                                <div id="echarts-area" class="row hide">
                                     <!-- 表格 -->
                                     <div class="col-sm-12">
                                         <table id="sku-list" class="table table-bordered table-condensed">
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>总金额</strong></td>
-                                                    <td class="text-muted">122.33GBP</td>
-                                                    <td><strong>总单数</strong></td>
-                                                    <td class="text-muted">12</td>
-                                                    <td><strong>均价</strong></td>
-                                                    <td class="text-muted">25.44GBP</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>总库存</strong></td>
-                                                    <td class="text-muted">17</td>
-                                                    <td><strong>本地仓</strong></td>
-                                                    <td class="text-muted">12</td>
-                                                    <td><strong>海外仓</strong></td>
-                                                    <td class="text-muted">UK：2，DE：0，AU：0</td>
-                                                </tr>
-                                            </tbody>
+                                            <tbody></tbody>
                                         </table>
                                     </div>
                                     <!-- 近30日售出情况报表 -->
                                     <div class="col-sm-12">
                                         <div id="echarts-last-30-days-sell" class="pull-left" style="width: 100%; height: 250px;"></div>
                                     </div>
-                                    <!-- 本月售出情况报表 -->
-                                    <!-- <div class="col-sm-12">
-                                        <div id="echarts-current-month-sell" class="pull-left" style="width: 100%; height: 250px;"></div>
-                                    </div> -->
                                     <!-- 近30日每天在线报表 -->
                                     <div class="col-sm-12">
                                         <div id="echarts-last-30-days-online" class="pull-left" style="width: 100%; height: 250px;"></div>
@@ -131,7 +99,6 @@
                                     <div class="col-sm-6">
                                         <div id="echarts-account" class="pull-left" style="width: 100%; height: 500px;"></div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -140,6 +107,35 @@
             </div>
         </div>
     </div>
+
+    <template id="temp-Statements">
+        {{#Statements}}
+        <tr>
+            <td><strong>Amount</strong></td>
+            <td class="text-muted">{{Amount}}</td>
+            <td><strong>SoldPlatform</strong></td>
+            <td class="text-muted">{{SoldPlatform}}</td>
+            <td><strong>BankFee</strong></td>
+            <td class="text-muted">{{BankFee}}</td>
+        </tr>
+        <tr>
+            <td><strong>Exchange</strong></td>
+            <td class="text-muted">{{Exchange}}</td>
+            <td><strong>Purchase</strong></td>
+            <td class="text-muted">{{Purchase}}</td>
+            <td><strong>Logistics</strong></td>
+            <td class="text-muted">{{Logistics}}</td>
+        </tr>
+        <tr>
+            <td><strong>Allocation</strong></td>
+            <td class="text-muted">{{Allocation}}</td>
+            <td><strong>Profit</strong></td>
+            <td class="text-muted">{{Profit}}</td>
+            <td><strong>Quantity</strong></td>
+            <td class="text-muted">{{Quantity}}</td>
+        </tr>
+        {{/Statements}}
+    </template>
 
     {页面底部}{/页面底部}
     <script src="/Resource/js/echarts.common.min.js"></script>
@@ -158,14 +154,21 @@
             (function() {
                 $('.btn-sku-see').on('click', function() {
 
-                    // 近30日售出情况报表
+                    // 报表
                     common.ajax({
                         title: '加载SKU数据',
-                        URL: '/Report/Api/?Do=SkuSaleAnalyze&SkuID=3201',
+                        URL: '/Report/Api/?Do=SkuSaleAnalyze&SkuID=' + $(this).closest('tr').data('id'),
                         type: 'GET',
                         good: function(d) {
+                            $('#echarts').find('.panel-title').text('[' + d.Basic.SkuID + '][' + d.Basic.FullSKU + ']' + d.Basic.FullName);
+                            $('#echarts-area').removeClass('hide');
                             eData = DataProcess(d);
                             Last30DaysSell(eData);
+                            Last30DaysOnline(eData);
+                            Last30DaysStock(eData);
+                            Operate(eData);
+                            Account(eData);
+                            $('#sku-list').find('tbody').html(Mustache.render($('#temp-Statements').html(), d))
                         }
                     });
 
@@ -187,11 +190,11 @@
                         text: '近30日售出情况报表'
                     },
                     legend: {
-                        data: ['金额', '订单数']
+                        data: ['关联订单金额', '售出包裹数量']
                     },
                     xAxis: {
                         type: 'category',
-                        data: last30Day
+                        data: eData.SSDate
                     },
                     yAxis: [
                         {
@@ -203,35 +206,21 @@
                         },
                         {
                             type: 'value',
-                            name: '订单量',
+                            name: '包裹量',
                             axisLabel: {
                                 formatter: '{value}'
                             }
                         }
                     ],
                     series: [{
-                        name: '金额',
+                        name: '关联订单金额',
                         type: 'bar',
                         data: eData.SSAmount
-                        // (function() {
-                        //     var res = [];
-                        //     for (var i = 0; i < 30; i++) {
-                        //         res.push(Math.floor(Math.random() * 2200));
-                        //     }
-                        //     return res;
-                        // })()
                     }, {
-                        name: '订单量',
+                        name: '售出包裹数量',
                         type: 'line',
                         yAxisIndex: 1,
                         data: eData.SSQuantity
-                        // (function() {
-                        //     var res = [];
-                        //     for (var i = 0; i < 30; i++) {
-                        //         res.push(Math.floor(Math.random() * 90));
-                        //     }
-                        //     return res;
-                        // })()
                     }]
                 };
 
@@ -254,7 +243,7 @@
             // })();
 
             // 近30日每天在线报表
-            (function() {
+            function Last30DaysOnline(eData) {
                 
                 // 柱线复合图配置
                 var barLineOption = {
@@ -270,7 +259,7 @@
                     },
                     xAxis: {
                         type: 'category',
-                        data: last30Day
+                        data: eData.SLDate
                     },
                     yAxis: [
                         {
@@ -288,36 +277,27 @@
                             }
                         }
                     ],
-                    series: [{
-                        name: 'Listing',
-                        type: 'bar',
-                        data: (function() {
-                            var res = [];
-                            for (var i = 0; i < 30; i++) {
-                                res.push(Math.floor(Math.random() * 3200));
-                            }
-                            return res;
-                        })()
-                    }, {
-                        name: '在线库存',
-                        type: 'line',
-                        yAxisIndex: 1,
-                        data: (function() {
-                            var res = [];
-                            for (var i = 0; i < 30; i++) {
-                                res.push(Math.floor(Math.random() * 70));
-                            }
-                            return res;
-                        })()
-                    }]
+                    series: [
+                        {
+                            name: 'Listing',
+                            type: 'bar',
+                            data: eData.SLQuantity
+                        }, 
+                        {
+                            name: '在线库存',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: eData.SLStock
+                        }
+                    ]
                 };
 
                 var $eLast30DaysOnline = echarts.init($('#echarts-last-30-days-online')[0]);
                 $eLast30DaysOnline.setOption(barLineOption);
-            })();
+            }
 
             // 近30日每天库存报表
-            (function() {
+            function Last30DaysStock(eData) {
                 var option = {
                     tooltip : {
                         trigger: 'axis',
@@ -329,7 +309,7 @@
                         text: '近30日每天库存报表'
                     },
                     legend: {
-                        data:['本地仓','UK','DE','AU']
+                        data: ['本地仓', 'UK仓', 'DE仓', 'AU仓', '调拨库存']
                     },
                     grid: {
                         left: '3%',
@@ -340,7 +320,7 @@
                     xAxis : [
                         {
                             type : 'category',
-                            data : last30Day
+                            data : eData.SSTDate
                         }
                     ],
                     yAxis : [
@@ -348,90 +328,21 @@
                             type : 'value'
                         }
                     ],
-                    series : [
-
-                        {
-                            name:'本地仓',
-                            type:'bar',
-                            stack: '库存',
-                            data: (function() {
-                                var res = [];
-                                for (var i = 0; i < 30; i++) {
-                                    res.push(Math.floor(Math.random() * 500));
-                                }
-                                return res;
-                            })()
-                        },
-                        {
-                            name:'UK',
-                            type:'bar',
-                            stack: '库存',
-                            data: (function() {
-                                var res = [];
-                                for (var i = 0; i < 30; i++) {
-                                    res.push(Math.floor(Math.random() * 500));
-                                }
-                                return res;
-                            })()
-                        },
-                        {
-                            name:'DE',
-                            type:'bar',
-                            stack: '库存',
-                            data: (function() {
-                                var res = [];
-                                for (var i = 0; i < 30; i++) {
-                                    res.push(Math.floor(Math.random() * 500));
-                                }
-                                return res;
-                            })()
-                        },
-                        {
-                            name:'AU',
-                            type:'bar',
-                            stack: '库存',
-                            data: (function() {
-                                var res = [];
-                                for (var i = 0; i < 30; i++) {
-                                    res.push(Math.floor(Math.random() * 500));
-                                }
-                                return res;
-                            })()
-                        }
-                    ]
+                    series : eData.SStock
                 };
 
                 var $eLast30DaysStock = echarts.init($('#echarts-last-30-stock')[0]);
                 $eLast30DaysStock.setOption(option);
-            })();
+            }
 
             // 产品运营情况两层饼图
-            (function() {
-                // 各类随机参数
-                var platform = randomNum(); // 平台费用
-                var platformArray = randomPart(platform, 3); 
-                var finance = randomNum(); // 财务费用
-                var financeArray = randomPart(finance, 2); 
-                var goods = randomNum(); // 商品费用
-                var goodsArray = randomPart(goods, 1); 
-                var logistics = randomNum(); // 物流成本
-                var logisticsArray = randomPart(logistics, 2); 
-                var market = randomNum(); // 销售毛利
-                var marketArray = randomPart(market, 3); 
-
-                var partSumArray = [
-                    148991.7, 10666, 101085.5, 18823.04, 23528.81, 624446.2, 
-                    61184.52, 448929.4, 47057.61, 39214.68, 135406.4
-                    ];
-                var SumArray = [260743.2, 42351.85, 624446.2, 510113.92, 221678.69];
-                var percentPart = sumPercent(partSumArray);
-                var percentSum = sumPercent(SumArray);
+            function Operate(eData) {
 
                 // 嵌套环形图配置
                 var pieNestOption = {
                     tooltip:{
                         trigger:'item',
-                        formatter:'{a} <br/>{b}: {c} ({d}%)'
+                        formatter:'{b}: ￥{c} ({d}%)'
                     },
                     legend:{},
                     title: {
@@ -439,10 +350,10 @@
                     },
                     series:[
                         {
-                            name: '资金汇总',
+                            // name: '资金汇总',
                             type: 'pie',
                             selectedMode: 'single',
-                            radius: [0, '40%'],
+                            radius: [0, '35%'],
                             label: {
                                 normal: {
                                     position: 'inner'
@@ -453,110 +364,61 @@
                                     show: false
                                 }
                             },
-                            data:[
-                                {value: 260743.2, name: '平台', selected: true},
-                                {value: 42351.85, name: '财务'},
-                                {value: 624446.2, name: '商品'},
-                                {value: 510113.92, name: '物流'},
-                                {value: 221678.69, name: '销售'}
-                            ]
+                            data: eData.StatementsInside
                         },
                         {
-                            name: '资金汇总',
+                            // name: '资金汇总',
                             type: 'pie',
-                            radius: ['50%', '75%'],
-                            data: [
-                                {value: 148991.7, name: '成交费'},
-                                {value: 10666, name: '功能费'},
-                                {value: 101085.5, name: '手续费'},
-                                {value: 18823.04, name: '汇差'},
-                                {value: 23528.81, name: '汇损'},
-                                {value: 624446.2, name: '商品成本'},
-                                {value: 61184.52, name: '调拨'},
-                                {value: 448929.4, name: '运费'},
-                                {value: 47057.61, name: '预扣净利'},
-                                {value: 39214.68, name: '预扣售后'},
-                                {value: 135406.4, name: '毛利'}
-                            ]
+                            radius: ['40%', '63%'],
+                            data: eData.StatementsExternal
                         }
                     ]
                 };
 
                 var $eOperate = echarts.init($('#echarts-operate')[0]);
                 $eOperate.setOption(pieNestOption);
-            })();
+            }
 
-            // 产品各账号分布情况饼图
-            (function() {
-                var option = {
-                    title : {
-                        text: '南丁格尔玫瑰图',
-                        subtext: '纯属虚构',
-                        x:'center'
+            // 产品在各账号分布情况饼图
+            function Account(eData) {
+                // 嵌套环形图配置
+                var pieNestOption = {
+                    tooltip:{
+                        trigger:'item',
+                        formatter:'{b}: {c} ({d}%)'
                     },
-                    tooltip : {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    legend:{},
+                    title: {
+                        text: '产品在各账号分布情况'
                     },
-                    legend: {
-                        x : 'center',
-                        y : 'bottom',
-                        data:['rose1','rose2','rose3','rose4','rose5','rose6','rose7','rose8']
-                    },
-                    toolbox: {
-                        show : true,
-                        feature : {
-                            mark : {show: true},
-                            dataView : {show: true, readOnly: false},
-                            magicType : {
-                                show: true,
-                                type: ['pie', 'funnel']
-                            },
-                            restore : {show: true},
-                            saveAsImage : {show: true}
-                        }
-                    },
-                    calculable : true,
-                    series : [
+                    series:[
                         {
-                            name:'半径模式',
-                            type:'pie',
-                            radius : [20, 110],
-                            roseType : 'radius',
+                            type: 'pie',
+                            selectedMode: 'single',
+                            radius: [0, '33%'],
                             label: {
                                 normal: {
-                                    show: false
-                                },
-                                emphasis: {
-                                    show: true
+                                    position: 'inner'
                                 }
                             },
-                            lableLine: {
+                            labelLine: {
                                 normal: {
                                     show: false
-                                },
-                                emphasis: {
-                                    show: true
                                 }
                             },
-                            data:[
-                                {value:10, name:'rose1'},
-                                {value:5, name:'rose2'},
-                                {value:15, name:'rose3'},
-                                {value:25, name:'rose4'},
-                                {value:20, name:'rose5'},
-                                {value:35, name:'rose6'},
-                                {value:30, name:'rose7'},
-                                {value:40, name:'rose8'}
-                            ]
+                            data: eData.DQuantitySum
+                        },
+                        {
+                            type: 'pie',
+                            radius: ['40%', '60%'],
+                            data: eData.DQuantity
                         }
                     ]
                 };
 
-
                 var $eAccount = echarts.init($('#echarts-account')[0]);
-                $eAccount.setOption(option);
-            })();
+                $eAccount.setOption(pieNestOption);
+            }
 
 // ==================================================== 图表 ============================================== //
 // 
@@ -604,6 +466,16 @@
                 return parseInt(Math.random() * 10000);
             }
 
+            // 把字符串数据转换为数值 dcf = Data Change Float; dci = Data Change Int
+            function dcf(data) {
+                data = data == '' ? '0' : data;
+                return parseFloat(data.replace(',', '')); 
+            }
+            function dci(data) {
+                data = data == '' ? '0' : data;
+                return parseInt(data.replace(',', ''));
+            }
+
             /**
              * 处理获取到的数据
              * @param {Object} data 获取到的数据
@@ -614,29 +486,159 @@
                     "FullSKU": "",
                     "FullName": "",
                     "TeamID": 0,
+                    'StatementsInside': [],
+                    'StatementsExternal': [],
                     'SSAmount': [],
                     'SSQuantity': [],
+                    'SSDate': [],
                     'SLQuantity': [],
                     'SLStock': [],
                     'SLQuantitySold': [],
+                    'SLDate': [],
                     'DAccount': [],
                     'DSite': [],
                     'DItem': [],
+                    'DItemSum': [],
                     'DQuantity': [],
-                    'DQuantitySold': []
+                    'DQuantitySum': [],
+                    'DQuantitySold': [],
+                    'DQuantitySoldSum': [],
+                    'SSTDate': [],
+                    'SStock': [
+                        {
+                            'name': '本地仓',
+                            'type': 'bar',
+                            'stack': '库存',
+                            'data': []
+                        },
+                        {
+                            'name': 'UK仓',
+                            'type': 'bar',
+                            'stack': '库存',
+                            'data': []
+                        },
+                        {
+                            'name': 'DE仓',
+                            'type': 'bar',
+                            'stack': '库存',
+                            'data': []
+                        },
+                        {
+                            'name': 'AU仓',
+                            'type': 'bar',
+                            'stack': '库存',
+                            'data': []
+                        },
+                        {
+                            'name': '调拨库存',
+                            'type': 'bar',
+                            'stack': '库存',
+                            'data': []
+                        }
+                    ]
                 };
+
                 optionData.SkuID = data.Basic.SkuID;
                 optionData.FullSKU = data.Basic.FullSKU;
                 optionData.FullName = data.Basic.FullName;
                 optionData.TeamID = data.Basic.TeamID;
+                optionData.StatementsInside.push(
+                    {
+                        'value': (dcf(data.Statements.SoldPlatform) + dcf(data.Statements.BankFee)
+                                    + dcf(data.Statements.Exchange)).toFixed(2),
+                        'name': '平台费用',
+                        'selected': true
+                    },
+                    {
+                        'value': dcf(data.Statements.Purchase),
+                        'name': '商品采购成本'
+                    },
+                    {
+                        'value': (dcf(data.Statements.Logistics) + dcf(data.Statements.Allocation)).toFixed(2),
+                        'name': '物流费用'
+                    },
+                    {
+                        'value': dcf(data.Statements.Profit),
+                        'name': '毛利'
+                    }
+                );
+                optionData.StatementsExternal.push(
+                    {
+                        'value': dcf(data.Statements.SoldPlatform),
+                        'name': '成交费'
+                    },
+                    {
+                        'value': dcf(data.Statements.BankFee),
+                        'name': '手续费'
+                    },
+                    {
+                        'value': dcf(data.Statements.Exchange),
+                        'name': '汇损'
+                    },
+                    {
+                        'value': dcf(data.Statements.Purchase),
+                        'name': '商品采购成本'
+                    },
+                    {
+                        'value': dcf(data.Statements.Logistics),
+                        'name': '运输费用'
+                    },
+                    {
+                        'value': dcf(data.Statements.Allocation),
+                        'name': '调拨费用'
+                    },
+                    {
+                        'value': dcf(data.Statements.Profit),
+                        'name': '毛利'
+                    }
+                );
                 for(var i = 0; i < 30; i++) {
-                    optionData.SSAmount.push(data.SkuSale[i].Amount.replace(',', ''));
+                    optionData.SSAmount.push(dcf(data.SkuSale[i].Amount));
                     optionData.SSQuantity.push(data.SkuSale[i].Quantity);
+                    optionData.SSDate.push(data.SkuSale[i].Month + '.' + data.SkuSale[i].Day);
                     optionData.SLQuantity.push(data.SkuListing[i].Quantity);
                     optionData.SLStock.push(data.SkuListing[i].Stock);
                     optionData.SLQuantitySold.push(data.SkuListing[i].QuantitySold);
+                    optionData.SLDate.push(data.SkuListing[i].Month + '.' + data.SkuListing[i].Day);
+                    optionData.SSTDate.push(data.SkuStock[i].Month + '.' + data.SkuStock[i].Day);
+                    optionData.SStock[0].data.push(dci(data.SkuStock[i].Local));
+                    optionData.SStock[1].data.push(dci(data.SkuStock[i].UK));
+                    optionData.SStock[2].data.push(dci(data.SkuStock[i].DE));
+                    optionData.SStock[3].data.push(dci(data.SkuStock[i].AU));
+                    optionData.SStock[4].data.push(dci(data.SkuStock[i].Allocation));
                 }
+                for(var j = 0; j < data.Distribution.length; j++) {
+                    // 账号判断是否存在，如果已经存在，则叠加数量；不存在则插入账号并新增一个数量
+                    data.Distribution[j].Account == '' ? data.Distribution[j].Account = 'OTHER' : data.Distribution[j].Account;
+                    var _index = optionData.DAccount.indexOf(data.Distribution[j].Account);
+                    if(_index != -1) {
+                        optionData.DItemSum[_index] += dci(data.Distribution[j].Item);
+                        optionData.DQuantitySum[_index].value += dci(data.Distribution[j].Quantity);
+                        optionData.DQuantitySoldSum[_index] += dci(data.Distribution[j].QuantitySold);
+                    } else {
+                        optionData.DAccount.push(data.Distribution[j].Account);
+                        optionData.DItemSum.push(dci(data.Distribution[j].Item));
+                        optionData.DQuantitySum.push(
+                            {
+                                'value': dci(data.Distribution[j].Quantity), 
+                                'name': data.Distribution[j].Account,
+                                'selected': j == 0 ? true : false
+                            }
+                        );
+                        optionData.DQuantitySoldSum.push(dci(data.Distribution[j].QuantitySold));
+                    }
 
+                    optionData.DSite.push(data.Distribution[j].Site);
+                    optionData.DItem.push(data.Distribution[j].Item);
+                    optionData.DQuantity.push(
+                        {
+                            'value': data.Distribution[j].Quantity,
+                            'name': data.Distribution[j].Account + '-' + data.Distribution[j].Site
+                        }
+                    );
+                    optionData.DQuantitySold.push(data.Distribution[j].QuantitySold);
+                }
+                cl(optionData);
                 return optionData;
             }
 
