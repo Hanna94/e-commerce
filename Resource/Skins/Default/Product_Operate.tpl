@@ -717,10 +717,19 @@
                 return percentArray;
             }
 // ==================================================== 公共方法 ========================================== //
-            // 标签页定位
-            var isDo = location.search.split('&')[0];
-            isDo = isDo.split('=')[0] == '?Do' ? isDo : '?Do=Sold';
-            $('.nav a[href="' + isDo + '"]').closest('li').addClass('active');
+            (function() {
+                // 标签页定位
+                var op = location.search.split('&');
+                var isDo = location.search.split('&')[0];
+                var $formSearch = $('#form-search');
+                isDo = isDo.split('=')[0] == '?Do' ? isDo : '?Do=Sold';
+                $('.nav a[href="' + isDo + '"]').closest('li').addClass('active');
+
+                $formSearch.find('input[type="text"]').val(decodeURI((op.KeyWord || '').replace(/\++/g, ' ')));
+                $formSearch.find('select').find('option[value="' + decodeURI(op.Selected) + '"]').prop('selected', true);
+                $formSearch.find('select option[value="' + (op.TeamID || $formSearch.find('select').data('default')) + '"]').prop('selected', true);
+            })();
+            
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数}, 'mini');
