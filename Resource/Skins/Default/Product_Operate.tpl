@@ -81,23 +81,33 @@
                                     </div>
                                     <!-- 近30日售出情况报表 -->
                                     <div class="col-sm-12">
-                                        <div id="echarts-last-30-days-sell" class="pull-left" style="width: 100%; height: 250px;"></div>
+                                        <div id="echarts-last-30-days-sell" class="pull-left" style="width: 100%; height: 250px;">
+                                            <p>资料空缺，无法显示。</p>
+                                        </div>
                                     </div>
                                     <!-- 近30日每天在线报表 -->
                                     <div class="col-sm-12">
-                                        <div id="echarts-last-30-days-online" class="pull-left" style="width: 100%; height: 250px;"></div>
+                                        <div id="echarts-last-30-days-online" class="pull-left" style="width: 100%; height: 250px;">
+                                            <p>资料空缺，无法显示。</p>
+                                        </div>
                                     </div>
                                     <!-- 近30日每天库存报表 -->
                                     <div class="col-sm-12">
-                                        <div id="echarts-last-30-stock" class="pull-left" style="width: 100%; height: 500px;"></div>
+                                        <div id="echarts-last-30-stock" class="pull-left" style="width: 100%; height: 500px;">
+                                            <p>资料空缺，无法显示。</p>
+                                        </div>
                                     </div>
                                     <!-- 产品运营情况两层饼图 -->
                                     <div class="col-sm-6">
-                                        <div id="echarts-operate" class="pull-left" style="width: 100%; height: 500px;"></div>
+                                        <div id="echarts-operate" class="pull-left" style="width: 100%; height: 500px;">
+                                            <p>资料空缺，无法显示。</p>
+                                        </div>
                                     </div>
                                     <!-- 产品各账号分布情况饼图 -->
                                     <div class="col-sm-6">
-                                        <div id="echarts-account" class="pull-left" style="width: 100%; height: 500px;"></div>
+                                        <div id="echarts-account" class="pull-left" style="width: 100%; height: 500px;">
+                                            <p>资料空缺，无法显示。</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +170,11 @@
                         URL: '/Report/Api/?Do=SkuSaleAnalyze&SkuID=' + $(this).closest('tr').data('id'),
                         type: 'GET',
                         good: function(d) {
-                            $('#echarts').find('.panel-title').text('[' + d.Basic.SkuID + '][' + d.Basic.FullSKU + ']' + d.Basic.FullName);
+                            if (d.Basic.length == 0) {
+                                $('#echarts').find('.panel-title').text('该Sku基本资料不全。');
+                            } else {
+                                $('#echarts').find('.panel-title').text('[' + d.Basic.SkuID + '][' + d.Basic.FullSKU + ']' + d.Basic.FullName);
+                            }
                             $('#echarts-area').removeClass('hide');
                             eData = DataProcess(d);
                             Last30DaysSell(eData);
@@ -538,10 +552,13 @@
                     ]
                 };
 
-                optionData.SkuID = data.Basic.SkuID;
-                optionData.FullSKU = data.Basic.FullSKU;
-                optionData.FullName = data.Basic.FullName;
-                optionData.TeamID = data.Basic.TeamID;
+                if (data.Basic.length != 0) {
+                    optionData.SkuID = data.Basic.SkuID;
+                    optionData.FullSKU = data.Basic.FullSKU;
+                    optionData.FullName = data.Basic.FullName;
+                    optionData.TeamID = data.Basic.TeamID;
+                }
+                
                 optionData.StatementsInside.push(
                     {
                         'value': (dcf(data.Statements.SoldPlatform) + dcf(data.Statements.BankFee)
@@ -592,53 +609,70 @@
                         'name': '毛利'
                     }
                 );
-                for(var i = 0; i < 30; i++) {
-                    optionData.SSAmount.push(dcf(data.SkuSale[i].Amount));
-                    optionData.SSQuantity.push(data.SkuSale[i].Quantity);
-                    optionData.SSDate.push(data.SkuSale[i].Month + '.' + data.SkuSale[i].Day);
-                    optionData.SLQuantity.push(data.SkuListing[i].Quantity);
-                    optionData.SLStock.push(data.SkuListing[i].Stock);
-                    optionData.SLQuantitySold.push(data.SkuListing[i].QuantitySold);
-                    optionData.SLDate.push(data.SkuListing[i].Month + '.' + data.SkuListing[i].Day);
-                    optionData.SSTDate.push(data.SkuStock[i].Month + '.' + data.SkuStock[i].Day);
-                    optionData.SStock[0].data.push(dci(data.SkuStock[i].Local));
-                    optionData.SStock[1].data.push(dci(data.SkuStock[i].UK));
-                    optionData.SStock[2].data.push(dci(data.SkuStock[i].DE));
-                    optionData.SStock[3].data.push(dci(data.SkuStock[i].AU));
-                    optionData.SStock[4].data.push(dci(data.SkuStock[i].Allocation));
+
+                if (data.SkuListing.length != 0) {
+                    for(var i = 0; i < 30; i++) {
+                        optionData.SLQuantity.push(data.SkuListing[i].Quantity);
+                        optionData.SLStock.push(data.SkuListing[i].Stock);
+                        optionData.SLQuantitySold.push(data.SkuListing[i].QuantitySold);
+                        optionData.SLDate.push(data.SkuListing[i].Month + '.' + data.SkuListing[i].Day);
+                        
+                    }
                 }
-                for(var j = 0; j < data.Distribution.length; j++) {
-                    // 账号判断是否存在，如果已经存在，则叠加数量；不存在则插入账号并新增一个数量
-                    data.Distribution[j].Account == '' ? data.Distribution[j].Account = 'OTHER' : data.Distribution[j].Account;
-                    var _index = optionData.DAccount.indexOf(data.Distribution[j].Account);
-                    if(_index != -1) {
-                        optionData.DItemSum[_index] += dci(data.Distribution[j].Item);
-                        optionData.DQuantitySum[_index].value += dci(data.Distribution[j].Quantity);
-                        optionData.DQuantitySoldSum[_index] += dci(data.Distribution[j].QuantitySold);
-                    } else {
-                        optionData.DAccount.push(data.Distribution[j].Account);
-                        optionData.DItemSum.push(dci(data.Distribution[j].Item));
-                        optionData.DQuantitySum.push(
+
+                if (data.SkuSale.length != 0) {
+                    for(var i = 0; i < 30; i++) {
+                        optionData.SSAmount.push(dcf(data.SkuSale[i].Amount));
+                        optionData.SSQuantity.push(data.SkuSale[i].Quantity);
+                        optionData.SSDate.push(data.SkuSale[i].Month + '.' + data.SkuSale[i].Day);
+                    }
+                }
+
+                if (data.SkuStock.length != 0) {
+                    for(var i = 0; i < 30; i++) {
+                        optionData.SSTDate.push(data.SkuStock[i].Month + '.' + data.SkuStock[i].Day);
+                        optionData.SStock[0].data.push(dci(data.SkuStock[i].Local));
+                        optionData.SStock[1].data.push(dci(data.SkuStock[i].UK));
+                        optionData.SStock[2].data.push(dci(data.SkuStock[i].DE));
+                        optionData.SStock[3].data.push(dci(data.SkuStock[i].AU));
+                        optionData.SStock[4].data.push(dci(data.SkuStock[i].Allocation));
+                    }
+                }
+                    
+                if (data.Distribution.length) {
+                    for(var j = 0; j < data.Distribution.length; j++) {
+                        // 账号判断是否存在，如果已经存在，则叠加数量；不存在则插入账号并新增一个数量
+                        data.Distribution[j].Account == '' ? data.Distribution[j].Account = 'OTHER' : data.Distribution[j].Account;
+                        var _index = optionData.DAccount.indexOf(data.Distribution[j].Account);
+                        if(_index != -1) {
+                            optionData.DItemSum[_index] += dci(data.Distribution[j].Item);
+                            optionData.DQuantitySum[_index].value += dci(data.Distribution[j].Quantity);
+                            optionData.DQuantitySoldSum[_index] += dci(data.Distribution[j].QuantitySold);
+                        } else {
+                            optionData.DAccount.push(data.Distribution[j].Account);
+                            optionData.DItemSum.push(dci(data.Distribution[j].Item));
+                            optionData.DQuantitySum.push(
+                                {
+                                    'value': dci(data.Distribution[j].Quantity),
+                                    'name': data.Distribution[j].Account,
+                                    'selected': j == 0 ? true : false
+                                }
+                            );
+                            optionData.DQuantitySoldSum.push(dci(data.Distribution[j].QuantitySold));
+                        }
+
+                        optionData.DSite.push(data.Distribution[j].Site);
+                        optionData.DItem.push(data.Distribution[j].Item);
+                        optionData.DQuantity.push(
                             {
-                                'value': dci(data.Distribution[j].Quantity), 
-                                'name': data.Distribution[j].Account,
-                                'selected': j == 0 ? true : false
+                                'value': data.Distribution[j].Quantity,
+                                'name': data.Distribution[j].Account + '-' + data.Distribution[j].Site
                             }
                         );
-                        optionData.DQuantitySoldSum.push(dci(data.Distribution[j].QuantitySold));
+                        optionData.DQuantitySold.push(data.Distribution[j].QuantitySold);
                     }
-
-                    optionData.DSite.push(data.Distribution[j].Site);
-                    optionData.DItem.push(data.Distribution[j].Item);
-                    optionData.DQuantity.push(
-                        {
-                            'value': data.Distribution[j].Quantity,
-                            'name': data.Distribution[j].Account + '-' + data.Distribution[j].Site
-                        }
-                    );
-                    optionData.DQuantitySold.push(data.Distribution[j].QuantitySold);
                 }
-                cl(optionData);
+                
                 return optionData;
             }
 
