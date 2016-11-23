@@ -278,30 +278,30 @@
                     yAxis: [
                         {
                             type: 'value',
-                            name: 'Listing',
+                            name: '库存',
                             axisLabel: {
-                                formatter: '{value}'
+                                formatter: '{value} 件'
                             }
                         },
                         {
                             type: 'value',
-                            name: '库存',
+                            name: 'Listing',
                             axisLabel: {
-                                formatter: '{value} 件'
+                                formatter: '{value}'
                             }
                         }
                     ],
                     series: [
                         {
-                            name: 'Listing',
-                            type: 'bar',
-                            data: eData.SLQuantity
-                        }, 
-                        {
                             name: '在线库存',
                             type: 'line',
                             yAxisIndex: 1,
                             data: eData.SLStock
+                        },
+                        {
+                            name: 'Listing',
+                            type: 'bar',
+                            data: eData.SLQuantity
                         }
                     ]
                 };
@@ -563,16 +563,16 @@
                     {
                         'value': (dcf(data.Statements.SoldPlatform) + dcf(data.Statements.BankFee)
                                     + dcf(data.Statements.Exchange)).toFixed(2),
-                        'name': '平台费用',
+                        'name': '平台',
                         'selected': true
                     },
                     {
                         'value': dcf(data.Statements.Purchase),
-                        'name': '商品采购成本'
+                        'name': '采购'
                     },
                     {
                         'value': (dcf(data.Statements.Logistics) + dcf(data.Statements.Allocation)).toFixed(2),
-                        'name': '物流费用'
+                        'name': '物流'
                     },
                     {
                         'value': dcf(data.Statements.Profit),
@@ -594,15 +594,15 @@
                     },
                     {
                         'value': dcf(data.Statements.Purchase),
-                        'name': '商品采购成本'
+                        'name': '采购'
                     },
                     {
                         'value': dcf(data.Statements.Logistics),
-                        'name': '运输费用'
+                        'name': '运输'
                     },
                     {
                         'value': dcf(data.Statements.Allocation),
-                        'name': '调拨费用'
+                        'name': '调拨'
                     },
                     {
                         'value': dcf(data.Statements.Profit),
