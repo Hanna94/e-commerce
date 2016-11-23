@@ -1291,6 +1291,7 @@
              */
             function SizeCheck(input) {
                 var val = input.val();
+                val = val == '' ? '0' : val;
                 var valArray = val.split('*');
                 valArray = valArray.sort(function(a, b){return b - a});
                 var loopNum = 3 - valArray.length;
