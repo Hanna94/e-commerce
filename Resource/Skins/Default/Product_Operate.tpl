@@ -364,7 +364,6 @@
                     },
                     series:[
                         {
-                            // name: '资金汇总',
                             type: 'pie',
                             selectedMode: 'single',
                             radius: [0, '35%'],
@@ -381,7 +380,6 @@
                             data: eData.StatementsInside
                         },
                         {
-                            // name: '资金汇总',
                             type: 'pie',
                             radius: ['40%', '63%'],
                             data: eData.StatementsExternal
