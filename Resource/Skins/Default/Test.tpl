@@ -302,6 +302,11 @@
             <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
         </tr>
     </template>
+    
+    <!-- 渲染产品搜索列表 -->
+    <template id="temp-product-search">
+        <a class="list-group-item pd-5 poi" data-skuid="{{SkuID}}" data-sku="{{FullSku}}" data-name="{{FullName}}">[{{Status}}] {{FullName}} [FullSku]</a>
+    </template>
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/bootstrap-datetimepicker.js"></script>
