@@ -75,8 +75,20 @@
     overflow-x: hidden;
 }
 
+.maxH150 {
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .maxH200 {
     max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH250 {
+    max-height: 250px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -87,8 +99,20 @@
     overflow-x: hidden;
 }
 
+.maxH350 {
+    max-height: 350px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .maxH400 {
     max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH450 {
+    max-height: 450px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -99,8 +123,20 @@
     overflow-x: hidden;
 }
 
+.maxH650 {
+    max-height: 650px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .maxH800 {
     max-height: 800px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH850 {
+    max-height: 850px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -509,3 +545,8 @@ tr.tr-pd-8{
 .topBtnColor07{
     background-color: rgba(192, 192, 192, 0.7); 
 }
+
+/* 优化bootstrap表格部分样式，设置垂直/水平居中 */
+.cen-th th{ text-align: center !important; } 
+.ver-td td{ vertical-align: middle !important; } 
+.inputH20 input.form-control{ height: 20px !important; }
