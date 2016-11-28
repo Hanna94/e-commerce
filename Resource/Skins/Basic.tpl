@@ -8,7 +8,7 @@
 	<link rel="shortcut icon" href="/Resource/Images/favicon.ico">
     <link href="/Resource/css/bootstrap.css" rel="stylesheet">
 	<link href="/Resource/css/bt-theme.css" rel="stylesheet">
-	<link href="/Resource/css/datetimepicker.css" rel="stylesheet">
+	<link href="/Resource/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/Resource/css/main.css" rel="stylesheet">
 	<link href="/Resource/css/jquery-ui.min.css" rel="stylesheet">
     <script src="/Resource/js/jquery.js"></script>
@@ -183,12 +183,10 @@
     <footer class="text-center hidden"><iframe ID="__Sys_Rpc_MiniCall__"  name="__Sys_Rpc_MiniCall__"></iframe></footer>
     <script src="/Resource/js/jquery.js"></script>
     <script src="/Resource/js/bootstrap.js"></script>
-    <script src="/Resource/js/datetimepicker.js"></script>
     <script src="/Resource/js/validate.js"></script>
     <script src="/Resource/js/Menu.js"></script>
     <script src="/Resource/js/common.js"></script>
     <script src="/Resource/js/ajaxfileupload.js"></script>
-    <script src="/Resource/js/mustache.js"></script>
 
     <script>
         $(function(){
