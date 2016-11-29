@@ -319,20 +319,20 @@
 //=========================================== 模态框方法 ====================================================
             (function() {
 
-                var $modalPlan = $('#modal-plan-edit');
-                var $modalOrder = $modalPlan.find('input[name="modal-plan-order"]');
-                var $modalName = $modalPlan.find('input[name="modal-plan-name"]');
-                var $modalTypes = $modalPlan.find('input[name="modal-plan-types"]');
+                var $modalPlan    = $('#modal-plan-edit');
+                var $modalOrder   = $modalPlan.find('input[name="modal-plan-order"]');
+                var $modalName    = $modalPlan.find('input[name="modal-plan-name"]');
+                var $modalTypes   = $modalPlan.find('input[name="modal-plan-types"]');
                 var $modalArrival = $modalPlan.find('input[name="modal-plan-arrival"]');
 
                 var $modalSearchList = $('#product-search-result');
 
                 $modalArrival.datetimepicker({
-                    format: 'yyyy-mm-dd',
-                    minView: 2,
-                    language: 'zh-CN',
-                    pickerPosition: "bottom-left",
-                    autoclose: true
+                    format         : 'yyyy-mm-dd',
+                    minView        : 2,
+                    language       : 'zh-CN',
+                    pickerPosition : "bottom-left",
+                    autoclose      : true
                 });
 
                 // 调拨产品列表添加功能
@@ -357,7 +357,7 @@
              */
             function ProductAdd(_$, _t) {
                 var tempHTML = $('#temp-product-add-tr').html();
-                var skuJSON = {
+                var skuJSON  = {
                     skuId: _$.data('skuid'),
                     SKU: _$.data('sku'),
                     skuName: _$.data('name')
