@@ -345,6 +345,15 @@ tbody tr td:nth-child(1) label {
 .def{ cursor: default; }
 .poi{ cursor: pointer; }
 
+/* 使文本不能被选中 */
+.no-select{
+    -moz-user-select:none;/*火狐*/
+    -webkit-user-select:none;/*webkit浏览器*/
+    -ms-user-select:none;/*IE10*/
+    -khtml-user-select:none;/*早期浏览器*/
+    user-select:none;
+}
+
 /*按钮设置*/
 .outL{ outline: none; }
 
