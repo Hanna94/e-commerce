@@ -9,19 +9,21 @@
                 <button class="btn btn-default" type="button">提审</button>
                 <button class="btn btn-default" type="button">取消</button>
             </div>
-            <form action="?" class="form-inline pull-right pull-right mg-r-20">
+            <form id="form-search" action="?" class="form-inline pull-right pull-right mg-r-20">
+                <input id="url-do" name="Do" type="hidden" value="All">
                 <div class="form-group form-group-sm">
-                    <select id="TeamID" class="form-control" name="TeamID" data-default="{TeamID}">
-                        <option value="0">空运</option>
-                        <option value="1">海运</option>
-                        <option value="2">香港DHL</option>
+                    <select class="form-control" name="Types">
+                        <option value="">所有</option>
+                        <option value="空运">空运</option>
+                        <option value="海运">海运</option>
+                        <option value="香港DHL">香港DHL</option>
                     </select>
                 </div>
                 <div class="form-group form-group-sm mg-l-20">
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="单号/产品名称/产品SKU">
+                        <input type="text" class="form-control" name="KeyWord" placeholder="单号/产品名称/产品SKU">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">查询</button>
+                            <button class="btn btn-default" type="submit">查询</button>
                         </span>
                     </div>
                 </div>
@@ -59,15 +61,15 @@
                             <!-- BEGIN 数据列表 ATTRIB= -->
                             <tr data-id="{DataID}" data-order="{OrderID}">
                                 <td><input type="checkbox" value="{DataID}"></td>
-                                <td>{OrderID}</td>
+                                <td class="orderID">{OrderID}</td>
                                 <td>{Name}</td>
-                                <td>{Types}</td>
+                                <td class="types">{Types}</td>
                                 <td>{OutStock} - {InStock}</td>
                                 <td>{Quantity}</td>
                                 <td>{VerifyDate}</td>
                                 <td>{ArrivalDate}</td>
                                 <td>{InStockDate}</td>
-                                <td>{Status}</td>
+                                <td class="status">{Status}</td>
                                 <td>{Date}</td>
                                 <td>
                                     <span class="btn-edit-plan poi glyphicon glyphicon-pencil mg-r-5" title="编辑"></span>
@@ -107,11 +109,7 @@
                         <div class="form-group form-group-sm">
                             <label class="control-label col-sm-2">调拨方式</label>
                             <div class="col-sm-4">
-                                <select name="modal-plan-types" class="form-control">
-                                    <option value="海运">海运</option>
-                                    <option value="空运" selected>空运</option>
-                                    <option value="香港DHL">香港DHL</option>
-                                </select>
+                                <select name="modal-plan-types" class="form-control"></select>
                             </div>
                             <label class="control-label col-sm-2">预期抵达</label>
                             <div class="col-sm-4">
@@ -192,14 +190,47 @@
         </div>
     </div>
     
+    <!-- 操作日志 -->
+    <div id="modal-log" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">操作日志</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="maxH400">
+                        <table class="table table-striped table-condensed">
+                            <colgroup>
+                                <col width="60px">
+                                <col>
+                                <col width="90px">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>操作人</th>
+                                    <th>记录</th>
+                                    <th>时间</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- 添加产品到调拨列表的tr -->
     <template id="temp-product-add-tr">
-        <tr data-id="{{id}}">
-            <td>{{id}}</td>
-            <td>[{{SKU}}] {{skuName}} </td>
-            <td><input class="form-control" type="text" name="modal-plan-quantity" value="0"></td>
+        {{#DataList}}
+        <tr data-id="{{DataID}}" data-sid="{{SkuID}}">
+            <td>{{SkuID}}</td>
+            <td>[{{FullSKU}}] {{FullName}} </td>
+            <td><input class="form-control" type="text" name="modal-plan-quantity" value="{{Quantity}}"></td>
             <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
         </tr>
+        {{/DataList}}
     </template>
     
     <!-- 渲染产品搜索列表 -->
@@ -232,6 +263,7 @@
 
                 var $modalSearchList = $('#product-search-result');
 
+                // ----------------------------- 日期控件 -----------------------------
                 $modalArrival.datetimepicker({
                     format         : 'yyyy-mm-dd',
                     minView        : 2,
@@ -239,9 +271,7 @@
                     pickerPosition : 'bottom-left',
                     autoclose      : true
                 });
-
-                // 遍历仓库下拉
-                GetWarehouse($modalOutW, $modalInW);
+                // ----------------------------- 日期控件 -----------------------------
 
                 // 搜索产品
                 $('.btn-search').on('click', function() { SearchProduct($('#input-search').val()) });
@@ -249,33 +279,48 @@
                 // 调拨产品列表添加功能
                 $modalSearchList.on('click', 'a', function() { ProductAdd($(this), $modalPlan.find('tbody')) });
 
-                // 调拨产品列表删除功能
-                    // 新建
+                // ---------------------- 新建&更新功能差异 -------------------------------------
+                    // ------------------------ 新建 ------------------------------
                 $('#btn-create-plan').click(function() {
+                    // 遍历仓库下拉默认值
+                    GetWarehouse($modalOutW, $modalInW, $modalTypes);
                     $('.btn-remove').on('click', function() { ProductRemove($(this)) });
                     $modalPlan.modal('show');
+
+                    // 自动计算预估时间
+                    $modalTypes.on('change', function() { AutoEstimate($(this).val(), $modalArrival) });
                 });
-                    // 编辑
+                    // ------------------------ 新建 ------------------------------
+                    
+                    // ----------------------- 编辑 -------------------------------
                 $('.btn-edit-plan').click(function() {
                     var _DataID = $(this).closest('tr').data('id');
                     $modalPlan.attr('data-id', _DataID);
-                    $('.btn-remove').on('click', function() {
-                        ProductRemove($(this), $(this).closest('tr').data('id'), $modalOrder.val()); 
-                    });
                     
                     // 渲染模态框数据
                     var planData = GetPlanData(_DataID);
                     $modalOrder.val(planData.OrderID);
                     $modalName.val(planData.TrueName);
-                    _CW($modalTypes, planData.Types);
                     $modalArrival.val(planData.ArrivalDate);
-                    _CW($modalOutW, planData.OutWID);
-                    _CW($modalInW, planData.InWID);
                     $modalState.val(planData.Status);
                     $modalCreate.val(planData.Date);
 
+                    // 遍历下拉
+                    GetWarehouse($modalOutW, $modalInW, $modalTypes, planData);
+                    // 自动计算预估时间
+                    $modalTypes.on('change', function() { AutoEstimate($(this).val(), $modalArrival) });
+                    // 遍历已选的调拨产品
+                    LoadProductList($modalPlan.find('tbody'), planData);
+
+                    // 绑定删除事件
+                    $('.btn-remove').on('click', function() {
+                        ProductRemove($(this), $(this).closest('tr').data('id'), $modalOrder.val()); 
+                    });
+
                     $modalPlan.modal('show');
                 });
+                    // ----------------------- 编辑 -------------------------------
+                // ---------------------- 新建&更新功能差异 -------------------------------------
 
                 // 数据检测和转换
                 $modalPlan.find('tbody tr input').on('change', function() {
@@ -283,7 +328,7 @@
                     $(this).val(val);
                 });
 
-                // 保存计划
+                // ------------------------ 保存计划 -----------------------------------
                 $('#modal-plan-btn-save').on('click', function() {
                     var obj = new Object();
                     obj.da = $modalPlan;
@@ -296,10 +341,18 @@
                     obj.in = $modalInW;
                     PlanSave(obj);
                 });
+                // ------------------------ 保存计划 -----------------------------------
                 
+                // ------------------------ 操作日志 ----------------------------------
+                $('.btn-log').on('click', function() {
+                    var _DataID = $(this).closest('tr').data('id');
+                    LoadPlanLog(_DataID);
+                });
+                // ------------------------ 操作日志 ---------------------------------- 
 
                 // 模态框关闭时，清除所有参数
                 $modalPlan.on('hidden.bs.modal', function() {
+                    $(this).attr('data-id', 0);
                     $(this).find('form')[0].reset();
                     $(this).find('tbody').empty();
                     $('#product-search-result').empty();
@@ -330,22 +383,39 @@
              * 遍历仓库下拉
              * @param {Object} _so 调出仓库的select
              * @param {Object} _si 调入仓库的select
+             * @param {Object} _st 调拨类型的select
+             * @param {String} _d  数据
              */
-            function GetWarehouse(_so, _si) {
+            function GetWarehouse(_so, _si, _st, _d) {
                 var template =   '{{#DataList}}'
                                 +'<option value="{{DataID}}">{{Name}}</option>'
                                 +'{{/DataList}}';
                 $.ajax({
-                    url: 'http://erp.v0.xytinc.com/Logistics/API/?Do=List',
+                    url: '/Logistics/API/?Do=List',
                     type: 'GET',
                     dataType: 'JSON',
                     success: function(d) {
+                        var _td = {
+                            'DataList': [
+                                {'DataID': '海运', 'Name': '海运'},
+                                {'DataID': '空运', 'Name': '空运'},
+                                {'DataID': '香港DHL', 'Name': '香港DHL'}
+                            ]
+                        };
                         _so.html(Mustache.render(template, d));
                         _si.html(Mustache.render(template, d));
+                        _st.html(Mustache.render(template, _td));
 
-                        // 设置出入库默认值
-                        _so.find('option[value="10"]').attr('selected', true);
-                        _si.find('option[value="6"]').attr('selected', true);
+                        if (_d) {
+                            _CW(_st, _d.Types);
+                            _CW(_so, _d.OutWID);
+                            _CW(_si, _d.InWID);
+                        } else {
+                            // 设置出入库默认值
+                            _CW(_st, "空运");
+                            _CW(_so, 10);
+                            _CW(_si, 6);
+                        }
                     }
                 });
             }
@@ -371,6 +441,34 @@
             }
 
             /**
+             * 添加调拨产品列表中的产品
+             * @param {Object} _$ 被点击的a标签
+             * @param {Object} _t 产品列表的tbody
+             */
+            function ProductAdd(_$, _t) {
+                var tempHTML = $('#temp-product-add-tr').html();
+                var skuJSON  = {
+                    'DataList': [
+                        {
+                            'SkuID': _$.data('id'),
+                            'FullSKU': _$.data('sku'),
+                            'FullName': _$.data('name'),
+                            'Quantity': 0
+                        }
+                    ]
+                };
+                var productList = ProductList(_t);
+
+                if (productList.indexOf(skuJSON.DataList[0].SkuID) < 0) {
+                    _t.prepend(Mustache.render(tempHTML, skuJSON));
+                    BindRemoveEvent(_t.find('tr[data-sid="' + skuJSON.DataList[0].SkuID + '"]'));
+                } else {
+                    var val = CheckValue(_t.find('tr[data-sid="' + skuJSON.DataList[0].SkuID + '"] input').val()) + 1;
+                    _t.find('tr[data-sid="' + skuJSON.DataList[0].SkuID + '"] input').val(val);
+                }
+            }
+
+            /**
              * 为新添加的调拨产品绑定事件
              * @param {Object} _$ 新添加的产品的tr
              */
@@ -380,29 +478,6 @@
                     var val = CheckValue($(this).val());
                     $(this).val(val);
                 })
-            }
-
-            /**
-             * 添加调拨产品列表中的产品
-             * @param {Object} _$ 被点击的a标签
-             * @param {Object} _t 产品列表的tbody
-             */
-            function ProductAdd(_$, _t) {
-                var tempHTML = $('#temp-product-add-tr').html();
-                var skuJSON  = {
-                    id: _$.data('id'),
-                    SKU: _$.data('sku'),
-                    skuName: _$.data('name')
-                };
-                var productList = ProductList(_t);
-
-                if (productList.indexOf(skuJSON.id) < 0) {
-                    _t.prepend(Mustache.render(tempHTML, skuJSON));
-                    BindRemoveEvent(_t.find('tr[data-id="' + skuJSON.id + '"]'));
-                } else {
-                    var val = CheckValue(_t.find('tr[data-id="'+skuJSON.id+'"] input').val()) + 1;
-                    _t.find('tr[data-id="'+skuJSON.id+'"] input').val(val);
-                }
             }
 
             /**
@@ -427,7 +502,6 @@
                         good: function(d) {
                             common.alert({
                                 type: 'success',
-                                title: '已移除',
                                 time: 1000,
                                 msg: d.Message,
                                 cb: function() {
@@ -442,10 +516,24 @@
             }
 
             /**
+             * 编辑调拨计划渲染已选产品
+             * @param {Object} _t 调拨产品列表
+             * @param {JSON}   _d 数据
+             */
+            function LoadProductList(_t, _d) {
+                var tempHTML = $('#temp-product-add-tr').html();
+                _t.html(Mustache.render(tempHTML, _d));
+            }
+
+            /**
              * 保存调拨计划
              * @param {Object} obj 模态框对象
              */
             function PlanSave(obj) {
+                // 保存时如果预估时间为空，则自动填入估计的空运时间
+                if (!obj.ar.val()) {
+                    AutoEstimate(obj.ty.val(), obj.ar);
+                }
                 var dataJSON = {
                     'DataID'     : parseInt(obj.da.data('id')),
                     'OrderID'    : obj.or.val(),
@@ -467,13 +555,36 @@
                             msg: d.Message,
                             time: 2000,
                             cb: function() {
-                                // location.reload();
-                                cl(dataJSON);
+                                location.reload();
                             }
                         });
                     }
                 });
                 
+            }
+
+            /**
+             * 操作记录
+             * @param {String} _d 调拨计划的id
+             */
+            function LoadPlanLog(_d) {
+                var logHTML = '{{#Log}}'
+                            + '<tr>'
+                                + '<td>{{Name}}</td>'
+                                + '<td>{{Remark}}</td>'
+                                + '<td>{{Date}}</td>'
+                            + '</tr>'
+                            + '{{/Log}}';
+
+                $.ajax({
+                    url: '/Logistics/API/?Do=RequisitionPlanQuery&DataID=' + _d,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function(d) {
+                        $('#modal-log tbody').html(Mustache.render(logHTML, d));
+                        $('#modal-log').modal('show');
+                    }
+                });
             }
 
             /**
@@ -484,7 +595,7 @@
             function ProductList(_t) {
                 var tArray = [];
                 _t.children('tr').each(function(index, e) {
-                    tArray.push($(this).data('id'));
+                    tArray.push($(this).data('sid'));
                 });
                 return tArray;
             }
@@ -510,11 +621,11 @@
              * return JSON     productJSON  返回一个拼装好的JSON
              */
             function PieceProductJSON(_tb) {
-                var productJSON = {'product': []};
+                var productJSON = {'Product': []};
 
                 _tb.find('tbody tr').each(function(index, el) {
-                    var temp = {'SkuID': $(this).data('id'), 'Quantity': CheckValue($(this).find('input').val())};
-                    productJSON.product.push(temp);
+                    var temp = {'SkuID': $(this).data('sid'), 'Quantity': CheckValue($(this).find('input').val())};
+                    productJSON.Product.push(temp);
                 });
 
                 return productJSON;
@@ -526,10 +637,34 @@
              * @param  {String} _id 要显示的选项的值
              */
             function _CW(_$, _id) {
-                _$.find('option[selected="selected"]').removeAttr('selected');
-                cl(_$.find('option[selected="selected"]').length);
+                _$.find('option').each(function() {$(this).removeAttr('selected')});
                 _$.find('option[value ="' + _id + '"]').attr('selected', true);
-                cl(_id);
+            }
+
+            /**
+             * 自动计算预估时间, 并填写
+             * @param {String} _d 调拨方式
+             * @param {Object} _e 预期时间的input
+             */
+            function AutoEstimate(_d, _e) {
+                var nowDate = new Date();
+                var nowMS = nowDate.getTime();
+                
+                switch(_d) {
+                    case '海运':
+                    _d = 50 * 86400000;
+                    break;
+                    case '空运':
+                    _d = 15 * 86400000;
+                    break;
+                    case '香港DHL':
+                    _d = 15 * 86400000;
+                    break;
+                }
+
+                var eDate = new Date(nowMS + _d);
+                var estimate = eDate.getFullYear() + '-' + (eDate.getMonth() + 1) + '-' + eDate.getDate();
+                _e.val(estimate);
             }
 //=========================================== 模态框方法 ====================================================
 
@@ -537,16 +672,51 @@
             
             // 标签页定位
             (function() {
-                var op = location.search.split('&');
-                var isDo = location.search.split('&')[0];
+                var op = common.URL.parse();
                 var $formSearch = $('#form-search');
-                isDo = isDo.split('=')[0] == '?Do' ? isDo : '?Do=All';
-                $('.nav a[href="' + isDo + '"]').closest('li').addClass('active');
-
+                var isDo = op.Do ? op.Do : 'All';
+                $('.nav a[href="?Do=' + isDo + '"]').closest('li').addClass('active');
                 $formSearch.find('input[type="text"]').val(decodeURI((op.KeyWord || '').replace(/\++/g, ' ')));
-                $formSearch.find('select').find('option[value="' + decodeURI(op.Selected) + '"]').prop('selected', true);
-                $formSearch.find('select option[value="' + (op.TeamID || $formSearch.find('select').data('default')) + '"]').prop('selected', true);
+                $formSearch.find('select').find('option[value="' + decodeURI(op.Types) + '"]').prop('selected', true);
             })();
+
+            // 单号渲染
+            common.Rendering.order($('#data-list tbody'));
+
+            // -------------------------- 调拨方式和状态渲染 ---------------------------------------------
+                // 调拨方式渲染
+            var typesOption = {
+                'Type' : ['', '空运', '海运', '香港DHL'],
+                'Style': ['label-default', 'label-info', 'label-primary', 'label-danger']
+            };
+
+            Dye($('#data-list tbody .types'), typesOption, '魔法传送');
+
+                // 状态渲染
+            var statusOption = {
+                'Type' : ['','提审','在途','完成','取消'],
+                'Style': ['label-default', 'label-primary', 'label-info', 'label-success', 'label-warning']
+            };
+
+            Dye($('#data-list tbody .status'), statusOption, '初始');
+
+            /**
+             * 渲染
+             * @param {Object} _tar   需要渲染的对象组
+             * @param {JSON}   option 配置参数
+             * @param {String} isnull 改参数决定如果为空时渲染什么文本
+             */
+            function Dye(_tar, option, isnull) {
+                _tar.each(function() {
+                    var text = $(this).text();
+                    var index = option.Type.indexOf(text);
+                    index == 0 ? text = isnull : text;
+                    if (index != -1) {
+                        $(this).html('<span class="label ' + option.Style[index] + '">' + text + '</span>');
+                    }
+                });
+            }
+            // -------------------------- 调拨方式和状态渲染 ---------------------------------------------
 
             // 列表页脚分页
             (function() {
