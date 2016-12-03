@@ -145,7 +145,8 @@
             });
 
             $sortableCancelBtn.on('click', function() {
-                location.reload();
+                // location.reload();
+                PieceString($('#tbody-sortable'));
             });
 
             // 设置
@@ -171,6 +172,29 @@
                     }
                 });
             });
+
+            /**
+             * 拼装顺序
+             * @param {Object} _$ 数据列表
+             */
+            function PieceString(_$) {
+                var _arr = [];
+                _$.find('tr').each(function(index, el) {
+                    _arr.push($(this).data('id'));
+                    console.log($(this).data('id'));
+                });
+                _arr = _arr.join(',');
+                
+                $.ajax({
+                    url: '/Logistics/Logistics.aspx?Do=ServiceSort',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: _arr,
+                    success: function(d) {
+                        cl(d);
+                    }
+                });
+            }
         }());
     </script>
 </body>

@@ -43,15 +43,16 @@
                     <table class="table table-striped table-bordered table-hover table-condensed">
                         <thead>
                             <th><input id="" type="checkbox"></th>
-                            <th>调拨计划单号</th>
-                            <th>发起人</th>
-                            <th>调拨方式</th>
-                            <th>调拨方向</th>
-                            <th>Sku数量</th>
-                            <th>提审时间</th>
-                            <th>预期抵达</th>
-                            <th>完成时间</th>
-                            <th>状态</th>
+                            <th>调拨单号</th>
+                            <th>货代单号</th>
+                            <th>货代状态</th>
+                            <th>物流方式</th>
+                            <th>处理点</th>
+                            <th>抵达仓库</th>
+                            <th>交货日期</th>
+                            <th>箱数</th>
+                            <th>体积重量</th>
+                            <th>费用</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </thead>
@@ -59,8 +60,8 @@
                             <!-- BEGIN 数据列表 ATTRIB= -->
                             <tr>
                                 <td><input type="checkbox" value="13"></td>
-                                <td>REP160812XXX001 {OrderID}</td>
-                                <td>姚丽丽 {Name}</td>
+                                <td>REQ160812XXX001 {OrderID}</td>
+                                <td>IA1M16111000004 {Name}</td>
                                 <td>空运/海运/香港DHL {Types}</td>
                                 <td>广州仓 - UK仓 {OutStock} - {InStock}</td>
                                 <td>3 {Quantity}</td>
@@ -69,6 +70,7 @@
                                 <td>2016-12-12 {InstockDate}</td>
                                 <td>完成 {Status}</td>
                                 <td>2016-11-16 {Date}</td>
+                                <td>2016-11-16 {Date}</td>
                                 <td>
                                     <span class="poi glyphicon glyphicon-pencil mg-r-5" title="编辑"></span>
                                     <span class="poi glyphicon glyphicon-list-alt" title="日志"></span>
@@ -76,7 +78,7 @@
                             </tr>
                             <!-- END 数据列表 -->
                         </tbody>
-                        <tfoot><tr><td colspan="12"></td></tr></tfoot>
+                        <tfoot><tr><td colspan="13"></td></tr></tfoot>
                     </table>
                 </div>
             </div>
