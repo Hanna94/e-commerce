@@ -41,7 +41,7 @@
                 <div class="row mg-t-5">
                     <!-- 数据表 -->
                     <div class="col-sm-3">
-                        <table id="data-list" class="table table-hover table-bordered table-striped table-condensed">
+                        <table id="data-list" class="table table-bordered table-condensed">
                             <colgroup>
                                 <col>
                                 <col width="40px">
@@ -163,6 +163,9 @@
             // 查看SKU概况
             (function() {
                 $('.btn-sku-see').on('click', function() {
+
+                    $dataList.find('.bg-primary').removeClass('bg-primary');
+                    $(this).closest('tr').addClass('bg-primary');
 
                     // 报表
                     common.ajax({
@@ -716,16 +719,13 @@
             }
 // ==================================================== 公共方法 ========================================== //
             (function() {
-                // 标签页定位
-                var op = location.search.split('&');
-                var isDo = location.search.split('&')[0];
+                var op = common.URL.parse();
                 var $formSearch = $('#form-search');
-                isDo = isDo.split('=')[0] == '?Do' ? isDo : '?Do=Sold';
-                $('.nav a[href="' + isDo + '"]').closest('li').addClass('active');
-
+                var isDo = op.Do ? op.Do : 'All';
+                $('.nav a[href="?Do=' + isDo + '"]').closest('li').addClass('active');
                 $formSearch.find('input[type="text"]').val(decodeURI((op.KeyWord || '').replace(/\++/g, ' ')));
-                $formSearch.find('select').find('option[value="' + decodeURI(op.Selected) + '"]').prop('selected', true);
-                $formSearch.find('select option[value="' + (op.TeamID || $formSearch.find('select').data('default')) + '"]').prop('selected', true);
+                $formSearch.find('select').find('option[value="' + decodeURI(op.TeamID) + '"]').prop('selected', true);
+
             })();
             
 
