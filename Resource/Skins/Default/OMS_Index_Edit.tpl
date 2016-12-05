@@ -227,7 +227,7 @@
                                     <input type="reset" class="btn btn-default hidden" value="取消" />
                                 </span>
                             </div>
-                            <span class="text-danger">提示：如果在IE浏览器下排版混乱，且无法使用编辑和删除功能，请酌情使用谷歌、火狐等其他浏览器。</span>
+                            <span class="text-danger">提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。</span>
                         </form>
                         <div class="maxH300 mg-t-10">
                             <table class="table table-striped table-condensed">
@@ -700,6 +700,10 @@
                     good: function(data){
                         var mes = data.DataList[0];
                         $panelRemark.find('tbody').html(Mustache.render(tempRemark, mes));
+                        $panelRemark.find('tr').each(function() {
+                            var isLink = LinkChange($(this).find('span:eq(0)').text());
+                            $(this).find('span:eq(0)').html(isLink);
+                        });
                         $panelRemarkForm.find('textarea').val("");
                         //判断备注能否编辑删除
                         editAndDel();
@@ -962,6 +966,17 @@
                 $panelRemark.find('textarea').prop('readonly', true).end().find('input').remove();
                 $panelRemarkForm.remove();
             }
+
+            // =========================== 附加方法 ==================================
+            /**
+             * 链接转换为a标签
+             * @param {String} _str 备注内容
+             */
+            function LinkChange(_str) {
+                _str = _str.replace(/\[\[\[(.*)]]]/g, ' 【<a href="$1" target="_blank">附加链接</a>】 ');
+                return _str;
+            }
+            // =========================== 附加方法 ==================================
         }());
     </script>
 </body>
