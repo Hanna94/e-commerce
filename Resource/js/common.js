@@ -806,6 +806,10 @@ common.remarkUpdate = function(dataID, rediv, reform, retemp, resetBtn, UID, upl
                 mes = data.DataList[0];
             }
             rediv.find('tbody').html(Mustache.render(retemp, mes));
+            rediv.find('tr').each(function() {
+                var isLink = LinkChange($(this).find('span:eq(0)').text());
+                $(this).find('span:eq(0)').html(isLink);
+            });
             reform.find('textarea').val("");
             //判断备注能否编辑删除
             common.editAndDel(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
@@ -876,6 +880,14 @@ common.reset = function(reform, resetBtn){
     });
 }
 
+/**
+ * 链接转换为a标签
+ * @param {String} _str 备注内容
+ */
+function LinkChange(_str) {
+    _str = _str.replace(/\[\[\[(.*)]]]/g, ' 【<a href="$1" target="_blank">附加链接</a>】 ');
+    return _str;
+}
 
 /**
  * 召唤方法封装
