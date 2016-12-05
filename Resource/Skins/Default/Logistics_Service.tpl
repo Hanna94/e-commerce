@@ -184,14 +184,13 @@
                     console.log($(this).data('id'));
                 });
                 _arr = _arr.join(',');
-                
                 $.ajax({
                     url: '/Logistics/Logistics.aspx?Do=ServiceSort',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: _arr,
+                    data: {DataID: _arr},
                     success: function(d) {
-                        cl(d);
+                        location.reload();
                     }
                 });
             }
