@@ -1112,3 +1112,106 @@ common.topBtn = function(winDiv){
 var cl = function(content){
     console.log(content);
 }
+
+/**
+ * SKU复制方法的封装
+ * @author Harry
+ * @date   2016-12-06 15:57
+ */
+
+common.copy = {};
+
+/**
+ * SKU复制方法封装
+ * @param {Object} _$ 需要复制的主体
+ * @param {JSON}   op 配置参数
+ */
+
+// var option = {
+//      Link: [],
+//      Warehouse: {
+//          placement: 'left', // 弹出框显示方向，默认bottom
+//          trigger: 'hover',  // 弹出框触发方式，默认hover
+//          stock: [
+//              {AllQuantity(实际库存): 0, LockQuantity(冻结库存): 0, Quantity(可用库存): 0}, 
+//              {AllQuantity: 0, LockQuantity: 0, Quantity: 0},
+//              {AllQuantity: 0, LockQuantity: 0, Quantity: 0}
+//          ]
+//      },
+//      Label: {
+//          Data: ['xxx', 'xxx', 'xxx', 'xxx'],                              // 需要遍历的状态
+//          Type: ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
+//          Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
+//      }
+// };
+// 
+common.copy.SkuCopy = function(_$, op) {
+    ZeroClipboard.config({swfPath: '/Resource/flash/ZeroClipboard.swf'});
+    var _tar = _$.find('.poi');
+    var clip = new ZeroClipboard(_tar);
+
+    // 添加鼠标滑过效果
+    _tar.on({
+        mousemove: function() {$(this).addClass('bg-primary')},
+        mouseout: function() {$(this).removeClass('bg-primary')}
+    });
+
+    // 默认渲染样式
+    var defaultStyle = ['label-default', 'label-primary', 'label-success', 'label-info', 'label-warning', 'label-danger'];
+
+    // 是否有参数传入
+    if (op) {
+
+        // 添加并渲染标签
+        if(op.Label && op.Label.Type.length != 0) {
+            var ol = op.Label.Data ? op.Label.Data.length : 0;
+            _$.each(function(ind, el) {
+                var tempLabel = $('<span></span>').addClass('label');
+                var text = ol != 0 ? op.Label.Data[ind] : $(this).find('.label').text();
+                var index = op.Label.Type.indexOf(text);
+                text == '' ? text = '初始' : text;
+                if (index != -1) {
+                    if (ol != 0) {
+                        tempLabel.addClass((op.Label.Style && op.Label.Style[index]) || defaultStyle[index]).text(text);
+                        $(this).prepend('&nbsp;');
+                        $(this).prepend(tempLabel);
+                    }else {
+                        $(this).find('.label').addClass((op.Label.Style && op.Label.Style[index]) || defaultStyle[index]).text(text);
+                    }
+                }
+            });
+        } // 添加并渲染标签 - End
+
+        // 显示库存
+        if (op.Warehouse && op.Warehouse.length != 0) {
+            _$.each(function(ind, el) {
+                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-home')
+                                .attr({
+                                    'style': 'color: rgb(61, 129, 190)',
+                                    'data-container': 'body',
+                                    'data-toggle': 'popover',
+                                    'data-html': 'true',
+                                    'data-trigger': op.Warehouse.trigger || 'hover',
+                                    'data-placement': op.Warehouse.placement || 'bottom',
+                                    'data-content': '<table class="table table-bordered table-condensed">'
+                                                    + '<tr>'
+                                                        + '<th>实际</th><th>冻结</th><th>可用</th>' 
+                                                    + '</tr>'
+                                                    + '<tr>'
+                                                        + '<td>' + op.Warehouse.stock[ind].AllQuantity
+                                                        + '</td><td>' + op.Warehouse.stock[ind].LockQuantity
+                                                        + '</td><td>' + op.Warehouse.stock[ind].Quantity + '</td>' 
+                                                    + '</tr>'
+                                                  + '</table>'
+                                });
+
+                $(this).append('&nbsp;').append(tempSpan);
+                $(this).find('span[data-toggle="popover"]').popover();
+
+            });
+        } // 显示库存 - End
+
+        // 弹出新窗口
+
+    } // 是否有参数传入 - End
+} // common.copy.SkuCopy - End
