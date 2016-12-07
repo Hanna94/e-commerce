@@ -57,26 +57,24 @@
                             <th>操作</th>
                         </thead>
                         <tbody>
-                            <!-- BEGIN 数据列表 ATTRIB= -->
                             <tr>
                                 <td><input type="checkbox" value="13"></td>
-                                <td>REQ160812XXX001 {OrderID}</td>
-                                <td>IA1M16111000004 {Name}</td>
-                                <td>空运/海运/香港DHL {Types}</td>
-                                <td>广州仓 - UK仓 {OutStock} - {InStock}</td>
-                                <td>3 {Quantity}</td>
-                                <td>2016-11-23 {VerifyDate}</td>
-                                <td>2016-12-10 {ArrivalDate}</td>
-                                <td>2016-12-12 {InstockDate}</td>
-                                <td>完成 {Status}</td>
-                                <td>2016-11-16 {Date}</td>
+                                <td>REQ160812XXX001 {ReferenceID}</td>
+                                <td>IA1M16111000004 {OrderSign}</td>
+                                <td>Shippingln {StateNew}</td>
+                                <td>AIRCL - 头程空运 {ShippingMethodNew}</td>
+                                <td>GZ {LocationNew}</td>
+                                <td>UK {WarehouseNew}</td>
+                                <td>2016-12-10 {OutDate}</td>
+                                <td>9 {CountCase}</td>
+                                <td>56.326 KG {CountCBM}</td>
+                                <td>运费： {CountCost}</td>
                                 <td>2016-11-16 {Date}</td>
                                 <td>
                                     <span class="poi glyphicon glyphicon-pencil mg-r-5" title="编辑"></span>
                                     <span class="poi glyphicon glyphicon-list-alt" title="日志"></span>
                                 </td>
                             </tr>
-                            <!-- END 数据列表 -->
                         </tbody>
                         <tfoot><tr><td colspan="13"></td></tr></tfoot>
                     </table>
@@ -294,6 +292,12 @@
             </div>
         </div>
     </div>
+
+    <div id="temp-sreach">
+        <form class="form-inline">
+            input
+        </form>
+    </div>
     
     <!-- 添加产品到调拨列表的tr -->
     <template id="temp-product-add-tr">
@@ -314,105 +318,9 @@
         (function() {
             'use strict';
 //=========================================== 模态框方法 ====================================================
-            (function() {
+            
 
-                var $modalPlan = $('#modal-plan-edit');
-                var $modalOrder = $modalPlan.find('input[name="modal-plan-order"]');
-                var $modalName = $modalPlan.find('input[name="modal-plan-name"]');
-                var $modalTypes = $modalPlan.find('input[name="modal-plan-types"]');
-                var $modalArrival = $modalPlan.find('input[name="modal-plan-arrival"]');
-
-                var $modalSearchList = $('#product-search-result');
-
-                $modalArrival.datetimepicker({
-                    format: 'yyyy-mm-dd',
-                    minView: 2,
-                    language: 'zh-CN',
-                    pickerPosition: "bottom-left",
-                    autoclose: true
-                });
-
-                // 调拨产品列表添加功能
-                $modalSearchList.on('click', 'a', function() { ProductAdd($(this), $modalPlan.find('tbody')) });
-                // 调拨产品列表删除功能
-                $('.btn-remove').on('click', function() { ProductRemove($(this)) });
-
-            })();
-
-            /**
-             * 为新添加的调拨产品绑定事件
-             * @param {Object} _$ 新添加的产品的tr
-             */
-            function BindRemoveEvent(_$) {
-                _$.on('click', '.btn-remove', function() { ProductRemove($(this)) });
-            }
-
-            /**
-             * 添加调拨产品列表中的产品
-             * @param {Object} _$ 被点击的a标签
-             * @param {Object} _t 产品列表的tbody
-             */
-            function ProductAdd(_$, _t) {
-                var tempHTML = $('#temp-product-add-tr').html();
-                var skuJSON = {
-                    skuId: _$.data('skuid'),
-                    SKU: _$.data('sku'),
-                    skuName: _$.data('name')
-                };
-
-                // common.ajax({
-                //     URL: '',
-                //     type: 'POST',
-                //     dataType: 'JSON',
-                //     data: {  },
-                //     good: function(d) {
-                //         common.alert({
-                //             title: '添加产品',
-                //             type: 'success',
-                //             time: 500,
-                //             msg: '完成：' + d.Message,
-                //             cb: function() {
-                //                 _t.prepend(Mustache.render(tempHTML, skuJSON));
-                //             }
-                //         });
-                //     }
-                // });
-
-                // 测试用代码
-                cl(skuJSON);
-                _t.prepend(Mustache.render(tempHTML, skuJSON));
-                BindRemoveEvent(_t.find('tr[data-skuid="' + skuJSON.skuId + '"]'));
-            }
-
-            /**
-             * 移除调拨产品列表中的产品
-             * @param {Object} _$ 被点击的按钮
-             */
-            function ProductRemove(_$) {
-                var skuId = _$.closest('tr').data('skuid');
-
-                // common.ajax({
-                //     URL: '',
-                //     type: 'POST',
-                //     dataType: 'JSON',
-                //     data: {  },
-                //     good: function(d) {
-                //         common.alert({
-                //             title: '移除产品',
-                //             type: 'success',
-                //             time: 500,
-                //             msg: '完成：' + d.Message,
-                //             cb: function() {
-                //                 _$.closest('tr').remove();
-                //             }
-                //         });
-                //     }
-                // });
-                
-                // 测试用代码
-                cl(skuId);
-                _$.closest('tr').remove();
-            }
+        
 //=========================================== 模态框方法 ====================================================
 
 //=========================================== 页面基本功能 ====================================================
