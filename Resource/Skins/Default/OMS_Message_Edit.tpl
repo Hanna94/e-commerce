@@ -527,15 +527,12 @@
 
                 // 清除图片
                 $('#imgRemove').on('click', function(){
-                    imgMedie = '';
-                    $imgAppendArea.find('img').remove();
+                    CloseImg();
                 });
 
                 // 上传数据
                 $msgInput.find('.sendEmail').on('click', function(){
                     var text = $('#msg-input-content').val();
-                    text = text.replace(/\n/g, '&#x000A');
-                    console.log(text);
                     $.ajax({
                         url: '/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=' + oParam.MessageID,
                         type: 'post',
@@ -547,7 +544,10 @@
                         success: function(data){
                             common.alert({
                                 type: 'success',
-                                msg: data.Message
+                                msg: data.Message,
+                                cb: function() {
+                                    CloseImg();
+                                }
                             });
                             $msgInput.find('textarea').val('');
                             imgMedie = null;
@@ -575,6 +575,12 @@
                         }
                     });
                 });
+
+                // 清空图片
+                function CloseImg() {
+                    imgMedie = '';
+                    $msgInput.find('.inputHead').find('img').remove();
+                }
 
                 // 上传图片后显示缩略图
                 function thumbnail() {
