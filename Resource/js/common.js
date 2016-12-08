@@ -1114,7 +1114,7 @@ var cl = function(content){
 }
 
 /**
- * SKU复制方法的封装
+ * SKU系列方法的封装
  * @author Harry
  * @date   2016-12-06 15:57
  */
@@ -1122,17 +1122,20 @@ var cl = function(content){
 common.copy = {};
 
 /**
- * SKU复制方法封装
+ * SKU系列方法封装
  * @param {Object} _$ 需要复制的主体
  * @param {JSON}   op 配置参数
  */
 
 // var option = {
-//      Link: [],
+//      Link: {
+//          Title: 'new page', // 鼠标悬浮显示的文字，默认“打开页面”
+//          URL: ['www.baidu.com', 'www.bilibili.com']
+//      },
 //      Warehouse: {
-//          placement: 'left', // 弹出框显示方向，默认bottom
-//          trigger: 'hover',  // 弹出框触发方式，默认hover
-//          stock: [
+//          Placement: 'left', // 弹出框显示方向，默认bottom
+//          Trigger: 'hover',  // 弹出框触发方式，默认hover
+//          Stock: [
 //              {AllQuantity(实际库存): 0, LockQuantity(冻结库存): 0, Quantity(可用库存): 0}, 
 //              {AllQuantity: 0, LockQuantity: 0, Quantity: 0},
 //              {AllQuantity: 0, LockQuantity: 0, Quantity: 0}
@@ -1183,35 +1186,65 @@ common.copy.SkuCopy = function(_$, op) {
         } // 添加并渲染标签 - End
 
         // 显示库存
-        if (op.Warehouse && op.Warehouse.length != 0) {
+        if (op.Warehouse.Ack) {
             _$.each(function(ind, el) {
-                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-home')
-                                .attr({
-                                    'style': 'color: rgb(61, 129, 190)',
-                                    'data-container': 'body',
-                                    'data-toggle': 'popover',
-                                    'data-html': 'true',
-                                    'data-trigger': op.Warehouse.trigger || 'hover',
-                                    'data-placement': op.Warehouse.placement || 'bottom',
-                                    'data-content': '<table class="table table-bordered table-condensed">'
-                                                    + '<tr>'
-                                                        + '<th>实际</th><th>冻结</th><th>可用</th>' 
-                                                    + '</tr>'
-                                                    + '<tr>'
-                                                        + '<td>' + op.Warehouse.stock[ind].AllQuantity
-                                                        + '</td><td>' + op.Warehouse.stock[ind].LockQuantity
-                                                        + '</td><td>' + op.Warehouse.stock[ind].Quantity + '</td>' 
-                                                    + '</tr>'
-                                                  + '</table>'
-                                });
+                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-home mg-l-5');
 
-                $(this).append('&nbsp;').append(tempSpan);
+                // 获取库存
+                $.ajax({
+                    url: '/Logistics/Logistics.aspx?Do=GetStockBySkuID&DataID=' + $(this).find('.poi').data('id'),
+                    type: 'GET',
+                    dataType: 'JSON',
+                    async: false,
+                    success: function(d) {
+                        var ds = d.DataList;
+                        tempSpan.attr({
+                            'style': 'color: rgb(61, 129, 190)',
+                            'data-container': 'body',
+                            'data-toggle': 'popover',
+                            'data-html': 'true',
+                            'data-trigger': op.Warehouse.Trigger || 'hover',
+                            'data-placement': op.Warehouse.Placement || 'bottom',
+                            'data-content': '<table class="table table-bordered table-condensed">'
+                                            + '<tr>'
+                                                + '<th>仓库名</th><th>实际</th><th>冻结</th><th>可用</th>' 
+                                            + '</tr>'
+                                            + 
+                                            (function() {
+                                                var tempTr = '';
+                                                for(var i = 0; i < ds.length; i++) {
+                                                    tempTr += '<tr>'
+                                                                + '<td>' + ds[i].Name
+                                                                + '</td><td>' + ds[i].AllQuantity
+                                                                + '</td><td>' + ds[i].LockQuantity
+                                                                + '</td><td>' + ds[i].Quantity + '</td>' 
+                                                            + '</tr>';
+                                                }
+                                                return tempTr;
+                                            })()
+                                          + '</table>'
+                        });
+                    }
+                });
+
+                $(this).append(tempSpan);
                 $(this).find('span[data-toggle="popover"]').popover();
-
             });
         } // 显示库存 - End
 
         // 弹出新窗口
+        if (op.Link && op.Link.length != 0) {
+            _$.each(function(ind, el) {
+                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-certificate')
+                var tempA = $('<a></a>').attr({
+                                                'title': op.Link.Title,
+                                                'href': op.Link.URL[ind],
+                                                'target': '_blank'
+                                                 });
+                tempA.append(tempSpan);
+                $(this).append('&nbsp;').append(tempA);
+            });
+        } // 弹出新窗口 - End
 
     } // 是否有参数传入 - End
 } // common.copy.SkuCopy - End
