@@ -414,7 +414,7 @@
             <td><input class="form-control input-sm sku" type="text" value="{{SKU}}"></td>
             <td>
                 {{#Product}}
-                    <p><div class="copy"><span class="poi" data-clipboard-text="{{SKU}}" title="点击复制该SKU">[{{SKU}}]</span>&nbsp;{{Name}}</div></p>
+                    <p><div class="copy"><span class="poi" data-clipboard-text="{{SKU}}" data-id="{{ID}}" title="点击复制该SKU">[{{SKU}}]</span>&nbsp;{{Name}}</div></p>
                 {{/Product}}
             </td>
             <td><input class="form-control input-sm quantity" type="text" value="{{Quantity}}"></td>
@@ -619,24 +619,23 @@
                     });
 
                     // 运单中SKU可复制
-                    // var option = {
-                    //      Link: [],
-                    //      Warehouse: {
-                    //          // placement: 'left',
-                    //          // trigger: 'click',
-                    //          stock: [
-                    //              {AllQuantity: 12, LockQuantity: 0, Quantity: 12}, 
-                    //              {AllQuantity: 15, LockQuantity: 9, Quantity: 9}
-                    //          ]
-                    //      },
-                    //      Label: {
-                    //          Ack: true,
-                    //          Data: ['魔法', '科学'],
-                    //          Type: ['', '魔法', '科学', '自然'],
-                    //          Style: ['label-default', 'label-primary', 'label-warning', 'label-danger']
-                    //      }
-                    // };
-                    common.copy.SkuCopy($panelTransaction.find('.copy'));
+                    var option = {
+                         Link: {
+                            Title: 'New Page',
+                            URL: ['http://www.baidu.com', 'http://www.bilibili.com']
+                         },
+                         Warehouse: {
+                            Ack: true
+                             // placement: 'left',
+                             // trigger: 'click',
+                         },
+                         Label: {
+                             Data: ['魔法', '科学'],
+                             Type: ['', '魔法', '科学', '自然'],
+                             Style: ['label-default', 'label-primary', 'label-warning', 'label-danger']
+                         }
+                    };
+                    common.copy.SkuCopy($panelTransaction.find('.copy'), option);
 
                     // 如果是查看订单
                     if (oParam.Do !== 'Edit') {
