@@ -293,10 +293,34 @@
         </div>
     </div>
 
-    <div id="temp-sreach">
-        <form class="form-inline">
-            input
-        </form>
+    <div id="common-sreach" class="pd-5" style="width: 700px;">
+        <!-- <form class="bs-example bs-example-form">
+            <input type="hidden" data-sku="">
+            <div class="row">
+                <div class="col-sm-9 pd-r-0">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="ID / SKU / Name">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">搜索</button>
+                        </span>
+                    </div>
+                    <div class="list-group col-sm-12 maxH200 pd-r-0 search-drop">
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                        <a data-id="1" data-sku="AOE213" class="list-group-item pd-5 poi"><span class="pname">生命生命</span> <span class="psku">[AOE213]</span></a>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <p class="form-control-static">结果：8</p>
+                </div>
+            </div>
+        </form> -->
     </div>
     
     <!-- 添加产品到调拨列表的tr -->
@@ -319,7 +343,56 @@
             'use strict';
 //=========================================== 模态框方法 ====================================================
             
+function SkuSearch(_$) {
+    // 样式及结构
+    _$.addClass('pd-5');
+    var tempHTML = $('<form></form>').addClass('bs-example bs-example-form')
+            .html('<input type="hidden" data-sku="">'
+                + '<div class="row">'
+                    + '<div class="col-sm-9 pd-r-0">'
+                        + '<div class="input-group input-group-sm">'
+                            + '<input type="text" class="form-control" placeholder="ID / SKU / Name">'
+                            + '<span class="input-group-btn">'
+                                + '<button class="btn btn-default" type="button">搜索</button>'
+                            + '</span>'
+                        + '</div>'
+                        + '<div class="list-group col-sm-12 maxH200 pd-r-0 search-drop"></div>'
+                    + '</div>'
+                    + '<div class="col-sm-3">'
+                        + '<p class="form-control-static"></p>'
+                    + '</div>'
+                + '</div>'
+    );
 
+    _$.append(tempHTML);
+    // 样式及结构 - End
+    
+    // 列表模板
+    var tempA = '{{#Datalist}}'
+              + '<a data-id="{{DataID}}" data-sku="{{FullSKU}}" class="list-group-item pd-5 poi">'
+                + '<span class="l-sku">[{{FullSKU}}]</span><span class="l-name">{{Name}}</span>'
+              + '</a>'
+              + '{{/Datalist}}'
+    // 列表模板 - End
+
+    var tempData = {
+        Datalist: [
+            {DataID: 1, FullSKU: 'AOE001', Name: '测试001'},
+            {DataID: 2, FullSKU: 'AOE002', Name: '测试002'},
+            {DataID: 3, FullSKU: 'AOE003', Name: '测试003'},
+            {DataID: 4, FullSKU: 'AOE004', Name: '测试004'},
+            {DataID: 5, FullSKU: 'AOE005', Name: '测试005'},
+            {DataID: 6, FullSKU: 'AOE006', Name: '测试006'}
+        ]
+    };
+
+    // 搜索事件
+    _$.find('button').on('click', function() {
+        _$.find('.list-group').html(Mustache.render(tempA, tempData));
+    });
+}
+
+SkuSearch($('#common-sreach'));
         
 //=========================================== 模态框方法 ====================================================
 

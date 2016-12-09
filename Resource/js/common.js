@@ -1240,7 +1240,7 @@ common.copy.SkuCopy = function(_$, op) {
                                                 'title': op.Link.Title,
                                                 'href': op.Link.URL[ind],
                                                 'target': '_blank'
-                                                 });
+                                                });
                 tempA.append(tempSpan);
                 $(this).append('&nbsp;').append(tempA);
             });
