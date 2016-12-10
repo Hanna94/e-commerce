@@ -342,12 +342,13 @@
         (function() {
             'use strict';
 //=========================================== 模态框方法 ====================================================
-            
+    
+// 搜索方法封装     
 function SkuSearch(_$) {
     // 样式及结构
     _$.addClass('pd-5');
     var tempHTML = $('<form></form>').addClass('bs-example bs-example-form')
-            .html('<input type="hidden" data-sku="">'
+            .html('<input name="SkuID" type="hidden">'
                 + '<div class="row">'
                     + '<div class="col-sm-9 pd-r-0">'
                         + '<div class="input-group input-group-sm">'
@@ -356,7 +357,7 @@ function SkuSearch(_$) {
                                 + '<button class="btn btn-default" type="button">搜索</button>'
                             + '</span>'
                         + '</div>'
-                        + '<div class="list-group col-sm-12 maxH200 pd-r-0 search-drop"></div>'
+                        + '<div class="list-group col-sm-12 maxH200 search-drop"></div>'
                     + '</div>'
                     + '<div class="col-sm-3">'
                         + '<p class="form-control-static"></p>'
@@ -368,27 +369,43 @@ function SkuSearch(_$) {
     // 样式及结构 - End
     
     // 列表模板
-    var tempA = '{{#Datalist}}'
+    var tempA = '{{#DataList}}'
               + '<a data-id="{{DataID}}" data-sku="{{FullSKU}}" class="list-group-item pd-5 poi">'
                 + '<span class="l-sku">[{{FullSKU}}]</span><span class="l-name">{{Name}}</span>'
               + '</a>'
-              + '{{/Datalist}}'
+              + '{{/DataList}}';
     // 列表模板 - End
-
-    var tempData = {
-        Datalist: [
-            {DataID: 1, FullSKU: 'AOE001', Name: '测试001'},
-            {DataID: 2, FullSKU: 'AOE002', Name: '测试002'},
-            {DataID: 3, FullSKU: 'AOE003', Name: '测试003'},
-            {DataID: 4, FullSKU: 'AOE004', Name: '测试004'},
-            {DataID: 5, FullSKU: 'AOE005', Name: '测试005'},
-            {DataID: 6, FullSKU: 'AOE006', Name: '测试006'}
-        ]
-    };
 
     // 搜索事件
     _$.find('button').on('click', function() {
-        _$.find('.list-group').html(Mustache.render(tempA, tempData));
+        $.ajax({
+            url: '/Product/Product.aspx?Do=FullSku&KeyWord=' + _$.find('input[type="text"]').val(),
+            type: 'GET',
+            dataType: 'JSON',
+            success: function(d) {
+                var _list = _$.find('.list-group');
+                if (d.DataList.length > 6) {
+                    if (!_list.hasClass('pd-r-0')) {
+                        _list.addClass('pd-r-0');
+                    }
+                } else if(_list.hasClass('pd-r-0')) {
+                    _list.removeClass('pd-r-0');
+                }
+                _list.html(Mustache.render(tempA, d));
+
+                _AddSkuBtn(_$);
+            }
+        });
+        
+    });
+
+} // 搜索方法封装 - End
+
+function _AddSkuBtn(_$) {
+    _$.find('.list-group a').each(function(ind, el) {
+        $(this).on('click', function() {
+            _$.find('input[name="SkuID"]').val($(this).data('id'));
+        });
     });
 }
 
