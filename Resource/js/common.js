@@ -1248,3 +1248,87 @@ common.copy.SkuCopy = function(_$, op) {
 
     } // 是否有参数传入 - End
 } // common.copy.SkuCopy - End
+
+
+/**
+ * 搜索方法封装
+ * @param {Object} _$ 搜索方法最外部div
+ */
+common.SkuSearch = function(_$) {
+    // 样式及结构
+    _$.addClass('pd-5');
+    var tempHTML = $('<form></form>').addClass('bs-example bs-example-form')
+            .html('<input name="SkuID" type="hidden">'
+                + '<div class="row">'
+                    + '<div class="col-sm-9 pd-r-0">'
+                        + '<input type="text" class="form-control" placeholder="ID / SKU / Name">'
+                        + '<div class="list-group col-sm-12 maxH200 search-drop"></div>'
+                    + '</div>'
+                    + '<div class="col-sm-3">'
+                        + '<p class="form-control-static"></p>'
+                    + '</div>'
+                + '</div>'
+    );
+
+    _$.append(tempHTML);
+    // 样式及结构 - End
+    
+    // 列表模板
+    var tempA = '{{#DataList}}'
+              + '<a data-id="{{DataID}}" data-sku="{{FullSKU}}" class="list-group-item pd-5 poi">'
+                + '<span class="l-sku">[{{FullSKU}}]</span><span class="l-name mg-l-5">{{Name}}</span>'
+              + '</a>'
+              + '{{/DataList}}';
+    // 列表模板 - End
+
+    // 搜索事件
+    _$[0].oninput = function() {
+        var _input = _$.find('input[type="text"]').val();
+        $.ajax({
+            url: '/Product/Product.aspx?Do=FullSku&KeyWord=' + _input,
+            type: 'GET',
+            dataType: 'JSON',
+            success: function(d) {
+                var _list = _$.find('.list-group');
+                
+                // 如果输入框为空，则清空列表
+                if(_input == '' || _input == null) {
+                    _list.empty();
+                    return;
+                }
+                
+                // 设置样式
+                if (d.DataList.length > 6) {
+                    if (!_list.hasClass('pd-r-0')) {
+                        _list.addClass('pd-r-0');
+                    }
+                } else if(_list.hasClass('pd-r-0')) {
+                    _list.removeClass('pd-r-0');
+                }
+
+                // 遍历列表
+                _list.html(Mustache.render(tempA, d));
+
+                // 绑定添加sku的按钮
+                _AddSkuBtn(_$, _list);
+            }
+        });
+        
+    }
+
+} // 搜索方法封装 - End
+
+/**
+ * 绑定添加sku的按钮 - common.SkuSearch 的私有方法
+ * @param  {Object} _$ 搜索方法最外部div
+ * @param  {Object} _l 搜索出的列表
+ */
+function _AddSkuBtn(_$, _l) {
+    _$.find('.list-group a').each(function(ind, el) {
+        $(this).on('click', function() {
+            _$.find('input[name="SkuID"]').val($(this).data('id'));
+            _$.find('input[type="text"]').val($(this).find('.l-name').text());
+            _l.empty();
+        });
+    });
+}
