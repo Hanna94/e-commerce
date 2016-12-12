@@ -414,7 +414,7 @@
             <td><input class="form-control input-sm sku" type="text" value="{{SKU}}"></td>
             <td>
                 {{#Product}}
-                    <p><div class="copy"><span class="poi" data-clipboard-text="{{SKU}}" data-id="{{ID}}" title="点击复制该SKU">[{{SKU}}]</span>&nbsp;{{Name}}</div></p>
+                    <p><div class="copy"><span class="poi mg-r-5" data-clipboard-text="{{SKU}}" data-id="{{ID}}" title="点击复制该SKU">[{{SKU}}]</span>{{Name}}</div></p>
                 {{/Product}}
             </td>
             <td><input class="form-control input-sm quantity" type="text" value="{{Quantity}}"></td>
