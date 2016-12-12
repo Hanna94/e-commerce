@@ -1088,25 +1088,53 @@ common.topBtn = function(winDiv){
  * [tagDiv]: 目标所在的div
  */
 
- common.Rendering = {};
+common.Rendering = {};
 
- // 货币渲染
- common.Rendering.currency = function(tagDiv){
+// 货币渲染
+common.Rendering.currency = function(tagDiv){
     tagDiv.find('.currency').each(function () {
         var ts = $(this);
         ts.addClass('label-' + common.order.amtCurrency($.trim(ts.text())));
     });
- }
+}
 
- //单号渲染
- common.Rendering.order = function(tagDiv){
+//单号渲染
+common.Rendering.order = function(tagDiv){
     tagDiv.find('.orderID').each(function() {
         var $this = $(this),
             before = $this.text();
         $this.html(before.replace(/(\d{8}|\d{6})/ig, '<span class="label label-success">$1</span>'));
     }); 
- }
- 
+}
+
+// var option = {
+//          Data: ['xxx', 'xxx', 'xxx', 'xxx'],                              // 需要遍历的状态
+//          Type: ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
+//          Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
+//      }
+
+// 万用渲染方法
+common.Rendering.All = function(_$, op) {
+    // 默认渲染样式
+    var defaultStyle = ['label-default', 'label-primary', 'label-success', 'label-info', 'label-warning', 'label-danger'];
+
+    if(op && op.Type.length != 0) {
+        var ol = op.Data ? op.Data.length : 0;
+        _$.each(function(ind, el) {
+            var tempLabel = $('<span></span>').addClass('label mg-r-5');
+            var text = ol != 0 ? op.Data[ind] : $(this).find('.label').text();
+            var index = op.Type.indexOf(text);
+            text == '' ? text = '初始' : text;
+            if (index != -1) {
+                if (ol != 0) {
+                    tempLabel.addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(text);
+                    $(this).prepend(tempLabel);
+                }else {
+                    $(this).find('.label').addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(text);
+                }
+            }
+        });
+}
 
 // 调试用输出
 var cl = function(content){
@@ -1126,6 +1154,11 @@ common.copy = {};
  * @param {Object} _$ 需要复制的主体
  * @param {JSON}   op 配置参数
  */
+
+// 需要的DOM结构
+// <div class="copy">
+//     <span class="poi mg-r-5" data-clipboard-text="{{SKU}}" data-id="{{ID}}" title="点击复制该SKU">[{{SKU}}]</span>{{Name}}
+// </div>
 
 // var option = {
 //      Link: {
@@ -1169,14 +1202,13 @@ common.copy.SkuCopy = function(_$, op) {
         if(op.Label && op.Label.Type.length != 0) {
             var ol = op.Label.Data ? op.Label.Data.length : 0;
             _$.each(function(ind, el) {
-                var tempLabel = $('<span></span>').addClass('label');
+                var tempLabel = $('<span></span>').addClass('label mg-r-5');
                 var text = ol != 0 ? op.Label.Data[ind] : $(this).find('.label').text();
                 var index = op.Label.Type.indexOf(text);
                 text == '' ? text = '初始' : text;
                 if (index != -1) {
                     if (ol != 0) {
                         tempLabel.addClass((op.Label.Style && op.Label.Style[index]) || defaultStyle[index]).text(text);
-                        $(this).prepend('&nbsp;');
                         $(this).prepend(tempLabel);
                     }else {
                         $(this).find('.label').addClass((op.Label.Style && op.Label.Style[index]) || defaultStyle[index]).text(text);
