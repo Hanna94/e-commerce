@@ -1267,7 +1267,7 @@ common.copy.SkuCopy = function(_$, op) {
         // 弹出新窗口
         if (op.Link && op.Link.length != 0) {
             _$.each(function(ind, el) {
-                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-certificate')
+                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-certificate');
                 var tempA = $('<a></a>').attr({
                                                 'title': op.Link.Title,
                                                 'href': op.Link.URL[ind],

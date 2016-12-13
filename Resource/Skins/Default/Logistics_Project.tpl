@@ -243,7 +243,7 @@
                 var ts = $(this);
                 // 获取产品的数据
                 $.ajax({
-                    url: '/Product/Product.aspx?Do=FullSku&KeyWord=' + ts.val(),
+                    url: '/Product/API/?Do=SkuSearch&KeyWord=' + ts.val(),
                     dataType: 'json',
                     type: 'get',
                     success: function(data){
@@ -254,7 +254,7 @@
 
                         var fragment = document.createDocumentFragment();
                         $.each(d.DataList, function(i, n){
-                            var newPLi = $('<li class="list-group-item" data-val="' + n.DataID + '">' + n.Name + ' ' + n.FullSKU + '</li>')[0];
+                            var newPLi = $('<li class="list-group-item" data-val="' + n.DataID + '">' + n.FullName + ' ' + n.FullSKU + '</li>')[0];
                             fragment.appendChild(newPLi);
                         });
                         $preceptList.find('ul')[0].appendChild(fragment);

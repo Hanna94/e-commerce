@@ -227,7 +227,7 @@
     <!-- 产品列表模板 -->
     <template id="temp-product">
         {{#DataList}}
-        <a data-id="{{DataID}}" data-sku="{{FullSKU}}" class="list-group-item pd-5">[{{Status}}] <span class="pname">{{Name}}</span> <span class="psku">[{{FullSKU}}]</span></a>
+        <a data-id="{{DataID}}" data-sku="{{FullSKU}}" class="list-group-item pd-5">[{{Status}}] <span class="pname">{{FullName}}</span> <span class="psku">[{{FullSKU}}]</span></a>
         {{/DataList}}
     </template>
 
@@ -548,7 +548,7 @@
             function selectProduct(kw){
                 kw ? kw = kw : kw = '';
                 $.ajax({
-                    url: '/Product/Product.aspx?Do=FullSku&KeyWord=' + kw + '&QueryLimitNumber=50',
+                    url: '/Product/API/?Do=SkuSearch&KeyWord=' + kw + '&QueryLimitNumber=50',
                     type: 'get',
                     dataType: 'json',
                     success: function(data){

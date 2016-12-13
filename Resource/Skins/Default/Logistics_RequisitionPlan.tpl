@@ -236,7 +236,7 @@
     <!-- 渲染产品搜索列表 -->
     <template id="temp-product-search">
         {{#DataList}}
-        <a class="list-group-item pd-5 poi" data-id="{{DataID}}" data-sku="{{FullSKU}}" data-name="{{Name}}">[{{Status}}] {{Name}} [{{FullSKU}}]</a>
+        <a class="list-group-item pd-5 poi" data-id="{{DataID}}" data-sku="{{FullSKU}}" data-name="{{FullName}}">[{{Status}}] {{FullName}} [{{FullSKU}}]</a>
         {{/DataList}}
     </template>
     {页面底部}{/页面底部}
@@ -427,7 +427,7 @@
             function SearchProduct(kw) {
                 kw ? kw = kw : kw = '';
                 $.ajax({
-                    url: '/Product/Product.aspx?Do=FullSku&KeyWord=' + kw + '&QueryLimitNumber=50',
+                    url: '/Product/API/?Do=SkuSearch&KeyWord=' + kw + '&QueryLimitNumber=50',
                     type: 'GET',
                     dataType: 'JSON',
                     success: function(d){

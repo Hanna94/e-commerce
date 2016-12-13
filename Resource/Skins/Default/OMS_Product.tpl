@@ -170,7 +170,7 @@
     <template id="temp-product-list">
         {{#DataList}}
         <tr>
-            <td><label class="checkbox-inline"><input data-id="{{DataID}}" data-sku="{{FullSKU}}" type="checkbox"><input class="input-none copy-txt" type="text" value="{{Name}}" readonly> <input class="input-none copy-txt" value="{{FullSKU}}" readonly></label></td>
+            <td><label class="checkbox-inline"><input data-id="{{DataID}}" data-sku="{{FullSKU}}" type="checkbox"><input class="input-none copy-txt" type="text" value="{{FullName}}" readonly> <input class="input-none copy-txt" value="{{FullSKU}}" readonly></label></td>
             <td>
                 <a title="查看" href="javascript:;"><span class="glyphicon glyphicon-eye-open text-success"></span></a>
             </td>
@@ -235,7 +235,7 @@
     <!-- 创建商品的产品搜索-->
     <template id="temp-search-product">
         {{#DataList}}
-        <a data-id="{{DataID}}" data-sku={{FullSKU}} class="list-group-item pd-5">{{Name}} [{{FullSKU}}]</a>
+        <a data-id="{{DataID}}" data-sku={{FullSKU}} class="list-group-item pd-5">{{FullName}} [{{FullSKU}}]</a>
         {{/DataList}}
     </template>
 
@@ -263,7 +263,7 @@
             function initProductList (page, size, keyword) {
                 common.ajax({
                     title: '初始化产品',
-                    URL: '/Product/Product.aspx?Do=FullSku&Page=' + page + '&QueryLimitNumber=' + size + '&KeyWord=' + keyword,
+                    URL: '/Product/API/?Do=SkuSearch&Page=' + page + '&QueryLimitNumber=' + size + '&KeyWord=' + keyword,
                     good: function (data) {
                         $panelProductList.find('tbody').html(Mustache.render(tempProductList, data));
                         ajaxShowPage({
@@ -360,7 +360,7 @@
             function funSearchProduct() {
                 common.ajax({
                     title: '搜索产品',
-                    URL: '/Product/Product.aspx?Do=FullSku&KeyWord=' + $inputSearch.val(),
+                    URL: '/Product/API/?Do=SkuSearch&KeyWord=' + $inputSearch.val(),
                     good: function (data) {
                         $productSearchResult.html(Mustache.render(tempSearchProduct, data));
                     }

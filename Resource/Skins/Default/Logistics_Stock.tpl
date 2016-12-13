@@ -126,7 +126,7 @@
         {{#DataList}}
         <li class="list-group-item pd-5" data-id="{{DataID}}">
             <div class="row">
-                <div class="col-xs-9 name">{{Name}}</div>
+                <div class="col-xs-9 name">{{FullName}}</div>
                 <div class="col-xs-3 text-right">
                     <div class="btn-group btn-group-xs">
                         <button class="btn btn-success" title="收藏" type="button">
@@ -264,9 +264,9 @@
         function getProductList (page, size, keyword) {
             common.ajax({
                 title: '搜索产品',
-                URL: '/Product/Product.aspx?Do=FullSku&KeyWord=' +
+                URL: '/Product/API/?Do=SkuSearch&KeyWord=' +
                     keyword + '&page=' + page +
-                    '&size=' + size,
+                    '&QueryLimitNumber=' + size,
 
                 good: function(data) {
                     $result.html(Mustache.render(tempSearchResult, data));
