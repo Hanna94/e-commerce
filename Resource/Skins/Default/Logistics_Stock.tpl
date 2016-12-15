@@ -31,14 +31,15 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-sm-2 control-label">产品</label>
                                 <div class="col-sm-10">
-                                    <div class="input-group input-group-sm">
+                                    <!-- <div class="input-group input-group-sm">
                                         <input type="text" class="form-control">
                                         <div class="input-group-btn">
                                             <button type="submit" class="btn btn-default">
                                                 <span class="glyphicon glyphicon-search"></span> 搜索
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> -->
+                                    <div id="common-search"></div>
                                 </div>
                             </div>
                         </form>
@@ -264,8 +265,8 @@
         function getProductList (page, size, keyword) {
             common.ajax({
                 title: '搜索产品',
-                URL: '/Product/API/?Do=SkuSearch&KeyWord=' +
-                    keyword + '&page=' + page +
+                URL: '/Product/API/?Do=SkuSearch&Mode=Full&KeyWord=' +
+                    keyword + '&page=' + page + 
                     '&QueryLimitNumber=' + size,
 
                 good: function(data) {
@@ -282,6 +283,9 @@
                 }
             });
         }
+
+        // 搜索方法
+        common.SkuSearch($('#common-search'), true, true);
 
         // 初始化页面
         (function () {
