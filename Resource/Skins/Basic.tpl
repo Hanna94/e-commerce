@@ -54,16 +54,18 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- 面包屑-->
+            <ol class="breadcrumb">
+                <li><span class="glyphicon glyphicon-send"></span></li>
+                <li>{模型}</li>
+                <li><a href={功能地址}>{功能}</a></li>
+                <li class="active">{操作}</li>
+            </ol>
         </nav>
     </header>
 
-    <!-- 面包屑-->
-    <ol class="breadcrumb">
-        <li><span class="glyphicon glyphicon-send"></span></li>
-        <li>{模型}</li>
-        <li><a href={功能地址}>{功能}</a></li>
-        <li class="active">{操作}</li>
-    </ol>
+    <div style="margin-top: 100px;"></div>
 
     <!-- 加载图片-->
     <div id="loading">
