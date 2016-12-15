@@ -9,9 +9,13 @@
             </div>
             <table class="table table-striped table-bordered table-hover table-condensed">
                 <colgroup>
+                    <col width="100px">
+                    <col width="100px">
+                    <col width="180px">
+                    <col>
+                    <col width="50px">
                     <col>
                     <col>
-                    <col width="250px">
                     <col>
                     <col width="100px">
                 </colgroup>
@@ -25,7 +29,7 @@
                         <th>价格</th>
                         <th>物流商</th>
                         <th>追踪号</th>
-                        <th>创建订单时间</th>
+                        <th>创建时间</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -414,7 +418,7 @@
             <td><input class="form-control input-sm sku" type="text" value="{{SKU}}"></td>
             <td>
                 {{#Product}}
-                    <p><div class="copy"><span class="poi mg-r-5" data-clipboard-text="{{SKU}}" data-id="{{ID}}" title="点击复制该SKU">[{{SKU}}]</span>{{Name}}</div></p>
+                    <p><div class="copy"><span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}}</div></p>
                 {{/Product}}
             </td>
             <td><input class="form-control input-sm quantity" type="text" value="{{Quantity}}"></td>
@@ -620,20 +624,9 @@
 
                     // 运单中SKU可复制
                     var option = {
-                         Link: {
-                            Title: 'New Page',
-                            URL: ['http://www.baidu.com', 'http://www.bilibili.com']
-                         },
-                         Warehouse: {
-                            Ack: true
-                             // placement: 'left',
-                             // trigger: 'click',
-                         },
-                         Label: {
-                             Data: ['魔法', '科学'],
-                             Type: ['', '魔法', '科学', '自然'],
-                             Style: ['label-default', 'label-primary', 'label-warning', 'label-danger']
-                         }
+                        Link: {Ack: true},
+                        Warehouse: {Ack: true, Placement: 'left'},
+                        Label: {Ack: true}
                     };
                     common.copy.SkuCopy($panelTransaction.find('.copy'), option);
 
