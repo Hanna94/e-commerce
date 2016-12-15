@@ -5,40 +5,46 @@
     <div id="data-list" class="container-fluid">
         <header>
             <div class="btn-group btn-group-sm pull-right">
-                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modal-plan-edit">创建调拨计划</button>
-                <button class="btn btn-default" type="button">提审</button>
+                <button class="btn btn-default" type="button">下单</button>
                 <button class="btn btn-default" type="button">取消</button>
             </div>
-            <form action="?" class="form-inline pull-right pull-right mg-r-20">
-                <div class="form-group form-group-sm">
+            <form action="?" class="form-inline mg-r-20 mg-b-10">
+                <div class="form-group form-group-sm mg-r-15">
+                    <label class="control-label">物流方式</label>
                     <select id="TeamID" class="form-control" name="TeamID" data-default="{TeamID}">
                         <option value="0">空运</option>
                         <option value="1">海运</option>
                         <option value="2">香港DHL</option>
                     </select>
                 </div>
-                <div class="form-group form-group-sm mg-l-20">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="单号/产品名称/产品SKU">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">查询</button>
-                        </span>
-                    </div>
+                <div class="form-group form-group-sm mg-r-15">
+                    <label class="control-label">目标仓库</label>
+                    <select class="form-control" name="TeamID" data-default="{TeamID}">
+                        <option value="0">全部</option>
+                        <option value="1">广州仓</option>
+                        <option value="2">海外仓</option>
+                    </select>
+                </div>
+                <div class="form-group form-group-sm mg-r-15">
+                    <label class="control-label">状态</label>
+                    <select id="TeamID" class="form-control" name="TeamID" data-default="{TeamID}">
+                        <option value="0">全部</option>
+                        <option value="1">状态1</option>
+                        <option value="2">状态2</option>
+                        <option value="3">状态3</option>
+                    </select>
+                </div>
+                <div class="form-group form-group-sm">
+                    <input type="text" class="form-control" placeholder="调拨单号 / 货代单号">
+                </div>
+                <div class="form-group form-group-sm">
+                    <button class="btn btn-default btn-sm" type="button">查询</button>
                 </div>
             </form>
         </header>
-    
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="?Do=All">全部</a></li>
-            <li><a href="?Do=All">初始</a></li>
-            <li><a href="?Do=All">提审</a></li>
-            <li><a href="?Do=All">在途</a></li>
-            <li><a href="?Do=All">完成</a></li>
-            <li><a href="?Do=All">取消</a></li>
-        </ul>
-
-        <div class="tab-content mg-t-5">
-            <div class="tab-pane active">
+        
+        <div class="row">
+            <div class="col-sm-12">
                 <div class="maxH800">
                     <table class="table table-striped table-bordered table-hover table-condensed">
                         <thead>
@@ -81,7 +87,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- 设置调拨计划模态框 -->
     <div id="modal-plan-edit" class="modal fade" tabindex="-1" data-backdrop="static">
@@ -293,7 +298,7 @@
         </div>
     </div>
 
-    <div id="common-sreach" class="pd-5" style="width: 300px;"></div>
+    <div id="common-sreach" class="pd-5"></div>
     
     <!-- 添加产品到调拨列表的tr -->
     <template id="temp-product-add-tr">
@@ -309,6 +314,7 @@
     <script src="/Resource/js/bootstrap-datetimepicker.js"></script>
     <script src="/Resource/js/bootstrap-datetimepicker.zh-CN.js"></script>
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
 
     <script>
         (function() {
