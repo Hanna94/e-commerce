@@ -51,7 +51,7 @@
                     <div class="row"> <!-- 第一行-->
                         <div class="col-sm-12">
                             <div class="input-group">
-                                <button id="openTab" class="btn btn-default btn-xs" type="button">批量打开编辑页面</button>
+                                <button id="openTab" class="btn btn-default btn-xs" type="button">批量打开</button>
                             </div>
 
                             <div class="input-group">
@@ -104,7 +104,7 @@
                         </div> 
                     </div> <!-- 第一行-->
 
-                    <div id="SearchTwo" class="row collapse fade"> <!-- 第二行-->
+                    <div id="SearchTwo" class="row collapse fade pd-t-5"> <!-- 第二行-->
                         <div class="col-sm-12"> 
 
                             <div class="form-group">
@@ -128,7 +128,7 @@
                             </div>
 
                             <div id="countrySelect" class="form-group">
-                                <div class="input-froup input-group-sm div-re">
+                                <div class="input-group-sm div-re">
                                     <input class="form-control" name="Country" type="text" placeholder="收货国家" />
                                     <div class="prompt prompt-send hidden">
                                         <ul class="list-group">
@@ -141,6 +141,8 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div id="common-sreach" class="form-group"></div>
                         </div>
                     </div> <!-- 第二行-->
 
@@ -158,7 +160,7 @@
                         <col>
                         <col>
                         <col>
-                        <col width="15%">
+                        <col>
                     </colgroup>
                     <thead>
                         <tr>
@@ -354,6 +356,8 @@
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/order.js"></script>
+    <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
     
     <script>
         (function() {
@@ -650,6 +654,16 @@
 
             // 回顶部按钮
             common.topBtn();
+
+            // 搜索方法
+            common.SkuSearch($('#common-sreach'), true);
+
+            // 渲染搜索方法的label渲染
+            // $('#common-sreach').find('label.label-control').one('DOMNodeInserted', function() {
+            //     var option = {Warehouse: {Ack: true}};
+            //     common.copy.SkuCopy($('#common-sreach').find('.copy'), option);
+            // });
+            // console.log($('#common-sreach').find('label.label-control'));
 
             // 限制审核按钮只在[待处理订单]分页显示
             oParam.Do !== 'UnConfirmed' ? $confBtn.closest('div').addClass('hidden') : $confBtn.closest('div').removeClass('hidden');
