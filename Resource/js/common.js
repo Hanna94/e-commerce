@@ -1134,6 +1134,7 @@ common.Rendering.All = function(_$, op) {
                 }
             }
         });
+    }
 }
 
 // 调试用输出
@@ -1157,27 +1158,21 @@ common.copy = {};
 
 // 需要的DOM结构
 // <div class="copy">
-//     <span class="poi mg-r-5" data-clipboard-text="{{SKU}}" data-id="{{ID}}" title="点击复制该SKU">[{{SKU}}]</span>{{Name}}
+//     <span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>
+//     {{FullName}}
 // </div>
 
 // var option = {
 //      Link: {
-//          Title: 'new page', // 鼠标悬浮显示的文字，默认“打开页面”
-//          URL: ['www.baidu.com', 'www.bilibili.com']
+//          Ack  : true, 
+//          Title: 'new page' // 鼠标悬浮显示的文字，默认“打开页面”
 //      },
 //      Warehouse: {
+//          Ack      : true,
 //          Placement: 'left', // 弹出框显示方向，默认bottom
-//          Trigger: 'hover',  // 弹出框触发方式，默认hover
-//          Stock: [
-//              {AllQuantity(实际库存): 0, LockQuantity(冻结库存): 0, Quantity(可用库存): 0}, 
-//              {AllQuantity: 0, LockQuantity: 0, Quantity: 0},
-//              {AllQuantity: 0, LockQuantity: 0, Quantity: 0}
-//          ]
 //      },
 //      Label: {
-//          Data: ['xxx', 'xxx', 'xxx', 'xxx'],                              // 需要遍历的状态
-//          Type: ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
-//          Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
+//          Ack : true
 //      }
 // };
 // 
@@ -1193,26 +1188,22 @@ common.copy.SkuCopy = function(_$, op) {
     });
 
     // 默认渲染样式
-    var defaultStyle = ['label-default', 'label-primary', 'label-success', 'label-info', 'label-warning', 'label-danger'];
+    var defaultStyle = ['label-default', 'label-primary', 'label-warning', 'label-danger'];
+    var defaultType  = ['', '销售', '清仓', '下架'];
 
     // 是否有参数传入
     if (op) {
 
         // 添加并渲染标签
-        if(op.Label && op.Label.Type.length != 0) {
-            var ol = op.Label.Data ? op.Label.Data.length : 0;
+        if(op.Label && op.Label.Ack) {
             _$.each(function(ind, el) {
                 var tempLabel = $('<span></span>').addClass('label mg-r-5');
-                var text = ol != 0 ? op.Label.Data[ind] : $(this).find('.label').text();
-                var index = op.Label.Type.indexOf(text);
+                var text = $(this).find('.poi').data('status');
+                var index = defaultType.indexOf(text);
                 text == '' ? text = '初始' : text;
                 if (index != -1) {
-                    if (ol != 0) {
-                        tempLabel.addClass((op.Label.Style && op.Label.Style[index]) || defaultStyle[index]).text(text);
-                        $(this).prepend(tempLabel);
-                    }else {
-                        $(this).find('.label').addClass((op.Label.Style && op.Label.Style[index]) || defaultStyle[index]).text(text);
-                    }
+                    tempLabel.addClass(defaultStyle[index]).text(text);
+                    $(this).prepend(tempLabel);
                 }
             });
         } // 添加并渲染标签 - End
@@ -1220,57 +1211,49 @@ common.copy.SkuCopy = function(_$, op) {
         // 显示库存
         if (op.Warehouse.Ack) {
             _$.each(function(ind, el) {
-                var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-home mg-l-5');
+                var _th = $(this);
+                var _switch = 0; // 初始为0，表示新建，当获取过一次接口后，设置为1，点击时不再获取接口。
+                var _skuID = _th.find('.poi').data('id');
 
-                // 获取库存
-                $.ajax({
-                    url: '/Logistics/Logistics.aspx?Do=GetStockBySkuID&DataID=' + $(this).find('.poi').data('id'),
-                    type: 'GET',
-                    dataType: 'JSON',
-                    async: false,
-                    success: function(d) {
-                        var ds = d.DataList;
-                        tempSpan.attr({
-                            'style': 'color: rgb(61, 129, 190)',
-                            'data-container': 'body',
-                            'data-toggle': 'popover',
-                            'data-html': 'true',
-                            'data-trigger': op.Warehouse.Trigger || 'hover',
-                            'data-placement': op.Warehouse.Placement || 'bottom',
-                            'data-content': '<table class="table table-bordered table-condensed">'
-                                            + '<tr>'
-                                                + '<th>仓库名</th><th>实际</th><th>冻结</th><th>可用</th>' 
-                                            + '</tr>'
-                                            + 
-                                            (function() {
-                                                var tempTr = '';
-                                                for(var i = 0; i < ds.length; i++) {
-                                                    tempTr += '<tr>'
-                                                                + '<td>' + ds[i].Name
-                                                                + '</td><td>' + ds[i].AllQuantity
-                                                                + '</td><td>' + ds[i].LockQuantity
-                                                                + '</td><td>' + ds[i].Quantity + '</td>' 
-                                                            + '</tr>';
-                                                }
-                                                return tempTr;
-                                            })()
-                                          + '</table>'
-                        });
-                    }
-                });
+                // 设置弹出框
+                var tempSpan = $('<span></span>').addClass('glyphicon poi glyphicon-home mg-l-5')
+                                                 .attr({
+                                                    'title'         : '库存',
+                                                    'style'         : 'color: rgb(61, 129, 190)',
+                                                    'data-container': 'body',
+                                                    'data-toggle'   : 'popover',
+                                                    'data-html'     : 'true',
+                                                    'data-trigger'  : 'click',
+                                                    'data-placement': op.Warehouse.Placement || 'bottom'
+                                                 });
+                _th.append(tempSpan);
 
-                $(this).append(tempSpan);
-                $(this).find('span[data-toggle="popover"]').popover();
+
+                _th.find('span.glyphicon-home').on('click', function() {
+                    var _sth = $(this);
+                    if (_switch == 0 && (_skuID != 0 && _skuID != null && _skuID != '')) {
+                        _switch = 1;
+                        common.copy.UpdateStock(tempSpan, _skuID, false);
+                    } // if - End
+
+                    //启动弹出框，并且设置弹出框完全渲染后的调用方法
+                }).popover().on('shown.bs.popover', function() {
+                    var popID = $(this).attr('aria-describedby');
+                    $('#' + popID).find('.glyphicon-time').attr('onclick', 'common.copy.UpdateStock(' + popID + ', ' + _skuID + ', true)');
+                });;
+                
+                
             });
         } // 显示库存 - End
 
         // 弹出新窗口
-        if (op.Link && op.Link.length != 0) {
+        if (op.Link && op.Link.Ack) {
             _$.each(function(ind, el) {
+                var _skuID = _tar.data('id');
                 var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-certificate');
                 var tempA = $('<a></a>').attr({
-                                                'title': op.Link.Title,
-                                                'href': op.Link.URL[ind],
+                                                'title' : op.Link.Title || '打开页面',
+                                                'href'  : '/Product/?Do=All&SkuID=' + _skuID,
                                                 'target': '_blank'
                                                 });
                 tempA.append(tempSpan);
@@ -1281,85 +1264,190 @@ common.copy.SkuCopy = function(_$, op) {
     } // 是否有参数传入 - End
 } // common.copy.SkuCopy - End
 
+/**
+ * 更新库存
+ * @param {Object} _$     需要更新的主题：新建时为整个table，更新时为tbody
+ * @param {Number} _skuID SKU的DataID
+ * @param {String} update 用于判断是否是更新
+ */
+common.copy.UpdateStock = function(_$, _skuID, update) {
+    $.ajax({
+        url: '/Logistics/Logistics.aspx?Do=GetStockBySkuID&DataID=' + _skuID,
+        type: 'GET',
+        dataType: 'JSON',
+        async: false,
+        success: function(d) {
+            var ds = d.DataList;
+            var now = new Date();
+            var nowTime = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+
+            if (update) {
+                $(_$).find('.popover-content span[name="time"]').html(nowTime);
+                $(_$).find('.popover-content table tbody').html(common.copy.LoopStock(ds));
+            } else {
+                _$.attr({
+                    'data-content'  : '<span class="pull-right mg-b-5">获取时间：'
+                                    + '<span class="glyphicon glyphicon-time text-danger mg-r-5 poi" title="刷新库存" '
+                                    + 'onclick=""></span><span name="time">' + nowTime + '</span></span>'
+                                    + '<table class="table table-bordered table-condensed">'
+                                    + '<thead>'
+                                        + '<tr>'
+                                            + '<th>仓库</th><th>库存编码</th><th>在库</th><th>冻结</th><th>可用</th>' 
+                                        + '</tr>'
+                                    + '</thead>'
+                                    + '<tbody>'
+                                    + common.copy.LoopStock(ds)
+                                    + '</tbody>'
+                                  + '</table>'
+                });
+            }
+
+        }
+    });
+}
+
+/**
+ * 遍历库存
+ * @param {JSON}   ds 库存数据
+ * return {String}    拼接好的元素字符串
+ */
+common.copy.LoopStock = function(ds) {
+    var tempTr = '';
+    for(var i = 0; i < ds.length; i++) {
+        tempTr += '<tr>'
+                    + '<td>' + ds[i].Name
+                    + '<td>' + ds[i].InsideNo
+                    + '</td><td>' + ds[i].AllQuantity
+                    + '</td><td>' + ds[i].LockQuantity
+                    + '</td><td>' + ds[i].Quantity + '</td>' 
+                + '</tr>';
+    }
+    return tempTr;
+}
 
 /**
  * 搜索方法封装
- * @param {Object} _$ 搜索方法最外部div
+ * @param {Object}  _$      搜索方法最外部div
+ * @param {boolean} inForm  是否有外部form
+ * @param {boolean} isLimit 是否是迷你搜索框
  */
-common.SkuSearch = function(_$) {
+// 需要的DOM结构
+// <div id="XXXX"></div> 其实什么元素都行，只要能做容器就好
+// 如果不是迷你模式，需要在页面添加引入
+// <script src="/Resource/js/ZeroClipboard.min.js"></script>
+common.SkuSearch = function(_$, inForm, isLimit) {
     // 样式及结构
-    _$.addClass('pd-5');
-    var tempHTML = $('<form></form>').addClass('bs-example bs-example-form')
-            .html('<input name="SkuID" type="hidden">'
+    var tempHTML;
+    if(!inForm) {
+        tempHTML = $('<form></form>').addClass('form-inline');
+    }else {
+        tempHTML = _$;
+    }
+
+    tempHTML.html('<input name="SkuID" type="hidden">'
                 + '<div class="row">'
-                    + '<div class="col-sm-9 pd-r-0">'
+                    + '<div class="col-sm-12 input-group-sm">'
                         + '<input type="text" class="form-control" placeholder="ID / SKU / Name">'
-                        + '<div class="list-group col-sm-12 maxH200 search-drop"></div>'
-                    + '</div>'
-                    + '<div class="col-sm-3">'
-                        + '<p class="form-control-static"></p>'
+                        + '<div class="list-group maxH200 search-drop"></div>'
+                        + '<label class="label-control mg-l-10"></label>'
                     + '</div>'
                 + '</div>'
+                
     );
+    
 
     _$.append(tempHTML);
     // 样式及结构 - End
     
     // 列表模板
-    var tempA = '{{#DataList}}'
-              + '<a data-id="{{DataID}}" data-sku="{{FullSKU}}" class="list-group-item pd-5 poi">'
-                + '<span class="l-sku">[{{FullSKU}}]</span><span class="l-name mg-l-5">{{Name}}</span>'
+    var tempA = '<div id="oh">' 
+              + '{{#DataList}}'
+              + '<a data-id="{{DataID}}" data-sku="{{FullSKU}}" data-status="{{Status}}" class="list-group-item pd-5 poi">'
+                + '<span data-status="{{Status}}" class="l-status">[{{Status}}]</span>'
+                + '<span data-sku="{{FullSKU}}" class="l-sku">[{{FullSKU}}]</span>'
+                + '<span data-name="{{FullName}}" class="l-name mg-l-5">{{FullName}}</span>'
               + '</a>'
-              + '{{/DataList}}';
+              + '{{/DataList}}'
+              + '</div>';
     // 列表模板 - End
 
     // 搜索事件
+    var _list = _$.find('.search-drop');
+    // 限制搜索下拉的宽度跟输入框一致
+    _$.find('input[type="text"]').one('focus', function() {
+        _list.width(_$.find('input[type="text"]').outerWidth(true));
+    });
+    // 每当用户输入时检测接口
     _$[0].oninput = function() {
         var _input = _$.find('input[type="text"]').val();
         $.ajax({
-            url: '/Product/Product.aspx?Do=FullSku&KeyWord=' + _input,
+            url: '/Product/API/?Do=SkuSearch&Mode=Full&QueryLimitNumber=100&Page=3&KeyWord=' + _input,
             type: 'GET',
             dataType: 'JSON',
             success: function(d) {
-                var _list = _$.find('.list-group');
                 
                 // 如果输入框为空，则清空列表
                 if(_input == '' || _input == null) {
                     _list.empty();
+                    _$.find('input[type="hidden"]').val('');
                     return;
-                }
-                
-                // 设置样式
-                if (d.DataList.length > 6) {
-                    if (!_list.hasClass('pd-r-0')) {
-                        _list.addClass('pd-r-0');
-                    }
-                } else if(_list.hasClass('pd-r-0')) {
-                    _list.removeClass('pd-r-0');
                 }
 
                 // 遍历列表
                 _list.html(Mustache.render(tempA, d));
 
                 // 绑定添加sku的按钮
-                _AddSkuBtn(_$, _list);
+                _AddSkuBtn(_$, _list, isLimit);
+
             }
         });
-        
     }
 
 } // 搜索方法封装 - End
 
 /**
  * 绑定添加sku的按钮 - common.SkuSearch 的私有方法
- * @param  {Object} _$ 搜索方法最外部div
- * @param  {Object} _l 搜索出的列表
+ * @param  {Object} _$      搜索方法最外部div
+ * @param  {Object} _l      搜索出的列表
+ * @param  {Object} isLimit 是否是迷你搜索框
  */
-function _AddSkuBtn(_$, _l) {
+function _AddSkuBtn(_$, _l, isLimit) {
     _$.find('.list-group a').each(function(ind, el) {
         $(this).on('click', function() {
             _$.find('input[name="SkuID"]').val($(this).data('id'));
-            _$.find('input[type="text"]').val($(this).find('.l-name').text());
+
+            // 拼装数据
+            var _d = {
+                data: {
+                    DataID  : $(this).data('id'),
+                    Status  : $(this).data('status'),
+                    FullSKU : $(this).find('.l-sku').data('sku'),
+                    FullName: $(this).find('.l-name').data('name')
+                }
+            };
+            if (isLimit) {
+                _$.find('input[type="text"]').val($(this).find('.l-name').text());
+            } else {
+                var tmpHtml = '{{#data}}'
+                            + '<div class="copy">'
+                                + '<span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">'
+                                    + '[{{FullSKU}}]'
+                                + '</span>{{FullName}}'
+                            + '</div>'
+                            + '{{/data}}';
+
+                // 渲染搜索方法的label渲染
+                _$.find('label.label-control').one('DOMNodeInserted', function() {
+                    var option = {
+                         Link: {Ack  : true},
+                         Warehouse: {Ack : true},
+                         Label: {Ack : true}
+                    };
+                    common.copy.SkuCopy(_$.find('.copy'), option);
+                });
+
+                _$.find('label').html(Mustache.render(tmpHtml, _d));
+            }
             _l.empty();
         });
     });
