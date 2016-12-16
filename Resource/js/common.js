@@ -1172,14 +1172,18 @@ common.copy = {};
 //          Placement: 'left', // 弹出框显示方向，默认bottom
 //      },
 //      Label: {
-//          Ack : true
+//          Ack: true
+//      },
+//      Limit: {
+//          Ack: true
 //      }
 // };
 // 
 common.copy.SkuCopy = function(_$, op) {
     ZeroClipboard.config({swfPath: '/Resource/flash/ZeroClipboard.swf'});
-    var _tar = _$.find('.poi');
-    var clip = new ZeroClipboard(_tar);
+    var _tar   = _$.find('.poi');
+    var _skuID = _tar.data('id');
+    var clip   = new ZeroClipboard(_tar);
 
     // 添加鼠标滑过效果
     _tar.on({
@@ -1192,7 +1196,7 @@ common.copy.SkuCopy = function(_$, op) {
     var defaultType  = ['', '销售', '清仓', '下架'];
 
     // 是否有参数传入
-    if (op) {
+    if (_skuID && (op && !(op.Limit && op.Limit.Ack))) {
 
         // 添加并渲染标签
         if(op.Label && op.Label.Ack) {
@@ -1213,7 +1217,6 @@ common.copy.SkuCopy = function(_$, op) {
             _$.each(function(ind, el) {
                 var _th = $(this);
                 var _switch = 0; // 初始为0，表示新建，当获取过一次接口后，设置为1，点击时不再获取接口。
-                var _skuID = _th.find('.poi').data('id');
 
                 // 设置弹出框
                 var tempSpan = $('<span></span>').addClass('glyphicon poi glyphicon-home mg-l-5')
@@ -1249,7 +1252,6 @@ common.copy.SkuCopy = function(_$, op) {
         // 弹出新窗口
         if (op.Link && op.Link.Ack) {
             _$.each(function(ind, el) {
-                var _skuID = _tar.data('id');
                 var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-certificate');
                 var tempA = $('<a></a>').attr({
                                                 'title' : op.Link.Title || '打开页面',
@@ -1325,20 +1327,31 @@ common.copy.LoopStock = function(ds) {
     return tempTr;
 }
 
+
+
 /**
  * 搜索方法封装
  * @param {Object}  _$      搜索方法最外部div
  * @param {boolean} inForm  是否有外部form
  * @param {boolean} isLimit 是否是迷你搜索框
+ * @param {String}  mode    是否是完整搜索
  */
+
+// 参考参数
+// var option = {
+//     inForm : true,
+//     isLimit: true,
+//     mode   : true
+// };
+// 
 // 需要的DOM结构
 // <div id="XXXX"></div> 其实什么元素都行，只要能做容器就好
 // 如果不是迷你模式，需要在页面添加引入
 // <script src="/Resource/js/ZeroClipboard.min.js"></script>
-common.SkuSearch = function(_$, inForm, isLimit) {
+common.SkuSearch = function(_$, op) {
     // 样式及结构
     var tempHTML;
-    if(!inForm) {
+    if(!op.inForm) {
         tempHTML = $('<form></form>').addClass('form-inline');
     }else {
         tempHTML = _$;
@@ -1348,27 +1361,23 @@ common.SkuSearch = function(_$, inForm, isLimit) {
                 + '<div class="row">'
                     + '<div class="col-sm-12 input-group-sm">'
                         + '<input type="text" class="form-control" placeholder="ID / SKU / Name">'
-                        + '<div class="list-group maxH200 search-drop"></div>'
+                        + '<div class="list-group maxH200 search-drop hidden"></div>'
                         + '<label class="label-control mg-l-10"></label>'
                     + '</div>'
                 + '</div>'
-                
     );
-    
 
     _$.append(tempHTML);
     // 样式及结构 - End
     
     // 列表模板
-    var tempA = '<div id="oh">' 
-              + '{{#DataList}}'
+    var tempA = '{{#DataList}}'
               + '<a data-id="{{DataID}}" data-sku="{{FullSKU}}" data-status="{{Status}}" class="list-group-item pd-5 poi">'
                 + '<span data-status="{{Status}}" class="l-status">[{{Status}}]</span>'
                 + '<span data-sku="{{FullSKU}}" class="l-sku">[{{FullSKU}}]</span>'
                 + '<span data-name="{{FullName}}" class="l-name mg-l-5">{{FullName}}</span>'
               + '</a>'
-              + '{{/DataList}}'
-              + '</div>';
+              + '{{/DataList}}';
     // 列表模板 - End
 
     // 搜索事件
@@ -1381,7 +1390,7 @@ common.SkuSearch = function(_$, inForm, isLimit) {
     _$[0].oninput = function() {
         var _input = _$.find('input[type="text"]').val();
         $.ajax({
-            url: '/Product/API/?Do=SkuSearch&Mode=Full&QueryLimitNumber=100&Page=3&KeyWord=' + _input,
+            url: '/Product/API/?Do=SkuSearch&Mode=' + (op.mode ? 'Full' : '') + '&QueryLimitNumber=100&Page=3&KeyWord=' + _input,
             type: 'GET',
             dataType: 'JSON',
             success: function(d) {
@@ -1395,13 +1404,22 @@ common.SkuSearch = function(_$, inForm, isLimit) {
 
                 // 遍历列表
                 _list.html(Mustache.render(tempA, d));
-
+                // 添加背景色
+                _list.find('a:odd').css('background-color', '#DDDDDD');
+                // 显示列表
+                _list.removeClass('hidden');
                 // 绑定添加sku的按钮
-                _AddSkuBtn(_$, _list, isLimit);
+                _AddSkuBtn(_$, _list, op.isLimit);
 
             }
         });
     }
+
+    // 初始化页面label
+    if (op.SkuID) {
+        InitialSetUp(_$, op);
+    }
+    // 初始化页面label - End
 
 } // 搜索方法封装 - End
 
@@ -1414,6 +1432,10 @@ common.SkuSearch = function(_$, inForm, isLimit) {
 function _AddSkuBtn(_$, _l, isLimit) {
     _$.find('.list-group a').each(function(ind, el) {
         $(this).on('click', function() {
+            // 销毁原有的弹出框
+            $('.popover').popover('destroy');
+
+            // 插入隐藏值
             _$.find('input[name="SkuID"]').val($(this).data('id'));
 
             // 拼装数据
@@ -1428,27 +1450,63 @@ function _AddSkuBtn(_$, _l, isLimit) {
             if (isLimit) {
                 _$.find('input[type="text"]').val($(this).find('.l-name').text());
             } else {
-                var tmpHtml = '{{#data}}'
-                            + '<div class="copy">'
-                                + '<span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">'
-                                    + '[{{FullSKU}}]'
-                                + '</span>{{FullName}}'
-                            + '</div>'
-                            + '{{/data}}';
-
-                // 渲染搜索方法的label渲染
-                _$.find('label.label-control').one('DOMNodeInserted', function() {
-                    var option = {
-                         Link: {Ack  : true},
-                         Warehouse: {Ack : true},
-                         Label: {Ack : true}
-                    };
-                    common.copy.SkuCopy(_$.find('.copy'), option);
-                });
-
-                _$.find('label').html(Mustache.render(tmpHtml, _d));
+                renderLabel(_$, _d);
             }
             _l.empty();
         });
+    });
+}
+
+/**
+ * 渲染label标签
+ * @param  {Object} _$ 搜索方法最外部div
+ * @param  {JSON}   _d 参数
+ */
+function renderLabel(_$, _d) {
+    var tmpHtml = '{{#data}}'
+                + '<div class="copy">'
+                    + '<span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">'
+                        + '[{{FullSKU}}]'
+                    + '</span>{{FullName}}'
+                + '</div>'
+                + '{{/data}}';
+
+    // 渲染搜索方法的label渲染
+    _$.find('label.label-control').one('DOMNodeInserted', function() {
+        var option = {
+             Link: {Ack  : true},
+             Warehouse: {Ack : true},
+             Label: {Ack : true}
+        };
+        common.copy.SkuCopy(_$.find('.copy'), option);
+    });
+
+    _$.find('label').html(Mustache.render(tmpHtml, _d));
+}
+
+/**
+ * 初始化页面label标签
+ * @param {Object} _$ 搜索方法最外部div
+ * @param {JSON}   op 配置参数
+ */
+function InitialSetUp(_$, op) {
+    $.ajax({
+        url: '/Product/API/?Do=SkuSearch&Mode=' + (op.mode ? 'Full' : '') + '&QueryLimitNumber=100&Page=3&KeyWord=' + op.SkuID,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function(d) {
+            var ds = d.DataList[0];
+            var _d = {
+                data: {
+                    DataID  : ds.DataID,
+                    Status  : ds.Status,
+                    FullSKU : ds.FullSKU,
+                    FullName: ds.FullName
+                }
+            };
+
+            // 渲染label标签
+            renderLabel(_$, _d);
+        }
     });
 }
