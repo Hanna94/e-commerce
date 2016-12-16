@@ -626,7 +626,8 @@
                     var option = {
                         Link: {Ack: true},
                         Warehouse: {Ack: true, Placement: 'left'},
-                        Label: {Ack: true}
+                        Label: {Ack: true},
+                        Limit: {Ack: true}
                     };
                     common.copy.SkuCopy($panelTransaction.find('.copy'), option);
 

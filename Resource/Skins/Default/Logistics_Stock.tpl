@@ -31,15 +31,10 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-sm-2 control-label">产品</label>
                                 <div class="col-sm-10">
-                                    <!-- <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control">
-                                        <div class="input-group-btn">
-                                            <button type="submit" class="btn btn-default">
-                                                <span class="glyphicon glyphicon-search"></span> 搜索
-                                            </button>
-                                        </div>
-                                    </div> -->
                                     <div id="common-search"></div>
+                                    <button type="submit" class="btn btn-default btn-sm pull-right">
+                                        <span class="glyphicon glyphicon-eye-open"></span> 搜索
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -285,7 +280,13 @@
         }
 
         // 搜索方法
-        common.SkuSearch($('#common-search'), true, true);
+        var option = {
+            inForm : true,
+            isLimit: true,
+            mode   : true,
+            button : true
+        };
+        common.SkuSearch($('#common-search'), option);
 
         // 初始化页面
         (function () {

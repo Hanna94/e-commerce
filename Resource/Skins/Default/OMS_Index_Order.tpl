@@ -656,14 +656,21 @@
             common.topBtn();
 
             // 搜索方法
-            common.SkuSearch($('#common-sreach'), true);
+            var option = {
+                inForm : true,
+                isLimit: false,
+                mode   : true,
+                SkuID  : oParam.SkuID || false
+            };
+            common.SkuSearch($('#common-sreach'), option);
 
-            // 渲染搜索方法的label渲染
-            // $('#common-sreach').find('label.label-control').one('DOMNodeInserted', function() {
-            //     var option = {Warehouse: {Ack: true}};
-            //     common.copy.SkuCopy($('#common-sreach').find('.copy'), option);
-            // });
-            // console.log($('#common-sreach').find('label.label-control'));
+            oParam.SkuID && (function(){
+                $(document).ready(function() {
+                    $('#SearchTwo').collapse('show');
+                    $('#SearchTwoBTN').find('span').toggleClass('glyphicon-chevron-up').toggleClass('glyphicon-chevron-down');
+                });
+                
+            })();
 
             // 限制审核按钮只在[待处理订单]分页显示
             oParam.Do !== 'UnConfirmed' ? $confBtn.closest('div').addClass('hidden') : $confBtn.closest('div').removeClass('hidden');
