@@ -63,24 +63,26 @@
                             <th>操作</th>
                         </thead>
                         <tbody>
+                            <!-- BEGIN 数据列表 ATTRIB= -->
                             <tr>
                                 <td><input type="checkbox" value="13"></td>
-                                <td>REQ160812XXX001 {ReferenceID}</td>
-                                <td>IA1M16111000004 {OrderSign}</td>
-                                <td>Shippingln {StateNew}</td>
-                                <td>AIRCL - 头程空运 {ShippingMethodNew}</td>
-                                <td>GZ {LocationNew}</td>
-                                <td>UK {WarehouseNew}</td>
-                                <td>2016-12-10 {OutDate}</td>
-                                <td>9 {CountCase}</td>
-                                <td>56.326 KG {CountCBM}</td>
-                                <td>运费： {CountCost}</td>
-                                <td>2016-11-16 {Date}</td>
+                                <td>{ReferenceID}</td>
+                                <td>{OrderSign}</td>
+                                <td>{State}</td>
+                                <td>{ShippingMethod}</td>
+                                <td>{Location}</td>
+                                <td>{Warehouse}</td>
+                                <td>{ArriveTime}</td>
+                                <td>{CountCase}</td>
+                                <td>{CountCBM}<br>{CountWeight}</td>
+                                <td>{CountCost}</td>
+                                <td>{Date}</td>
                                 <td>
                                     <span class="poi glyphicon glyphicon-pencil mg-r-5" title="编辑"></span>
                                     <span class="poi glyphicon glyphicon-list-alt" title="日志"></span>
                                 </td>
                             </tr>
+                            <!-- END 数据列表 -->
                         </tbody>
                         <tfoot><tr><td colspan="13"></td></tr></tfoot>
                     </table>
@@ -88,227 +90,6 @@
             </div>
         </div>
 
-    <!-- 设置调拨计划模态框 -->
-    <div id="modal-plan-edit" class="modal fade" tabindex="-1" data-backdrop="static">
-        <div class="modal-dialog" style="width:800px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" type="button" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">设置调拨计划</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal">
-                        <!-- input部分 -->
-                        <div class="form-group form-group-sm">
-                            <label class="control-label col-sm-2">计划单号</label>
-                            <div class="col-sm-4">
-                                <input name="modal-plan-order" type="text" class="form-control" readonly>
-                            </div>
-                            <label class="control-label col-sm-2">发起人</label>
-                            <div class="col-sm-4">
-                                <input name="modal-plan-name" type="text" class="form-control" readonly>
-                            </div>
-                        </div>
-                        <div class="form-group form-group-sm">
-                            <label class="control-label col-sm-2">调拨方式</label>
-                            <div class="col-sm-4">
-                                <select name="modal-plan-types" class="form-control">
-                                    <option value="">空运</option>
-                                    <option value="">海运</option>
-                                    <option value="">香港DHL</option>
-                                </select>
-                            </div>
-                            <label class="control-label col-sm-2">预期抵达</label>
-                            <div class="col-sm-4">
-                                <input name="modal-plan-arrival" type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group form-group-sm">
-                            <label class="control-label col-sm-2">调出仓库</label>
-                            <div class="col-sm-4">
-                                <select name="modal-plan-out" class="form-control">
-                                    <option value="">广州仓</option>
-                                    <option value="">海运</option>
-                                    <option value="">香港DHL</option>
-                                </select>
-                            </div>
-                            <label class="control-label col-sm-2">调入仓库</label>
-                            <div class="col-sm-4">
-                                <select name="modal-plan-in" class="form-control">
-                                    <option value="">广州仓</option>
-                                    <option value="">海运</option>
-                                    <option value="">香港DHL</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group form-group-sm">
-                            <label class="control-label col-sm-2">状态</label>
-                            <div class="col-sm-4">
-                                <input name="modal-plan-state" type="text" class="form-control" readonly>
-                            </div>
-                            <label class="control-label col-sm-2">创建日期</label>
-                            <div class="col-sm-4">
-                                <input name="modal-plan-creation" type="text" class="form-control" readonly>
-                            </div>
-                        </div>
-                        <!-- input部分 End -->
-                        <!-- 产品调拨 -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <h5 style="border-bottom: #CCC solid 1px; font-weight: bold;">调拨产品</h5>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group form-group-sm">
-                                    <div class="col-sm-12 maxH250">
-                                        <table class="table table-striped table-bordered table-hover table-condensed">
-                                            <colgroup>
-                                                <col width="50px">
-                                                <col>
-                                                <col width="70px">
-                                                <col width="10px">
-                                            </colgroup>
-                                            <thead class="cen-th">
-                                                <tr>
-                                                    <th>SkuID</th>
-                                                    <th>Product</th>
-                                                    <th>Quantity</th>
-                                                    <th><span class="glyphicon glyphicon-wrench"></span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="ver-td inputH20">
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF  DFASDFASDF DFASDFASDF</td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-                                                <tr data-skuid="3155">
-                                                    <td>3155</td>
-                                                    <td>[C00247] SADFASDFASDF </td>
-                                                    <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-                                                    <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-                                                </tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="input-group input-group-sm">
-                                            <input class="form-control input-search" type="text" placeholder="产品ID / 产品名称 / 产品Sku">
-                                            <span class="input-group-btn">
-                                                <input type="button" class="btn btn-default btn-search" value="搜索" />
-                                                <input type="button" class="btn btn-default btn-empty" value="清空列表" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="product-search-result" class="list-group col-sm-12 maxH200">
-                                    <a class="list-group-item pd-5 poi" data-skuid="111" data-sku="sdas" data-name="SADFAqweF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="112" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="113" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="114" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="115" data-sku="sdas" data-name="S1234ASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="116" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="117" data-sku="sdas" data-name="SADerfwASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="118" data-sku="sdas" data-name="SADFAqweDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="119" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="120" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="121" data-sku="sdas" data-name="SADasdfSDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                    <a class="list-group-item pd-5 poi" data-skuid="122" data-sku="sdas" data-name="SADFASDFASDF">[销售] SADFASDFASDF [sb233-Def]</a>
-                                </div>
-                            </div>
-                        </div>
-                    <!-- 产品调拨 End -->
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button id="modal-plan-btn-save" class="btn btn-default btn-sm">保存</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="common-sreach" class="pd-5"></div>
-    
-    <!-- 添加产品到调拨列表的tr -->
-    <template id="temp-product-add-tr">
-        <tr data-skuid="{{skuId}}">
-            <td>{{skuId}}</td>
-            <td>[{{SKU}}] {{skuName}} </td>
-            <td><input class="form-control" type="text" name="modal-plan-quantity"></td>
-            <td><span class="btn-remove glyphicon glyphicon-remove text-danger poi"></span></td>
-        </tr>
-    </template>
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/bootstrap-datetimepicker.js"></script>
@@ -321,8 +102,6 @@
             'use strict';
 //=========================================== 模态框方法 ====================================================
 
-// 搜索方法
-common.SkuSearch($('#common-sreach'));
         
 //=========================================== 模态框方法 ====================================================
 

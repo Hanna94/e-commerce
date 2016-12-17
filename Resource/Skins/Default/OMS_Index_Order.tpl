@@ -664,6 +664,7 @@
             };
             common.SkuSearch($('#common-sreach'), option);
 
+            // 初始化页面
             oParam.SkuID && (function(){
                 $(document).ready(function() {
                     $('#SearchTwo').collapse('show');
