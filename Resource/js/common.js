@@ -1108,10 +1108,11 @@ common.Rendering.order = function(tagDiv){
 }
 
 // var option = {
-//          Data: ['xxx', 'xxx', 'xxx', 'xxx'],                              // 需要遍历的状态
-//          Type: ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
-//          Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
-//      }
+//     Type : ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
+//     Ch   : ['中文1', '中文2', '中文3'],
+//     Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
+//     Mode : prepend(前插) / append(后插) / replace(替换)
+//}
 
 // 万用渲染方法
 common.Rendering.All = function(_$, op) {
@@ -1119,18 +1120,23 @@ common.Rendering.All = function(_$, op) {
     var defaultStyle = ['label-default', 'label-primary', 'label-success', 'label-info', 'label-warning', 'label-danger'];
 
     if(op && op.Type.length != 0) {
-        var ol = op.Data ? op.Data.length : 0;
         _$.each(function(ind, el) {
-            var tempLabel = $('<span></span>').addClass('label mg-r-5');
-            var text = ol != 0 ? op.Data[ind] : $(this).find('.label').text();
+            var tempLabel = $('<span></span>').addClass('label mg-r-5 mg-l-5');
+            var text = $(this).text();
             var index = op.Type.indexOf(text);
             text == '' ? text = '初始' : text;
             if (index != -1) {
-                if (ol != 0) {
-                    tempLabel.addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(text);
-                    $(this).prepend(tempLabel);
-                }else {
-                    $(this).find('.label').addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(text);
+                tempLabel.addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(op.Ch ? op.Ch[index] : op.Type[index]);
+                switch(op.Mode) {
+                    case 'prepend':
+                        $(this).prepend(tempLabel);
+                        break;
+                    case 'append':
+                        $(this).append(tempLabel);
+                        break;
+                    case 'replace':
+                        $(this).html(tempLabel);
+                        break;
                 }
             }
         });
@@ -1159,7 +1165,7 @@ common.copy = {};
 // 需要的DOM结构
 // <div class="copy">
 //     <span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>
-//     {{FullName}}
+//     {{FullName}} * {{Quantity}}
 // </div>
 
 // var option = {
@@ -1202,8 +1208,8 @@ common.copy.SkuCopy = function(_$, op) {
         if(op.Label && op.Label.Ack) {
             _$.each(function(ind, el) {
                 var tempLabel = $('<span></span>').addClass('label mg-r-5');
-                var text = $(this).find('.poi').data('status');
-                var index = defaultType.indexOf(text);
+                var text      = $(this).find('.poi').data('status');
+                var index     = defaultType.indexOf(text);
                 text == '' ? text = '初始' : text;
                 if (index != -1) {
                     tempLabel.addClass(defaultStyle[index]).text(text);
@@ -1505,6 +1511,7 @@ function InitialSetUp(_$, op) {
                 }
             };
 
+            _$.find('input[type="text"]').val(ds.FullSKU);
             // 渲染label标签
             renderLabel(_$, _d);
         }
