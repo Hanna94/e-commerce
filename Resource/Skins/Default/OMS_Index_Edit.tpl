@@ -418,7 +418,7 @@
             <td><input class="form-control input-sm sku" type="text" value="{{SKU}}"></td>
             <td>
                 {{#Product}}
-                    <p><div class="copy"><span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}}</div></p>
+                    <p><div class="copy"><span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}} * {{Quantity}}</div></p>
                 {{/Product}}
             </td>
             <td><input class="form-control input-sm quantity" type="text" value="{{Quantity}}"></td>
@@ -626,8 +626,7 @@
                     var option = {
                         Link: {Ack: true},
                         Warehouse: {Ack: true, Placement: 'left'},
-                        Label: {Ack: true},
-                        Limit: {Ack: true}
+                        Label: {Ack: true}
                     };
                     common.copy.SkuCopy($panelTransaction.find('.copy'), option);
 
