@@ -12,6 +12,7 @@
     <link href="/Resource/css/main.css" rel="stylesheet">
 	<link href="/Resource/css/jquery-ui.min.css" rel="stylesheet">
     <script src="/Resource/js/jquery.js"></script>
+    <script src="/Resource/js/mustache.js"></script>
 </head>
 [/页面属性]
 
