@@ -81,8 +81,8 @@
                         <select class="form-control" name="FreightID"></select>
                     </div>
 
-                    <div class="form-group form-group-sm">
-                        <select class="form-control" name="WaybillType">
+                    <div class="form-group form-group-sm"">
+                        <select class="form-control" name="WaybillType" style="width:100px;">
                             <option value="0">所有运单</option>
                             <option value="1">可合并运单</option>
                             <option value="2">可拆分运单</option>
@@ -118,7 +118,7 @@
 
                     <div id="countrySelect" class="form-group">
                         <div class="input-froup input-group-sm div-re">
-                            <input class="form-control" name="Country" type="text" placeholder="收货国家" />
+                            <input class="form-control" name="Country" type="text" style="width: 100px;" placeholder="收货国家" />
                             <div class="prompt prompt-send hidden">
                                 <ul class="list-group">
                                     <li class="list-group-item poi">United Kingdom</li>
@@ -132,11 +132,14 @@
                     </div>
 
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="Search..." name="KeyWord">
+                        <input type="text" class="form-control" placeholder="Search..." name="KeyWord" style="width: 120px;">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
                         </span>
                     </div>
+
+                    <div id="common-sreach" class="form-group"></div>
+
                 </form>
                 <div>
                     <table class="table table-striped table-bordered table-hover table-condensed">
@@ -450,6 +453,7 @@
 
     <script src="/Resource/js/Logistics.js"></script>
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
 
     <script>
         (function () {
@@ -1348,6 +1352,15 @@
                     }
                 });
             });
+
+            // 搜索方法
+            var option = {
+                inForm : true,
+                isLimit: false,
+                mode   : true,
+                SkuID  : oParam.SkuID || false
+            };
+            common.SkuSearch($('#common-sreach'), option);
             
             // 初始化
             (function() {
