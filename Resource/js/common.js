@@ -400,6 +400,8 @@ common.date.addZero = function (text) {
 /*
  * 时间选择插件
  */
+// 需要在页面加载
+// <script src="/Resource/js/bootstrap-datetimepicker.js"></script>
 common.date.activePlug = function($dateGroup) {
     $dateGroup.find('input').each(function() {
         var $this = $(this);
@@ -1421,6 +1423,14 @@ common.SkuSearch = function(_$, op) {
         });
     }
 
+    // 手动关闭搜索下拉
+    $(document).keydown(function(e) {
+        e = event || window.event;
+        if (e.keyCode === 27) {
+            _list.empty();
+        }
+    });
+
     // 初始化页面label
     if (op.SkuID) {
         InitialSetUp(_$, op);
@@ -1435,6 +1445,8 @@ common.SkuSearch = function(_$, op) {
  * @param  {Object} _l      搜索出的列表
  * @param  {Object} isLimit 是否是迷你搜索框
  */
+// 必要插件 
+// <script src="/Resource/js/ZeroClipboard.min.js"></script>
 function _AddSkuBtn(_$, _l, isLimit) {
     _$.find('.list-group a').each(function(ind, el) {
         $(this).on('click', function() {
@@ -1516,4 +1528,30 @@ function InitialSetUp(_$, op) {
             renderLabel(_$, _d);
         }
     });
+}
+
+/**
+ * 操作记录封装
+ * @param {Object} _$ 要插入记录的容器
+ * @param {[type]} d  要遍历的数据
+ */
+common.Log = function(_$, d) {
+    var LogHTML = '<table class="table table-striped table-bordered table-hover table-condensed">'
+                 + '<thead>'
+                    + '<tr>'
+                        + '<th>操作人</th>'
+                        + '<th>操作记录</th>'
+                        + '<th>时间</th>'
+                    + '</tr>'
+                 + '</thead>'
+                 + '<tbody>'
+                    + '{{#Log}}'
+                    + '<tr>'
+                        + '<td>{{Name}}</td>'
+                        + '<td>{{Remark}}</td>'
+                        + '<td>{{Date}}</td>'
+                    + '</tr>'
+                    + '{{/Log}}'
+                 + '</tbody>';
+    _$.html(Mustache.render(LogHTML, d));
 }
