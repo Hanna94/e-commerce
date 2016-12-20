@@ -14,7 +14,7 @@
         <div class="tab-content">
             <div class="tab-pane active">
                 <form id="form-filter" class="form-inline mg-t-10 mg-b-10" action="?">
-                    
+                    <input id="do" type="hidden" name="Do" value="">
                     <div class="row mg-b-5"> <!-- 第一行-->
                         <div class="col-sm-12">
 
@@ -44,6 +44,8 @@
                                     <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
                                 </span>
                             </div>
+
+                            <div id="common-sreach" class="form-group"></div>
                         </div> 
                     </div> <!-- 第一行-->
 
@@ -149,6 +151,7 @@
     {页面底部}{/页面底部}
     
     <script src="/Resource/js/order.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
     
     <script>
         (function() {
@@ -265,6 +268,17 @@
 
             // 渲染单号
             common.Rendering.order($('#data-list'));
+
+            // 搜索方法
+            var option = {
+                inForm : true,
+                isLimit: false,
+                mode   : true,
+                SkuID  : op.SkuID || false
+            };
+            common.SkuSearch($('#common-sreach'), option);
+
+            $('#do').val(op.Do);
 
             // 回顶部按钮
             common.topBtn();
