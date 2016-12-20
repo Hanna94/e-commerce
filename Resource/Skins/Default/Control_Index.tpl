@@ -203,6 +203,8 @@
 
     {页面底部}{/页面底部}
 
+    <script src="/Resource/js/bootstrap-datetimepicker.js"></script>
+
     <script>
         (function() {
             'use strict';
