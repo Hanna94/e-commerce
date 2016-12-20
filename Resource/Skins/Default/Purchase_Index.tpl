@@ -24,12 +24,14 @@
         <div class="tab-content">
             <div class="tab-pane active">
             <form id="form-filter" class="form-inline mg-t-10 mg-b-10" action="?">
+                <input id="do" type="hidden" name="Do" value="">
                 <div class="input-group input-group-sm">
                     <input type="text" class="form-control" placeholder="单号/供应商/联系人名称" name="KeyWord">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
                     </span>
                 </div>
+                <div id="common-sreach" class="form-group"></div>
             </form>
                 <table class="table table-striped table-bordered table-hover table-condensed">
                     <colgroup>
@@ -81,6 +83,8 @@
             </div>
         </div>
     </div>
+
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
 
     {页面底部}{/页面底部}
 
@@ -203,6 +207,17 @@
 
             //启动弹出框
             $("[data-toggle='popover']").popover(); 
+
+            // 搜索方法
+            var option = {
+                inForm : true,
+                isLimit: false,
+                mode   : true,
+                SkuID  : op.SkuID || false
+            };
+            common.SkuSearch($('#common-sreach'), option);
+
+            $('#do').val(op.Do);
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
