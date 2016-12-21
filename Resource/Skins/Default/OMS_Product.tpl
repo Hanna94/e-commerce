@@ -12,12 +12,9 @@
                     </div>
                     <div class="panel-body">
                         <form class="form-inline" action="javascript:;">
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" placeholder="中文名称、SKU">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
-                                </div>
-                            </div>
+                            <button class="btn btn-default btn-sm mg-b-5" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+                            <div id="common-sreach" class="form-group"></div>
+                               
                         </form>
                     </div>
                     <table class="table table-striped table-bordered table-hover table-condensed">
@@ -241,7 +238,7 @@
 
     {页面底部}{/页面底部}
 
-    <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
 
     <script>
         (function () {
@@ -311,13 +308,14 @@
             initGoodsList(1, 20, '');
 
             var $productForm = $panelProductList.find('form'),
-                $productInput = $productForm.find('input'),
                 $goodsForm = $panelGoodsList.find('form'),
                 $goodsInput = $goodsForm.find('input');
 
             // 产品与商品数据列表
             $productForm.on('submit', function () {
-                initProductList(1, 20, $productInput.val());
+                var _hval = $productForm.find('input[type="hidden"]').val();
+                var _val = _hval == '' || _hval == null ? $productForm.find('input[type="text"]').val() : _hval;
+                initProductList(1, 20, _val);
             });
             $goodsForm.on('submit', function () {
                 initGoodsList(1, 20, $goodsInput.val());
@@ -486,6 +484,18 @@
 
             // 初始化商品过滤
             $goodsFilter.find('.title').text($goodsFilter.next().find('li[data-id="' + $goodsFilter.data('default') + '"]').addClass('active').text());
+
+            // 搜索方法
+            (function() {
+                var op = common.URL.parse();
+                var option = {
+                    inForm : true,
+                    isLimit: false,
+                    mode   : true,
+                    SkuID  : op.SkuID || false
+                };
+                common.SkuSearch($('#common-sreach'), option);
+            })();
 
             // 商品过滤
             $goodsFilter.next().find('li').on('click', function() {
