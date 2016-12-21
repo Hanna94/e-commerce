@@ -11,31 +11,33 @@
             <form action="?" class="form-inline mg-r-20 mg-b-10">
                 <div class="form-group form-group-sm mg-r-15">
                     <label class="control-label">物流方式</label>
-                    <select id="ShippingMethod" class="form-control" name="ShippingMethod">
-                        <option value="0">不限</option>
+                    <select class="form-control" name="ShippingMethod">
+                        <option value="">不限</option>
                         <option value="AIRLCL">空运</option>
                         <option value="SEALCL">海运</option>
                     </select>
                 </div>
                 <div class="form-group form-group-sm mg-r-15">
                     <label class="control-label">目标仓库</label>
-                    <select id="Warehouse" class="form-control" name="Warehouse">
-                        <option value="0">不限</option>
-                        <option value="1">广州仓</option>
-                        <option value="2">海外仓</option>
+                    <select class="form-control" name="Warehouse">
+                        <option value="">不限</option>
+                        <option value="AU">AU</option>
+                        <option value="UK">UK</option>
+                        <option value="DE">DE</option>
                     </select>
                 </div>
                 <div class="form-group form-group-sm mg-r-15">
                     <label class="control-label">状态</label>
-                    <select id="Status" class="form-control" name="Status">
-                        <option value="0">不限</option>
-                        <option value="1">状态1</option>
-                        <option value="2">状态2</option>
-                        <option value="3">状态3</option>
+                    <select class="form-control" name="Status">
+                        <option value="">不限</option>
+                        <option value="Submitted">已审核</option>
+                        <option value="ShippingIn">已入库</option>
+                        <option value="PartShippingIn">部分入库</option>
+                        <option value="Confirmed">已交运</option>
                     </select>
                 </div>
                 <div class="form-group form-group-sm">
-                    <input type="text" class="form-control" placeholder="调拨单号 / 货代单号">
+                    <input type="text" class="form-control" name="KeyWord" placeholder="调拨单号 / 货代单号">
                 </div>
                 <div class="form-group form-group-sm">
                     <button class="btn btn-default btn-sm" type="submit">查询</button>
@@ -240,6 +242,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
 
     {页面底部}{/页面底部}
@@ -502,6 +505,22 @@ function DataSpell(d) {
 
             // 返回顶部按钮
             common.topBtn($('body'));
+
+            // 页面初始化
+            (function() {
+                var op = common.URL.parse();
+                op.ShippingMethod && $('header select[name="ShippingMethod"]')
+                    .find('option[value="' + op.ShippingMethod + '"]')
+                    .attr('selected', true);
+                op.Warehouse && $('header select[name="Warehouse"]')
+                    .find('option[value="' + op.Warehouse + '"]')
+                    .attr('selected', true);
+                op.Status && $('header select[name="Status"]')
+                    .find('option[value="' + op.Status + '"]')
+                    .attr('selected', true);
+                op.KeyWord && $('header input[name="KeyWord"]').val(decodeURI(op.KeyWord));
+
+            })();
 
             // 列表页脚分页
             (function() {
