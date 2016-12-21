@@ -1397,6 +1397,9 @@ common.SkuSearch = function(_$, op) {
     // 每当用户输入时检测接口
     _$[0].oninput = function() {
         var _input = _$.find('input[type="text"]').val();
+        // 清楚隐藏值
+        _$.find('input[name="SkuID"]').val('');
+
         $.ajax({
             url: '/Product/API/?Do=SkuSearch&Mode=' + (op.mode ? 'Full' : '') + '&QueryLimitNumber=100&Page=3&KeyWord=' + _input,
             type: 'GET',
