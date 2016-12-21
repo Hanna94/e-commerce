@@ -9,7 +9,7 @@
                 <button class="btn btn-default" type="button" disabled>导出报表</button>
                 <button id="add-spu-data" class="btn btn-default" type="button">添加数据</button>
             </div>
-            <form id="form-search" action="?" class="form-inline pull-right pull-right mg-r-20">
+            <form id="form-search" action="?" class="form-inline mg-b-5">
                 <input id="url-do" name="Do" type="hidden" value="All">
                 <input id="url-tag" name="TagID" type="hidden" value="">
                 <div class="form-group form-group-sm">
@@ -21,14 +21,9 @@
                         <!-- END 销售团队 -->
                     </select>
                 </div>
-                <div class="form-group form-group-sm mg-l-20">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="Search..." name="KeyWord">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit">查询</button>
-                        </span>
-                    </div>
-                </div>
+
+                <button class="btn btn-default btn-sm" type="submit">查询</button>
+                <div id="common-sreach" class="form-group"></div>
             </form>
         </header>
 
@@ -1386,6 +1381,18 @@
                 $skuStatusSpan.each(function() {
                     $(this).addClass('label-' + _skuStyle[$.inArray($(this).text(), _skuStatus)]);
                 });
+            })();
+
+            // 搜索方法
+            (function() {
+                var op = common.URL.parse();
+                var option = {
+                    inForm : true,
+                    isLimit: false,
+                    mode   : true,
+                    SkuID  : op.SkuID || false
+                };
+                common.SkuSearch($('#common-sreach'), option);
             })();
 
             // 标签页定位
