@@ -1190,7 +1190,6 @@ common.copy = {};
 common.copy.SkuCopy = function(_$, op) {
     ZeroClipboard.config({swfPath: '/Resource/flash/ZeroClipboard.swf'});
     var _tar   = _$.find('.poi');
-    var _skuID = _tar.data('id');
     var clip   = new ZeroClipboard(_tar);
 
     // 添加鼠标滑过效果
@@ -1204,7 +1203,7 @@ common.copy.SkuCopy = function(_$, op) {
     var defaultType  = ['', '销售', '清仓', '下架'];
 
     // 是否有参数传入
-    if (_skuID && (op && !(op.Limit && op.Limit.Ack))) {
+    if (op && !(op.Limit && op.Limit.Ack)) {
 
         // 添加并渲染标签
         if(op.Label && op.Label.Ack) {
@@ -1224,6 +1223,7 @@ common.copy.SkuCopy = function(_$, op) {
         if (op.Warehouse.Ack) {
             _$.each(function(ind, el) {
                 var _th = $(this);
+                var _skuID = _th.find('.poi').data('id');
                 var _switch = 0; // 初始为0，表示新建，当获取过一次接口后，设置为1，点击时不再获取接口。
 
                 // 设置弹出框
@@ -1260,6 +1260,7 @@ common.copy.SkuCopy = function(_$, op) {
         // 弹出新窗口
         if (op.Link && op.Link.Ack) {
             _$.each(function(ind, el) {
+                var _skuID = $(this).find('.poi').data('id');
                 var tempSpan = $('<span></span>').addClass('glyphicon glyphicon-certificate');
                 var tempA = $('<a></a>').attr({
                                                 'title' : op.Link.Title || '打开页面',
