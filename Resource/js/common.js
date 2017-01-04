@@ -1340,17 +1340,19 @@ common.copy.LoopStock = function(ds) {
 
 /**
  * 搜索方法封装
- * @param {Object}  _$      搜索方法最外部div
- * @param {boolean} inForm  是否有外部form
- * @param {boolean} isLimit 是否是迷你搜索框
- * @param {String}  mode    是否是完整搜索
+ * @param {Object}  _$        搜索方法最外部div
+ * @param {boolean} inForm    是否有外部form
+ * @param {boolean} isLimit   是否是迷你搜索框
+ * @param {String}  mode      是否是完整搜索
+ * @param {String}  placement 库存方式位置
  */
 
 // 参考参数
 // var option = {
-//     inForm : true,
-//     isLimit: true,
-//     mode   : true
+//     inForm   : true,
+//     isLimit  : true,
+//     mode     : true,
+//     placement: 'lift' //非必要
 // };
 // 
 // 需要的DOM结构
@@ -1421,7 +1423,7 @@ common.SkuSearch = function(_$, op) {
                 // 显示列表
                 _list.removeClass('hidden');
                 // 绑定添加sku的按钮
-                _AddSkuBtn(_$, _list, op.isLimit);
+                _AddSkuBtn(_$, _list, op.isLimit, op.placement);
 
             }
         });
@@ -1445,13 +1447,14 @@ common.SkuSearch = function(_$, op) {
 
 /**
  * 绑定添加sku的按钮 - common.SkuSearch 的私有方法
- * @param  {Object} _$      搜索方法最外部div
- * @param  {Object} _l      搜索出的列表
- * @param  {Object} isLimit 是否是迷你搜索框
+ * @param  {Object} _$        搜索方法最外部div
+ * @param  {Object} _l        搜索出的列表
+ * @param  {Object} isLimit   是否是迷你搜索框
+ * @param  {String} placement 库存方式位置
  */
 // 必要插件 
 // <script src="/Resource/js/ZeroClipboard.min.js"></script>
-function _AddSkuBtn(_$, _l, isLimit) {
+function _AddSkuBtn(_$, _l, isLimit, placement) {
     _$.find('.list-group a').each(function(ind, el) {
         $(this).on('click', function() {
             // 销毁原有的弹出框
@@ -1472,7 +1475,7 @@ function _AddSkuBtn(_$, _l, isLimit) {
             if (isLimit) {
                 _$.find('input[type="text"]').val($(this).find('.l-name').text());
             } else {
-                renderLabel(_$, _d);
+                renderLabel(_$, _d, placement);
             }
             _l.empty();
         });
@@ -1483,8 +1486,9 @@ function _AddSkuBtn(_$, _l, isLimit) {
  * 渲染label标签
  * @param  {Object} _$ 搜索方法最外部div
  * @param  {JSON}   _d 参数
+ * @param  {String} placement 库存方式位置
  */
-function renderLabel(_$, _d) {
+function renderLabel(_$, _d, placement) {
     var tmpHtml = '{{#data}}'
                 + '<div class="copy">'
                     + '<span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">'
@@ -1496,9 +1500,12 @@ function renderLabel(_$, _d) {
     // 渲染搜索方法的label渲染
     _$.find('label.label-control').one('DOMNodeInserted', function() {
         var option = {
-             Link: {Ack  : true},
-             Warehouse: {Ack : true},
-             Label: {Ack : true}
+            Link     : {Ack  : true},
+            Warehouse: {
+                Ack      : true,
+                Placement: placement || "bottom"
+            },
+            Label    : {Ack : true}
         };
         common.copy.SkuCopy(_$.find('.copy'), option);
     });
