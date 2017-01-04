@@ -9,22 +9,6 @@
                 <button class="btn btn-default" type="button" disabled>导出报表</button>
                 <button id="add-spu-data" class="btn btn-default" type="button">添加数据</button>
             </div>
-            <form id="form-search" action="?" class="form-inline mg-b-5">
-                <input id="url-do" name="Do" type="hidden" value="All">
-                <input id="url-tag" name="TagID" type="hidden" value="">
-                <div class="form-group form-group-sm">
-                    <select id="TeamID" class="form-control" name="TeamID" data-default="{TeamID}">
-                        <option value = "-1">未分配</option>
-                        <option value = "0">所有团队</option>
-                        <!-- BEGIN 销售团队 ATTRIB= -->
-                        <option value="{DataID}">{Name}</option>
-                        <!-- END 销售团队 -->
-                    </select>
-                </div>
-
-                <button class="btn btn-default btn-sm" type="submit">查询</button>
-                <div id="common-sreach" class="form-group"></div>
-            </form>
         </header>
 
         <ul class="nav nav-tabs">
@@ -37,6 +21,22 @@
 
         <div class="tab-content">
             <div class="tab-pane active">
+                <form id="form-search" action="?" class="form-inline mg-b-5 mg-t-5">
+                    <input id="url-do" name="Do" type="hidden" value="All">
+                    <input id="url-tag" name="TagID" type="hidden" value="">
+                    <div class="form-group form-group-sm">
+                        <select id="TeamID" class="form-control" name="TeamID" data-default="{TeamID}">
+                            <option value = "-1">未分配</option>
+                            <option value = "0">所有团队</option>
+                            <!-- BEGIN 销售团队 ATTRIB= -->
+                            <option value="{DataID}">{Name}</option>
+                            <!-- END 销售团队 -->
+                        </select>
+                    </div>
+
+                    <button class="btn btn-default btn-sm" type="submit">查询</button>
+                    <div id="common-sreach" class="form-group"></div>
+                </form>
                 <div class="tags mg-10">
                     <!-- BEGIN TAG列表 ATTRIB= -->
                     <span class="label label-default poi btn-tag" data-id='{DataID}'>{Name}</span>
