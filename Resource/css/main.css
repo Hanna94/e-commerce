@@ -159,6 +159,36 @@
     overflow-x: hidden;
 }
 
+.maxW300{
+    max-width: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW200{
+    max-width: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW150{
+    max-width: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW100{
+    max-width: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxW50{
+    max-width: 50px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .divCenter{
     margin: 0 auto;
 }
@@ -559,3 +589,11 @@ tr.tr-pd-8{
 .cen-th th{ text-align: center !important; } 
 .ver-td td{ vertical-align: middle !important; } 
 .inputH20 input.form-control{ height: 20px !important; }
+
+/* 聚焦样式 */
+.fs {
+    border-color: #FF5959;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(255,89,89,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(255,89,89,.6);
+}
