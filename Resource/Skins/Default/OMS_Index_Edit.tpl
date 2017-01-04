@@ -572,8 +572,8 @@
                 tempLog = $('#temp-log').html();
 
             // 获取运单信息
-            (function(){
-                var ourl = "/logistics/API/?Do=LogisticsList&OID=" + oParam.DataID;
+            function GetOrderInfo(_o) {
+                var ourl = "/logistics/API/?Do=LogisticsList&ReferenceID=" + _o;
                 $.ajax({
                     url: ourl,
                     type: 'get',
@@ -594,7 +594,7 @@
                         console.log("发生错误：" + e);
                     }
                 });
-            })();
+            }
 
 
             // 初始化
@@ -613,6 +613,9 @@
                     $panelTransaction.find('tbody').html(Mustache.render(tempTransaction, d));
                     $panelDetails.find('tbody').html(Mustache.render(tempDetails, d));
                     $panelRemark.find('tbody').html(Mustache.render(tempRemark, d));
+
+                    // 获取订单信息
+                    GetOrderInfo(d.OrderID);
 
                     // SKU识别
                     $panelSKUDiscern.find('.modal-body').html(Mustache.render(tempDiscern, d));
