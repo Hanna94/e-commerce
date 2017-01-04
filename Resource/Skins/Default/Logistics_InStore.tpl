@@ -283,6 +283,7 @@
 
             // 入库单设置模态框
             (function() {
+                // 打开模态框
                 $('.btn-edit').on('click', function() {
                     var did = $(this).closest('tr').data('id');
                     common.loading.show();
@@ -309,8 +310,13 @@
                             common.loading.hide();
                         }
                     });
+                });
 
-                    
+                // 关闭模态框时重置标签页
+                $('#modal-instore-edit').on('hidden.bs.modal', function() {
+                    $(this).find('.active').removeClass('active');
+                    $(this).find('ul li:first').addClass('active');
+                    $(this).find('#nav-product').addClass('active in');
                 });
             })();
             // 入库单设置模态框 - End
