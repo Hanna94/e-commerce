@@ -276,9 +276,9 @@
                     
 
                     //从订单信息获取备注
-                    remarkID = d.Order[0].OID;
+                    remarkID = d.Order[0].ReferenceID;
                     $.ajax({
-                        url: '/OMS/Order.aspx?Do=Query&DataID=' + remarkID,
+                        url: '/OMS/Order.aspx?Do=Query&OrderID=' + remarkID,
                         dataType: 'json',
                         type: 'get',
                         success: function(data, status, e){
