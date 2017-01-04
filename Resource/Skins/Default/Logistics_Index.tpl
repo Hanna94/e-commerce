@@ -651,7 +651,7 @@
                         $remark.find('tbody').html(""); // 每次打开清空记录
                         $.each(data.Order, function(i, val){
                             $.ajax({
-                                url: '/OMS/Order.aspx?Do=Query&DataID=' + val.OID,
+                                url: '/OMS/Order.aspx?Do=Query&OrderID=' + val.ReferenceID,
                                 dataType: 'json',
                                 type: 'get',
                                 success: function(data){
