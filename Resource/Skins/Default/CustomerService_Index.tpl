@@ -79,7 +79,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    <h4 class="modal-title">设置售后单</h4>
+                    <h4 class="modal-title">设置售后单<small id="sell-info"></small></h4>
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs mg-b-5">
@@ -377,6 +377,9 @@
                             // 隐藏搜索框
                             $('#sell-search').closest('div').addClass('hidden');
 
+                            // 设置模态框信息
+                            $('#sell-info').html(' ' + data.Order.OrderID + ' - ' + data.Order.ShopName + ' - ' + data.Order.BuyerID);
+
                             // 设置选项
                             var _mode;
                             switch(data.Order.ExecuteMode) {
@@ -393,9 +396,19 @@
                             $('#sell-handle').find('option[value="'+ _mode +'"]').prop('selected', true);
                             $('#sell-cause').find('option[value="'+ data.Order.Types +'"]').prop('selected', true);
 
-                            // 渲染订单列表
                             if (_mode == 'again') {
-                                OrderList(data);
+                                // 重发模式
+                                OrderList(data);  // 渲染订单列表
+                                SetAddress(data); // 渲染地址
+                                SetProduct(data); //渲染产品
+                                ProductChange();  // 添加和删除产品的方法
+                                // 保存编辑后的售后单 - 重发
+                                $('#sell-save').off().on('click', function() {
+                                    SaveServiceAgain(data.Order.OID, data.DataID); 
+                                });
+                            } else if (_mode == 'reimburse' || _mode == 'added') {
+                                // 退款模式
+                                
                             }
 
                             // 显示模态框
@@ -475,40 +488,9 @@
                             success : function(d) {
                                 switch($('#sell-handle').val()) {
                                     case 'again':
-                                        // 处理地址
-                                        var sellOrderID = d.DataList[0].OrderID;
-                                        var $sellAdd = $('#sell-address');
-                                        var sellAddress;
-                                        var sellPhone = d.DataList[0].Address.eBay.Phone;
-                                        if (sellOrderID.indexOf('XYT') != -1 || sellOrderID.indexOf('OMS') != -1) {
-                                            sellAddress = d.DataList[0].Address.eBay;
-                                        } else {
-                                            sellAddress = d.DataList[0].Address.PayPal;
-                                        }
-                                        $sellAdd.find('input[name="Name"]').val(sellAddress.Name);
-                                        $sellAdd.find('input[name="Street1"]').val(sellAddress.Street1);
-                                        $sellAdd.find('input[name="Street2"]').val(sellAddress.Street2);
-                                        $sellAdd.find('input[name="City"]').val(sellAddress.City);
-                                        $sellAdd.find('input[name="State"]').val(sellAddress.State);
-                                        $sellAdd.find('input[name="ZIP"]').val(sellAddress.ZIP);
-                                        $sellAdd.find('input[name="Country"]').val(sellAddress.Country);
-                                        $sellAdd.find('input[name="Phone"]').val(sellPhone);
-                                        
-                                        // 遍历产品列表
-                                        var _tmpProduct = '{{#DataList}}{{#Transaction}}{{#Product}}'
-                                                        + '<tr data-id="{{DataID}}">'
-                                                            + '<td>'
-                                                            + '<div class="copy">'
-                                                                + '<span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}}'
-                                                            + '</div>'
-                                                            + '</td>'
-                                                            + '<td><input type="text" class="form-control input-sm maxW50" value="1"></td>'
-                                                            + '<td><span class="glyphicon glyphicon-remove poi" style="color: red"></span></td>'
-                                                        + '</tr>'
-                                                        + '{{/Product}}{{/Transaction}}{{/DataList}}';
-                                        $('#sell-product-list').find('tbody').html(Mustache.render(_tmpProduct, d));
-                                        common.copy.SkuCopy($('#sell-product-list').find('.copy'));
-                                        ProductChange(); // 添加和删除产品的方法
+                                        SetAddress(d, true);             // 渲染地址
+                                        SetProduct(d.DataList[0], true); //渲染产品
+                                        ProductChange();                 // 添加和删除产品的方法
 
                                         $('#search-list-toggle').click(); // 隐藏列表
                                         TypeChange();                     // 处理方式切换
@@ -635,6 +617,61 @@
             }
 
             /**
+             * 渲染地址
+             * @param {JSON}    _d   数据
+             * @param {Boolean} _new 用于区别是否是新建售后单
+             */
+            function SetAddress(_d, _new) {
+                var $sellAdd = $('#sell-address');
+                var sellAddress;
+                // 区别新建售后单和编辑售后单
+                if (_new) {
+                    var sellOrderID = _d.DataList[0].OrderID;
+                    var sellPhone = _d.DataList[0].Address.eBay.Phone;
+                    if (sellOrderID.indexOf('XYT') != -1 || sellOrderID.indexOf('OMS') != -1) {
+                        sellAddress = _d.DataList[0].Address.eBay;
+                    } else {
+                        sellAddress = _d.DataList[0].Address.PayPal;
+                    }
+                } else {
+                    sellAddress = _d.Address;
+                }
+                
+                $sellAdd.find('input[name="Name"]').val(sellAddress.Name);
+                $sellAdd.find('input[name="Street1"]').val(sellAddress.Street1);
+                $sellAdd.find('input[name="Street2"]').val(sellAddress.Street2);
+                $sellAdd.find('input[name="City"]').val(sellAddress.City);
+                $sellAdd.find('input[name="State"]').val(sellAddress.State);
+                $sellAdd.find('input[name="ZIP"]').val(sellAddress.ZIP);
+                $sellAdd.find('input[name="Country"]').val(sellAddress.Country);
+                $sellAdd.find('input[name="Phone"]').val(sellPhone || sellAddress.Phone);
+            }
+
+            /**
+             * 遍历产品列表
+             * @param {JSON}    _d   数据
+             * @param {Boolean} _new 判断是新建或是编辑售后单
+             */
+            function SetProduct(_d, _new) {
+                // 遍历产品列表
+                var _tmpProduct = (_new && '{{#Transaction}}')
+                                + '{{#Product}}'
+                                + '<tr data-id="{{DataID}}">'
+                                    + '<td>'
+                                    + '<div class="copy">'
+                                        + '<span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}}'
+                                    + '</div>'
+                                    + '</td>'
+                                    + '<td><input type="text" class="form-control input-sm maxW50" value="1"></td>'
+                                    + '<td><span class="glyphicon glyphicon-remove poi" style="color: red"></span></td>'
+                                + '</tr>'
+                                + '{{/Product}}'
+                                + (_new && '{{/Transaction}}');
+                $('#sell-product-list').find('tbody').html(Mustache.render(_tmpProduct, _d));
+                common.copy.SkuCopy($('#sell-product-list').find('.copy'));
+            }
+
+            /**
              * 添加和删除产品的方法
              */
             function ProductChange() {
@@ -696,6 +733,7 @@
                              + '{{/Payments}}';
                 $('#sell-payments').find('tbody').html(Mustache.render(_tmphtml, _d));
                 $('#sell-currency').text(_d.AmountOfMoney.Currency);
+                // 输入金额
                 $('#sell-application').off().on('click', function() {
                     var _amt = $('#sell-amount').val();
                     var $sadd = $('#sell-added');
@@ -747,6 +785,7 @@
              * @param {String} _DataID 更新售后单时用到，新建时为空
              */
             function SaveServiceAgain(_OID, _DataID) {
+                common.loading.show();
                 // 产品
                 var productJson         = {};
                     productJson.Product = [];
@@ -761,7 +800,7 @@
                 $.ajax({
                     url     : '/CustomerService/API/?Do=AfterSaleSave',
                     type    : 'POST',
-                    dataJSON: 'JSON',
+                    dataType: 'JSON',
                     data: {
                         DataID     : _DataID,
                         OID        : _OID,
@@ -778,12 +817,13 @@
                         Product    : JSON.stringify(productJson)
                     },
                     success: function(data) {
+                        common.loading.hide();
                         common.alert({
                             type : 'success',
-                            title: '保存售后单 - 重发',
+                            title: '保存售后单：',
                             msg  : data.Message,
                             cb   : function() {
-                                window.location.reload();
+                                // window.location.reload();
                             }
                         });
                     }
@@ -844,6 +884,8 @@
                     }
                 });
             }
+
+
 //=========================================== 模态框方法 ====================================================
 
 //=========================================== 页面基本功能 ==================================================
@@ -875,6 +917,7 @@
 
             // 模态框重置
             function ModalReset() {
+                $('#sell-info').empty();
                 var $1st = $('#sell-can-change-1st');
                 var $2nd = $('#sell-can-change-2nd');
                 !$1st.hasClass('hidden') && $1st.addClass('hidden');
@@ -882,7 +925,9 @@
                 SearchReset();
                 AgainReset();
                 OptionReset();
+                OrderListReset();
                 ReimburseReset();
+                ProductReset();
                 RemarkReset();
             }
 
@@ -905,14 +950,15 @@
 
             // 原因和处理方法选项重置
             function OptionReset() {
-                $('#sell-cause option:first').attr('selected', true);
-                $('#sell-handle option:first').attr('selected', true);
+                $('#sell-cause option:first').prop('selected', true);
+                $('#sell-handle option:first').prop('selected', true);
             }
 
             // 订单处理记录列表重置
             function OrderListReset() {
                 var $dom = $('#order-list-1st');
                 !$dom.hasClass('hidden') && $dom.addClass('hidden');
+                $dom.find('tbody').empty();
             }
             
             // 退款模块重置
@@ -921,12 +967,19 @@
                 $('#sell-amount').val('');
             }
 
+            // 产品模块重置
+            function ProductReset() {
+                $('#common-sreach-2nd input').val('');
+                $('#common-sreach-2nd .search-drop').empty();
+            }
+
             // 备注重置
             function RemarkReset() {
                 var $dom = $('#panel-remark');
                 $dom.find('textarea[name="Remark"]').val('');
                 $dom.find('tbody').empty();
             }
+
             // 标签页定位
             // (function() {
             //     var op = location.search.split('&');
