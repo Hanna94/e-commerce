@@ -117,6 +117,18 @@
     overflow-x: hidden;
 }
 
+.maxH500 {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH550 {
+    max-height: 550px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .maxH600 {
     max-height: 600px;
     overflow-y: auto;
@@ -125,6 +137,18 @@
 
 .maxH650 {
     max-height: 650px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH700 {
+    max-height: 700px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.maxH750 {
+    max-height: 750px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -185,6 +209,12 @@
 
 .maxW50{
     max-width: 50px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.minW50{
+    min-width: 50px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -600,3 +630,9 @@ tr.tr-pd-8{
 
 /* 禁用输入法 */
 .ime { ime-mode:disabled; }
+
+/* 备注模块用样式 */
+.remarkFontStyle {
+    font-size: 12px;
+    color: #777;
+}
