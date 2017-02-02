@@ -57,14 +57,14 @@ common.alertIf = function(option){
         common.alert({
             type: 'success',
             title: option.title,
-            msg: '成功，系统反馈：' + option.data.Message,
+            msg: '成功，系统反馈：' + (option.data.Message || '无'),
             time: option.time || null,
             cb: option.tcb
         });
     } else {
         common.alert({
             title: option.title,
-            msg: '失败，系统反馈：' + option.data.Message,
+            msg: '失败，系统反馈：' + (option.data.Message || '无'),
             cb: option.fcb
         });
     }
@@ -744,17 +744,18 @@ common.init();
  * [getdataURL]:获取接口，如没有传入参数则使用默认
  * [deleteURL]:删除接口，如没有传入参数则使用默认
  */
+// 参数格式
 
 // 所有方法再封装一次
-common.remarkFunction = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL) {
+common.remarkFunction = function(option) {
     // 更新备注封装
-    common.remarkUpdate(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
+    common.remarkUpdate(option.dataID, option.rediv, option.reform, option.retemp, option.resetBtn, option.UID, option.uploadURL, option.getdataURL, option.deleteURL);
     // 提交备注信息
-    common.remarkSave(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
+    common.remarkSave(option.dataID, option.rediv, option.reform, option.retemp, option.resetBtn, option.UID, option.uploadURL, option.getdataURL, option.deleteURL);
     // 判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-    common.editAndDel(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
+    common.editAndDel(option.dataID, option.rediv, option.reform, option.retemp, option.resetBtn, option.UID, option.uploadURL, option.getdataURL, option.deleteURL);
     // 编辑备注的[取消]按钮事件
-    common.reset(reform, resetBtn);
+    common.reset(option.reform, option.resetBtn);
 }
 
 //提交备注信息
@@ -797,7 +798,7 @@ common.remarkSave = function(dataID, rediv, reform, retemp, resetBtn, UID, uploa
 //更新备注封装
 common.remarkUpdate = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL){
     $.ajax({
-        url: getdataURL || '/OMS/Order.aspx?Do=Query&DataID=' + dataID,
+        url: getdataURL || '/OMS/API/?Do=Query&DataID=' + dataID,
         type: 'get',
         dataType: 'json',
         success: function(data){
@@ -1116,7 +1117,11 @@ common.Rendering.order = function(tagDiv){
 //     Mode : prepend(前插) / append(后插) / replace(替换)
 //}
 
-// 万用渲染方法
+/**
+ * 万用渲染方法
+ * @param {Object} _$ 待渲染的元素的父元素集合
+ * @param {JSON}   op 配置参数
+ */
 common.Rendering.All = function(_$, op) {
     // 默认渲染样式
     var defaultStyle = ['label-default', 'label-primary', 'label-success', 'label-info', 'label-warning', 'label-danger'];
@@ -1159,6 +1164,28 @@ var cl = function(content){
 common.copy = {};
 
 /**
+ * 用于遍历列表的{TemplateProduct}数据
+ * @param {Object} _$ 目标元素
+ */
+common.copy.ProductData = function(_$) {
+    _$.each(function(index, event) {
+        var tmpJson = '{"Product": ' + ($(this).text() =='' ? '[]' : $(this).text()) + '}';
+        tmpJson = JSON.parse(tmpJson);
+        var tmpDOM = '{{#Product}}<div class="copy">'
+                   + '<span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}} * {{Quantity}}'
+                   + '</div>{{/Product}}';
+
+        $(this).html(Mustache.render(tmpDOM, tmpJson));
+        var option = {
+            Link     : {Ack: true},
+            Warehouse: {Ack: true},
+            Label    : {Ack: true}
+        };
+        common.copy.SkuCopy($(this).find('.copy'), option);
+    });
+}
+
+/**
  * SKU系列方法封装
  * @param {Object} _$ 需要复制的主体
  * @param {JSON}   op 配置参数
@@ -1180,7 +1207,7 @@ common.copy = {};
 //          Placement: 'left', // 弹出框显示方向，默认bottom
 //      },
 //      Label: {
-//          Ack: true
+//          Ack: true       // 产品状态  清仓 销售等
 //      },
 //      Limit: {
 //          Ack: true
@@ -1252,9 +1279,8 @@ common.copy.SkuCopy = function(_$, op) {
                     var popID = $(this).attr('aria-describedby');
                     $('#' + popID).find('.glyphicon-time').attr('onclick', 'common.copy.UpdateStock(' + popID + ', ' + _skuID + ', true)');
                 });;
-                
-                
             });
+
         } // 显示库存 - End
 
         // 弹出新窗口
@@ -1547,6 +1573,7 @@ function InitialSetUp(_$, op) {
  * @param {[type]} d  要遍历的数据
  */
 common.Log = function(_$, d) {
+    common.loading.show();
     var LogHTML = '<table class="table table-striped table-bordered table-hover table-condensed">'
                  + '<thead>'
                     + '<tr>'
@@ -1565,4 +1592,5 @@ common.Log = function(_$, d) {
                     + '{{/Log}}'
                  + '</tbody>';
     _$.html(Mustache.render(LogHTML, d));
+    common.loading.hide();
 }
