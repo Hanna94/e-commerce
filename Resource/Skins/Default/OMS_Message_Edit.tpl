@@ -28,7 +28,7 @@
                         <button class="btn btn-default pull-right sendEmail" type="button">确认</button>
                     </div>
                     <!-- 测试区 -->
-                    <form action="/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=83158820711" method="post">
+                    <!-- <form action="/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=83158820711" method="post">
                         <div class="inputHead pd-t-5 pd-l-5">这里是测试专用的输入框，请勿在这里回复</div>
                         <div class="inputBody">
                             <textarea name="Content"></textarea>
@@ -36,7 +36,7 @@
                         <div class="inputFoot">
                             <button class="btn btn-danger" type="submit" disabled="disabled">测试用提交</button>
                         </div>
-                    </form>
+                    </form> -->
                 </div>
             </div>
             <div id="userInfo">
@@ -56,7 +56,7 @@
 
                 <!-- 订单信息 -->
                 <div id="u-order" class="pad mg-b-10">
-                    <table class="tableStyle">
+                    <table class="tableStyle table">
                         <colgroup>
                             <col>
                             <col>
@@ -80,21 +80,7 @@
                 <!-- 备注信息 -->
                 <div id="msg-remark" class="pad mg-b-10">
                     <h4></h4>
-                    <form class="form-horizontal" action="javascript:;">
-                        <div class="input-group input-group-sm">
-                            <textarea rows="1" name="Remark" class="form-control"></textarea>
-                                <span class="input-group-btn">
-                                    <input type="submit" class="btn btn-default" value="提交">
-                                    <input type="reset" class="btn btn-default hidden" value="取消">
-                                </span>
-                        </div>
-                        <span class="text-danger"></span>
-                    </form>
-                    <div class="maxH300 mg-t-10">
-                        <table class="table table-striped table-condensed" style="word-break:break-all">
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                    <div id="message-remark"></div>
                 </div>
             </div>
         </div>
@@ -208,33 +194,16 @@
             <td><a href="/OMS/?Do=Edit&DataID={{DataID}}" target="_blank">{{DataID}}</a></td>
             <td>{{Status}}</td>
             <td>{{Currency}}{{Amt}}</td>
-            <td>{{CreatedTime}}</td>
+            <td><span class="glyphicon glyphicon-time" title="{{CreatedTime}}"></span></td>
             <td><span data-val="{{DataID}}" class="glyphicon glyphicon-tag poi" title="点击切换备注[{{DataID}}]"></span></td>
         </tr>
         {{/Order}}
-    </template>
-
-    <!-- 备注 -->
-    <template id="temp-remark">
-        {{#Message}}
-        <tr>
-            <td>
-                <input type="hidden" id="UID" name="UID" value="{{UID}}" />
-                <input type="hidden" id="DataID" name="DataID" value="{{DataID}}" />
-                <span>{{Remark}}</span>&nbsp;&nbsp;
-                <span style="font-size: 14px;color: #929292;">By：{{UserName}}</span>&nbsp;&nbsp;<i style="font-size: 14px;color: #929292;">{{Date}}</i>
-                <div id="btn-ead" class="poi" style="float: right;">
-                    <span class="glyphicon glyphicon-pencil"></span><br />
-                    <span class="glyphicon glyphicon-remove"></span>
-                </div>
-            </td>
-        </tr>
-        {{/Message}}
     </template>
     
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/Remark.js"></script>
     <script>
         $(function(){
             'use strict';
@@ -610,7 +579,7 @@
                     $("[data-toggle='popover']").popover(); // 启动缩略图预览
                 }
 
-                // 点击切换备注备注
+                // 点击切换备注
                 function orderChange() {
                     var $remarkTr = $userInfo.find('#u-order tbody tr'),
                         dataDataID;
@@ -626,31 +595,18 @@
 
                 // 设置备注方法
                 function setRemark(dataDataID){
-                    var Int_UID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->,
-                        $msgRemark = $('#msg-remark'),
-                        $msgForm = $msgRemark.find('form'),
-                        tempRemark = $('#temp-remark').html(),
-                        $remarkBtn = $msgForm.find('input[type="reset"]'),
-                        $orderDiv = $userInfo.find('div:eq(1)');
-
-                    // 移除绑定事件
-                    $msgForm.unbind();
-                    $remarkBtn.unbind();
+                    var Int_UID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->;
 
                     // 设置备注标题
-                    $msgRemark.find('h4').html('备注单号：' + dataDataID);
+                    $('#msg-remark h4').html('备注单号：' + dataDataID);
                     
-                    // 更新备注
-                    common.remarkUpdate(dataDataID, $msgRemark, $msgForm, tempRemark, $remarkBtn, Int_UID);
-
-                    //提交备注
-                    common.remarkSave(dataDataID, $msgRemark, $msgForm, tempRemark, $remarkBtn, Int_UID);
-
-                    //判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-                    common.editAndDel(dataDataID, $msgRemark, $msgForm, tempRemark, $remarkBtn, Int_UID);
-
-                    //编辑备注的[取消]按钮事件
-                    common.reset($msgForm, $remarkBtn);
+                    var msgOption = {
+                        Target : $('#message-remark'),
+                        DataID : dataDataID,
+                        UID    : Int_UID,
+                        HasWarp: true
+                    };
+                    Remark(msgOption);
                 }
 
             })(); //获取数据和上传数据-END
