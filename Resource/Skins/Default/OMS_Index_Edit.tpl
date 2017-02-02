@@ -218,7 +218,7 @@
 
             <!-- 买家留言与备注-->
             <div class="col-lg-6 col-sm-6">
-                <div id="panel-remark" class="panel panel-default">
+                <!-- <div id="panel-remark" class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">备注</h3>
                     </div>
@@ -239,7 +239,9 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </div> -->
+
+                <div id="buyer-remark"></div>
 
                 <div id="buyer-message" class="panel panel-default">
                     <div class="panel-heading">
@@ -444,7 +446,7 @@
     </template>
 
     <!-- 买家留言与备注模板-->
-    <template id="temp-remark">
+    <!-- <template id="temp-remark">
         {{#Message}}
         <tr>
             <td>
@@ -459,7 +461,7 @@
             </td>
         </tr>
         {{/Message}}
-    </template>
+    </template> -->
 
     <!-- 运单信息模板 -->
     <template id="temp-order">
@@ -489,9 +491,11 @@
 
     <script src="/Resource/js/mustache.js"></script>
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
+    <script src="/Resource/js/Remark.js"></script>
     <script>
         (function () {
             'use strict';
+            var currUID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->;
 
             // 加载Flash按钮
             ZeroClipboard.config({swfPath: '/Resource/flash/ZeroClipboard.swf'});
@@ -601,7 +605,7 @@
             // 获取当前订单详情
             common.ajax({
                 title: '获取订单内容',
-                URL: '/OMS/Order.aspx?Do=Query&DataID=' + oParam.DataID,
+                URL: '/OMS/API/?Do=Query&DataID=' + oParam.DataID,
                 good: function (data) {
                     var d = data.DataList[0],
                         eBayAddress = d.Address.eBay,
@@ -612,7 +616,16 @@
                     $panelPayments.find('tbody').html(Mustache.render(tempPayments, d));
                     $panelTransaction.find('tbody').html(Mustache.render(tempTransaction, d));
                     $panelDetails.find('tbody').html(Mustache.render(tempDetails, d));
-                    $panelRemark.find('tbody').html(Mustache.render(tempRemark, d));
+
+                    // 备注模块
+                    var remarkOption = {
+                        Target : $('#buyer-remark'),
+                        DataID : oParam.DataID,
+                        UID    : currUID,
+                        HasWarp: false,
+                        Title  : '备注'
+                    };
+                    Remark(remarkOption, data);
 
                     // 获取订单信息
                     GetOrderInfo(d.OrderID);
@@ -707,124 +720,10 @@
                 }
             }
 
-            //更新备注封装
-            function RFremark(){
-                common.ajax({
-                    title: '更新备注',
-                    URL: '/OMS/Order.aspx?Do=Query&DataID=' + oParam.DataID,
-                    good: function(data){
-                        var mes = data.DataList[0];
-                        $panelRemark.find('tbody').html(Mustache.render(tempRemark, mes));
-                        $panelRemark.find('tr').each(function() {
-                            var isLink = LinkChange($(this).find('span:eq(0)').text());
-                            $(this).find('span:eq(0)').html(isLink);
-                        });
-                        $panelRemarkForm.find('textarea').val("");
-                        //判断备注能否编辑删除
-                        editAndDel();
-                    }
-                });
-            }
-
-            //判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-            function editAndDel(){
-                var Int_UID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->,
-                    $uidList = $panelRemark.find('table tr');
-                //遍历每条备注的按钮，设置为隐藏
-                $uidList.each(function(){
-                    var inputUID = $(this).find('#UID').val();
-                    $(this).find('#btn-ead').hide();
-                    //如果备注的UID符合当前用户UID，则显示编辑和删除按钮
-                    if(inputUID == Int_UID){
-                        var $thisDiv = $(this).find('#btn-ead'),
-                            $thisTr = $(this),
-                            $DataID = $thisTr.find('#DataID').val();
-                        $thisDiv.show();
-                        //绑定按钮事件
-                        //编辑备注
-                        $thisDiv.find('span:eq(0)').on('click', function(){
-                            var $cInput = $('<input id="DataIDforEdit" name="DataID" type="hidden" value=' + $DataID + ' />'),
-                                //预防点击多次出现多个OID
-                                $hidinp = $panelRemarkForm.find('input[type="hidden"]');
-                                $hidinp ? $panelRemarkForm.find('input[type="hidden"]').remove().end().append($cInput) : $panelRemarkForm.append($cInput);
-                            //把备注内容复制到文本域
-                            var copyText = $thisTr.find('span:eq(0)').text();
-                            $panelRemarkForm.find('textarea').val(copyText);
-                            //改变提交按钮为[修改]，并显示隐藏的[取消]按钮
-                            $panelRemarkForm.find('input[type="submit"]').val('修改');
-                            $resetBtn.attr('class', 'btn btn-default');
-                        });
-                        //删除备注
-                        $thisDiv.find('span:eq(1)').on('click', function(){
-                            common.ajax({
-                                title: '删除备注',
-                                URL: '/OMS/Order.aspx?Do=MessageDelete',
-                                type: 'post',
-                                data: { DataID: $DataID },
-                                good: function(data){
-                                    common.alert({
-                                        type: 'success',
-                                        title: '“删除备注”操作：',
-                                        msg: data.Message || '成功！'
-                                    });
-                                    //刷新备注
-                                    RFremark();
-                                }
-                            });
-                        });
-                    }
-                });
-            }
-
             // 编辑订单
             if (oParam.Do === 'Edit') {
                 $panelTransaction.find('tfoot').removeClass('hidden');
                 $contactAddress.find('.btn-box').removeClass('hidden');
-
-                //启用备注更新
-                RFremark();
-
-                //提交备注信息
-                $panelRemarkForm.on('submit', function(){
-                    common.ajax({
-                        title: '提交备注信息',
-                        URL: '/OMS/Order.aspx?Do=MessageSave',
-                        type: 'post',
-                        data: {
-                            DataID: $panelRemarkForm.find('#DataIDforEdit').val()?$panelRemarkForm.find('#DataIDforEdit').val():null,
-                            OID: oParam.DataID, 
-                            Remark: $panelRemarkForm.find('textarea').val()
-                        },
-                        good: function(data){
-                            common.alert({
-                                type: 'success',
-                                title: '“提交备注”操作：',
-                                msg: data.Message || '成功！'
-                            });
-                            //检查是否有隐藏的input标签，如果有就删除（更新备注遗留）
-                            if($panelRemarkForm.find('#DataIDforEdit')){
-                                $panelRemarkForm.find('#DataIDforEdit').remove();
-                            }
-                            //如果[取消]按钮是显示的，就隐藏掉
-                            if(!$resetBtn.is(':hidden')){
-                                $resetBtn.attr('class', 'btn btn-default hidden');;
-                            }
-                            //按钮更改为[提交]
-                            $panelRemarkForm.find('input[type="submit"]').val('提交');
-                            //刷新备注
-                            RFremark();
-                        }
-                    });
-                });
-
-                //编辑备注的[取消]按钮事件
-                $panelRemarkForm.find('input[type="reset"]').on('click', function(){
-                    //删除掉带有DataID的input标签
-                    $panelRemarkForm.find('input[type="hidden"]').remove();
-                    $resetBtn.attr('class', 'btn btn-default hidden');
-                    //按钮更改为[提交]
-                    $panelRemarkForm.find('input[type="submit"]').val('提交');
-                });
 
                 // 修改eBay地址
                 $eBayAddress.on('submit', function() {
@@ -982,18 +881,6 @@
                 $panelRemarkForm.remove();
             }
 
-
-
-            // =========================== 附加方法 ==================================
-            /**
-             * 链接转换为a标签
-             * @param {String} _str 备注内容
-             */
-            function LinkChange(_str) {
-                _str = _str.replace(/\[\[\[(.*)]]]/g, ' 【<a href="$1" target="_blank">附加链接</a>】 ');
-                return _str;
-            }
-            // =========================== 附加方法 ==================================
         }());
     </script>
 </body>
