@@ -202,7 +202,7 @@
                             <td>{Shop}</td>
                             <td>{Buyer}</td>
                             <td>{Name}</td>
-                            <td>{SKU}</td>
+                            <td class="product">{TemplateProduct}</td>
                             <td>{CreatedTime}</td>
                             <td title="{Address}"><span class="label state">{Country}</span></td>
                             <td>{BuyerMessage}</td>
@@ -663,6 +663,9 @@
                 SkuID  : oParam.SkuID || false
             };
             common.SkuSearch($('#common-sreach'), option);
+
+            // 产品渲染
+            common.copy.ProductData($dataList.find('.product'));
 
             // 初始化页面
             oParam.SkuID && (function(){

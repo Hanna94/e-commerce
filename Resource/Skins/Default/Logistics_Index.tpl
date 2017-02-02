@@ -191,7 +191,7 @@
 
                                 <td>{Shop}</td>
                                 <td>{Buyer}</td>
-                                <td>{SKU}</td>
+                                <td class="product">{TemplateProduct}</td>
 
                                 <td>{Address}</td>
                                 <td>{BuyerMessage}</td>
@@ -651,7 +651,7 @@
                         $remark.find('tbody').html(""); // 每次打开清空记录
                         $.each(data.Order, function(i, val){
                             $.ajax({
-                                url: '/OMS/Order.aspx?Do=Query&OrderID=' + val.ReferenceID,
+                                url: '/OMS/API/?Do=Query&OrderID=' + val.ReferenceID,
                                 dataType: 'json',
                                 type: 'get',
                                 success: function(data){
@@ -1393,6 +1393,9 @@
                         add = ts.find('td:eq(9)').text();
                     ts.find('td:eq(9)').html(add.replace(/(Packstation|packstation|Postnummer)/, '<span class="bg-primary">$1</span>'));
                 });
+
+                // 产品渲染
+                common.copy.ProductData($dataList.find('.product'));
             }());
 
             // 标签页定位
