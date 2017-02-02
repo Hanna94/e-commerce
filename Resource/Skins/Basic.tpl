@@ -40,8 +40,8 @@
                     <!-- 用户信息，与网站操作-->
                     <ul id="user-mess" class="nav navbar-nav navbar-right">
                         <li><a href="javascript:;"><span class="glyphicon glyphicon-user"></span>：<strong>{UID}</strong></a></li>
-                        <li><a href="javascript:;"><button id="basic-magBtn" type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#basic-modal"><span class="glyphicon glyphicon-envelope"></span> 0</button></a></li>
-                        <li><a href="javascript:;"><button id="create-magBtn" type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#create-modal"><span class="glyphicon glyphicon-plus" title="新建工单"></span></button></a></li>
+                        <!-- <li><a href="javascript:;"><button id="basic-magBtn" type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#basic-modal"><span class="glyphicon glyphicon-envelope"></span> 0</button></a></li>
+                        <li><a href="javascript:;"><button id="create-magBtn" type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#create-modal"><span class="glyphicon glyphicon-plus" title="新建工单"></span></button></a></li> -->
                         <li><a href="javascript:;"><time></time></a></li>
                         <li title="设置" class="dropdown">
                             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></a>
@@ -195,232 +195,232 @@
         $(function(){
             'use strict';
 
-            var I_UID = {UID};
-            // 获取未确认的消息条数， 每10秒一次
-            (function(){
-                var $userMess = $('#user-mess');
-                function getMes(){
-                    $.ajax({
-                        url: '/message/API/?Do=GetCount',
-                        type: 'get',
-                        dataType: 'json',
-                        data: {
-                            UID: I_UID
-                        },
-                        success: function(data){
-                            $userMess.find('li:eq(1) button').html('<span class="glyphicon glyphicon-envelope"></span> ' + data.Count);
-                        }
-                    });
-                }
-                // 先执行一次后，之后每10秒获取一次
-                getMes();
-                // setInterval(getMes, 10000); //暂时暂停这项功能
-            })();
+            // var I_UID = {UID};
+            // // 获取未确认的消息条数， 每10秒一次
+            // (function(){
+            //     var $userMess = $('#user-mess');
+            //     function getMes(){
+            //         $.ajax({
+            //             url: '/message/API/?Do=GetCount',
+            //             type: 'get',
+            //             dataType: 'json',
+            //             data: {
+            //                 UID: I_UID
+            //             },
+            //             success: function(data){
+            //                 $userMess.find('li:eq(1) button').html('<span class="glyphicon glyphicon-envelope"></span> ' + data.Count);
+            //             }
+            //         });
+            //     }
+            //     // 先执行一次后，之后每10秒获取一次
+            //     getMes();
+            //     // setInterval(getMes, 10000); //暂时暂停这项功能
+            // })();
 
             // 消息列表
-            (function(){
-                var $BasicModal = $('#basic-modal'),
-                    $spanEyes = $BasicModal.find('tbody .glyphicon-eye-open'),
+            // (function(){
+            //     var $BasicModal = $('#basic-modal'),
+            //         $spanEyes = $BasicModal.find('tbody .glyphicon-eye-open'),
                     
-                    $BasicMagBtn = $('#basic-magBtn'),
-                    tempBasic = $('#temp-basic').html();
+            //         $BasicMagBtn = $('#basic-magBtn'),
+            //         tempBasic = $('#temp-basic').html();
 
-                // 获取未确认的消息列表
-                $BasicMagBtn.on('click', function(){
-                    $.ajax({
-                        url: '/message/API/?Do=GetList',
-                        dataType: 'json',
-                        type: 'get',
-                        data: {
-                            UID: I_UID
-                        },
-                        success: function(data){
-                            $BasicModal.find('tbody').html(Mustache.render(tempBasic, data));
+            //     // 获取未确认的消息列表
+            //     $BasicMagBtn.on('click', function(){
+            //         $.ajax({
+            //             url: '/message/API/?Do=GetList',
+            //             dataType: 'json',
+            //             type: 'get',
+            //             data: {
+            //                 UID: I_UID
+            //             },
+            //             success: function(data){
+            //                 $BasicModal.find('tbody').html(Mustache.render(tempBasic, data));
 
-                            // 确定消息
-                            var $spanOk = $BasicModal.find('tbody .glyphicon-ok'),
-                                $spanOpen = $BasicModal.find('tbody .glyphicon-eye-open');
-                            $BasicModal.find('tbody tr').each(function(){
-                                var ts = $(this),
-                                    did = $.trim(ts.find('td:eq(0)').text());
+            //                 // 确定消息
+            //                 var $spanOk = $BasicModal.find('tbody .glyphicon-ok'),
+            //                     $spanOpen = $BasicModal.find('tbody .glyphicon-eye-open');
+            //                 $BasicModal.find('tbody tr').each(function(){
+            //                     var ts = $(this),
+            //                         did = $.trim(ts.find('td:eq(0)').text());
 
-                                // 确认消息
-                                ts.find('.glyphicon-ok').on('click', function(){
-                                    $.ajax({
-                                        url: '/message/API/?Do=Confirm',
-                                        type: 'post',
-                                        data: {
-                                            DataID: did,
-                                            UID: I_UID
-                                        },
-                                        success: function(data){
-                                            common.alert({
-                                                type: 'success',
-                                                title: '确认消息',
-                                                msg: data.message || '成功。',
-                                                cb: function(){
-                                                   ts.closest('tr').remove(); 
-                                                }
-                                            });
-                                        }
-                                    });
-                                });
+            //                     // 确认消息
+            //                     ts.find('.glyphicon-ok').on('click', function(){
+            //                         $.ajax({
+            //                             url: '/message/API/?Do=Confirm',
+            //                             type: 'post',
+            //                             data: {
+            //                                 DataID: did,
+            //                                 UID: I_UID
+            //                             },
+            //                             success: function(data){
+            //                                 common.alert({
+            //                                     type: 'success',
+            //                                     title: '确认消息',
+            //                                     msg: data.message || '成功。',
+            //                                     cb: function(){
+            //                                        ts.closest('tr').remove(); 
+            //                                     }
+            //                                 });
+            //                             }
+            //                         });
+            //                     });
 
-                                // 查看消息
-                                ts.find('.glyphicon-eye-open').on('click', function(){
-                                    $.ajax({
-                                        url: '/message/API/?Do=Confirm',
-                                        type: 'post',
-                                        data: {
-                                            DataID: did,
-                                            UID: I_UID
-                                        },
-                                        success: function(data){
-                                                ts.closest('tr').remove(); 
-                                        }
-                                    });
-                                });
-                            });
-                        }
-                    });
-                });
-            })();
+            //                     // 查看消息
+            //                     ts.find('.glyphicon-eye-open').on('click', function(){
+            //                         $.ajax({
+            //                             url: '/message/API/?Do=Confirm',
+            //                             type: 'post',
+            //                             data: {
+            //                                 DataID: did,
+            //                                 UID: I_UID
+            //                             },
+            //                             success: function(data){
+            //                                     ts.closest('tr').remove(); 
+            //                             }
+            //                         });
+            //                     });
+            //                 });
+            //             }
+            //         });
+            //     });
+            // })();
 
             // 新建工单
-            (function(){
-                var $orderid = $('.orderid').find('label'),
-                    $workForm = $('#word-from'),
-                    $workSend = $('#work-send'),
-                    $sendPromptDiv = $('.prompt-send'),
-                    $atList = $('.atList'),
-                    $workShare = $('#work-share'),
-                    $sharePromptDiv = $('.prompt-share'),
-                    $shareList = $('.shareList'),
-                    $note = $('.noteLite'),
-                    $workBtn = $('#work-btn'),
-                    allMenbers = [],    //成员数组
-                    allpounds = [],     //团队数组
-                    keySelect = null,   //按键定位
-                    setHeight = null;   //滚动条高度
+            // (function(){
+            //     var $orderid = $('.orderid').find('label'),
+            //         $workForm = $('#word-from'),
+            //         $workSend = $('#work-send'),
+            //         $sendPromptDiv = $('.prompt-send'),
+            //         $atList = $('.atList'),
+            //         $workShare = $('#work-share'),
+            //         $sharePromptDiv = $('.prompt-share'),
+            //         $shareList = $('.shareList'),
+            //         $note = $('.noteLite'),
+            //         $workBtn = $('#work-btn'),
+            //         allMenbers = [],    //成员数组
+            //         allpounds = [],     //团队数组
+            //         keySelect = null,   //按键定位
+            //         setHeight = null;   //滚动条高度
 
-                // 获取团队数据
-                common.ajax({
-                    title: '获取团队数据',
-                    URL: '/user/API/?Do=GetDivisionList',
-                    good: function(data){
-                        var d = data;
-                        //遍历团队，添加进数组
-                        $.each(d.DataList, function(i, n){
-                            allpounds[i] = n.Name;
-                        });
-                    }
-                });
+            //     // 获取团队数据
+            //     common.ajax({
+            //         title: '获取团队数据',
+            //         URL: '/user/API/?Do=GetDivisionList',
+            //         good: function(data){
+            //             var d = data;
+            //             //遍历团队，添加进数组
+            //             $.each(d.DataList, function(i, n){
+            //                 allpounds[i] = n.Name;
+            //             });
+            //         }
+            //     });
 
-                // 获取成员数据
-                common.ajax({
-                    title: '获取成员数据',
-                    URL: '/user/API/?Do=GetUserList',
-                    good: function(data){
-                        var d = data;
-                        //遍历成员，添加进数组
-                        $.each(d.DataList, function(i, n){
-                            allMenbers[i] = n.TrueName;
-                        });
-                    }
-                });
+            //     // 获取成员数据
+            //     common.ajax({
+            //         title: '获取成员数据',
+            //         URL: '/user/API/?Do=GetUserList',
+            //         good: function(data){
+            //             var d = data;
+            //             //遍历成员，添加进数组
+            //             $.each(d.DataList, function(i, n){
+            //                 allMenbers[i] = n.TrueName;
+            //             });
+            //         }
+            //     });
 
-                //获取工单号
-                $.ajax({
-                    url: '/Ticket/API/?Do=Post',
-                    data: { UID: I_UID },
-                    type: 'post',
-                    dataType: 'json',
-                    success: function(data){
-                        var d = data.OrderID;
-                        $orderid.text("工单号：" + d);
-                        $orderid.attr("data-val", d);
-                    }
-                });
+            //     //获取工单号
+            //     $.ajax({
+            //         url: '/Ticket/API/?Do=Post',
+            //         data: { UID: I_UID },
+            //         type: 'post',
+            //         dataType: 'json',
+            //         success: function(data){
+            //             var d = data.OrderID;
+            //             $orderid.text("工单号：" + d);
+            //             $orderid.attr("data-val", d);
+            //         }
+            //     });
 
-                // 工单创建提交时序列化文本
-                var workJson = function(){
-                    var postjson = {},
-                        $hidPost = $workForm.find('input[name="PostName"]'),
-                        $hidShare = $workForm.find('input[name="ShareName"]');
-                    postjson.OrderID = $orderid.data('val');
-                    postjson.UID = I_UID;
-                    postjson.SentTo = [];
-                    postjson.ShareTo = [];
-                    postjson.Note = $note.find('textarea').val();
-                    $hidPost.each(function(i){
-                        var ts = $(this);
-                        postjson.SentTo.push({Name : ts.val()});
-                    });
-                    $hidShare.each(function(i){
-                        var ts = $(this);
-                        postjson.ShareTo.push({Name : ts.val()});
-                    });
-                    return JSON.stringify(postjson);
-                };
+            //     // 工单创建提交时序列化文本
+            //     var workJson = function(){
+            //         var postjson = {},
+            //             $hidPost = $workForm.find('input[name="PostName"]'),
+            //             $hidShare = $workForm.find('input[name="ShareName"]');
+            //         postjson.OrderID = $orderid.data('val');
+            //         postjson.UID = I_UID;
+            //         postjson.SentTo = [];
+            //         postjson.ShareTo = [];
+            //         postjson.Note = $note.find('textarea').val();
+            //         $hidPost.each(function(i){
+            //             var ts = $(this);
+            //             postjson.SentTo.push({Name : ts.val()});
+            //         });
+            //         $hidShare.each(function(i){
+            //             var ts = $(this);
+            //             postjson.ShareTo.push({Name : ts.val()});
+            //         });
+            //         return JSON.stringify(postjson);
+            //     };
 
-                // 提交
-                $workBtn.on('click', function(){
+            //     // 提交
+            //     $workBtn.on('click', function(){
                     
-                    // 文本内容上传
-                    var textJson = workJson(),
-                        fileName = $('#StrFile').attr('name');
-                    $.ajax({
-                        type: 'post',
-                        url: '/Ticket/API/?Do=Create',
-                        data: textJson,
-                        success: function(data, status, e){
-                            // 文本上传成功后上传文件
-                            common.ajaxFE({
-                                title: '工单附件上传',
-                                URL: '/Ticket/API/?Do=Upload',
-                                FE: 'StrFile',
-                                dataType: 'json',
-                                type: 'post',
-                                data: {
-                                    OrderID: $orderid.data('val'),
-                                    UID: I_UID,
-                                    StrFile: fileName
-                                },
-                                ok: function(data, status, e){
-                                    common.alert({
-                                        type: 'success',
-                                        title: '[工单创建]操作：',
-                                        msg: data.Message || '失败！提示：' + e
-                                    });
-                                    setTimeout(function() {
-                                        location.href="/Ticket/?Do=MyTicket";
-                                    }, 1000);
-                                },
-                                no: function(data, status, e){
-                                    console.log("这里是no" + e);
-                                }
-                            });
-                        },
-                        error: function(data, status, e){
-                            console.log(e);
-                        }
-                    });
+            //         // 文本内容上传
+            //         var textJson = workJson(),
+            //             fileName = $('#StrFile').attr('name');
+            //         $.ajax({
+            //             type: 'post',
+            //             url: '/Ticket/API/?Do=Create',
+            //             data: textJson,
+            //             success: function(data, status, e){
+            //                 // 文本上传成功后上传文件
+            //                 common.ajaxFE({
+            //                     title: '工单附件上传',
+            //                     URL: '/Ticket/API/?Do=Upload',
+            //                     FE: 'StrFile',
+            //                     dataType: 'json',
+            //                     type: 'post',
+            //                     data: {
+            //                         OrderID: $orderid.data('val'),
+            //                         UID: I_UID,
+            //                         StrFile: fileName
+            //                     },
+            //                     ok: function(data, status, e){
+            //                         common.alert({
+            //                             type: 'success',
+            //                             title: '[工单创建]操作：',
+            //                             msg: data.Message || '失败！提示：' + e
+            //                         });
+            //                         setTimeout(function() {
+            //                             location.href="/Ticket/?Do=MyTicket";
+            //                         }, 1000);
+            //                     },
+            //                     no: function(data, status, e){
+            //                         console.log("这里是no" + e);
+            //                     }
+            //                 });
+            //             },
+            //             error: function(data, status, e){
+            //                 console.log(e);
+            //             }
+            //         });
 
-                });
+            //     });
 
-                if ($workSend.length > 0) { //如果获取元素为空，则不执行召唤程序
-                    // SendTo模块召唤处理
-                    common.at.inputCheck($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, allMenbers, allpounds, "PostName");
-                    common.at.keydownFun($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, "PostName");
-                    common.at.removeMate($atList, $workForm);
+            //     if ($workSend.length > 0) { //如果获取元素为空，则不执行召唤程序
+            //         // SendTo模块召唤处理
+            //         common.at.inputCheck($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, allMenbers, allpounds, "PostName");
+            //         common.at.keydownFun($workSend, $atList, $workForm, $sendPromptDiv, keySelect, setHeight, "PostName");
+            //         common.at.removeMate($atList, $workForm);
 
-                    // shareTo模块召唤处理
-                    common.at.inputCheck($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, allMenbers, allpounds, "ShareName");
-                    common.at.keydownFun($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, "ShareName");
-                    common.at.removeMate($shareList, $workForm);
-                }
+            //         // shareTo模块召唤处理
+            //         common.at.inputCheck($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, allMenbers, allpounds, "ShareName");
+            //         common.at.keydownFun($workShare, $shareList, $workForm, $sharePromptDiv, keySelect, setHeight, "ShareName");
+            //         common.at.removeMate($shareList, $workForm);
+            //     }
 
-            })();
+            // })();
 
         });
     </script>
