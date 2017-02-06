@@ -81,7 +81,7 @@
                         <select class="form-control" name="FreightID"></select>
                     </div>
 
-                    <div class="form-group form-group-sm"">
+                    <div class="form-group form-group-sm">
                         <select class="form-control" name="WaybillType" style="width:100px;">
                             <option value="0">所有运单</option>
                             <option value="1">可合并运单</option>
@@ -143,22 +143,28 @@
                 </form>
                 <div>
                     <table class="table table-striped table-bordered table-hover table-condensed">
+                        <colgroup>
+                            <col>
+                            <col>
+                            <col width=10%>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col width=15%>
+                            <col>
+                            <col>
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th><label id="select-all"><input type="checkbox"> 全选</label></th>
                                 <th>运单号</th>
-                                <th class="war-stutes">发货仓库</th>
-                                <th>货代</th>
-
-                                <th>服务</th>
+                                <th>物流信息</th>
                                 <th>售价</th>
                                 <th>店铺</th>
-                                
                                 <th>买家ID</th>
                                 <th>商品</th>
-                                <th>地址</th>
-
-                                <th>买家留言</th>
+                                <th>地址 & 买家留言</th>
                                 <th>状态</th>
                                 <th>操作</th>
                             </tr>
@@ -183,18 +189,12 @@
                                     </div>
                                 </td>
                                 <td class="orderID">{OrderID}</td>
-                                <td class="warehouse-status"><i class="hidden">{Warehouse}</i></td>
-
-                                <td>{Freight}</td>
-                                <td>{Service}</td>
+                                <td class="warehouse-status">仓库：<i>{Warehouse}</i><br>货代：{Freight}<br>服务：{Service}</td>
                                 <td>{Amt} <span class="label currency">{Currency}</span></td>
-
                                 <td>{Shop}</td>
                                 <td>{Buyer}</td>
                                 <td class="product">{TemplateProduct}</td>
-
-                                <td>{Address}</td>
-                                <td>{BuyerMessage}</td>
+                                <td>{Address}{BuyerMessage}</td>
                                 <td class="waybill-status"><i class="hidden">{Status}</i></td>
 
                                 <td>
@@ -202,12 +202,12 @@
                                     &nbsp;&nbsp;
                                     <a class="stock-post" title="配货交运" href="javascript:;" ><span class="glyphicon glyphicon-qrcode"></span></a>
                                     &nbsp;&nbsp;
-                                    <span data-toggle="modal" class="glyphicon glyphicon-fullscreen poi" style="color: rgb(255, 73, 18);" title="拆单"></span>
+                                    <span class="glyphicon glyphicon-fullscreen btn-tear poi" style="color: rgb(255, 73, 18);" title="拆单"></span>
                                 </td>
                             </tr>
                             <!-- END 数据列表 -->
                         </tbody>
-                        <tfoot><tr><td colspan="13"></td></tr></tfoot>
+                        <tfoot><tr><td colspan="10"></td></tr></tfoot>
                     </table>
                 </div>
             <!-- </div> -->
@@ -456,7 +456,7 @@
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
 
     <script>
-        (function () {
+        $(function () {
             'use strict';
 
             var arrWrehouse,
@@ -1037,12 +1037,13 @@
                             tempJSON = {}; //初始化JSON
                             
                         // 点击列表页的拆分按钮
-                        $dataList.find('.glyphicon-fullscreen').on('click', function(){
-                            $modalSplit.modal('show'); // 显示面板
+                        $dataList.on('click', '.btn-tear', function(){
+                            console.log($(this));
                             // 初始化面板
                             var DID = $(this).closest('tr').data('id');
                             getData(DID);
 
+                            $modalSplit.modal('show'); // 显示面板
                         });
 
                         //获取数据初始化面板
@@ -1380,7 +1381,7 @@
 
                 //设置仓库颜色
                 $dataList.find('.warehouse-status').each(function(){
-                    var $this = $(this);
+                    var $this = $(this).find('i');
                     $this.html(common.order.setWarehouse($this.text()));
                 });
 
@@ -1390,7 +1391,7 @@
                 //Packstation packstation Postnummer三个地址字段加上背景色
                 $dataList.find('tbody tr').each(function(){
                     var ts = $(this),
-                        add = ts.find('td:eq(9)').text();
+                        add = ts.find('td:eq(9)').html();
                     ts.find('td:eq(9)').html(add.replace(/(Packstation|packstation|Postnummer)/, '<span class="bg-primary">$1</span>'));
                 });
 
@@ -1404,7 +1405,7 @@
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
             <!-- END 分页脚本 -->
-        }());
+        });
     </script>
 </body>
 </html>
