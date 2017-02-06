@@ -54,15 +54,29 @@
                                 <button id="openTab" class="btn btn-default btn-xs" type="button">批量打开</button>
                             </div>
 
-                            <div class="input-group">
+                            <!-- <div class="input-group">
                                 <div class="btn-group btn-group-xs" data-toggle="buttons">
-                                    <!-- BEGIN 店铺列表 ATTRIB= -->
+                                    BEGIN 店铺列表 ATTRIB=
                                     <label class="btn btn-default btn-shop">
                                         <input type="checkbox" name="ShopID" value="{DataID}" autocomplete="off">{Name}
                                     </label>
-                                    <!-- END 店铺列表 -->
+                                    <label class="btn btn-default btn-shop">
+                                        <input type="checkbox" name="ShopID" value="{DataID}" autocomplete="off">{Name}
+                                    </label>
+                                    END 店铺列表
                                 </div>
-                            </div>
+                            </div> -->
+                            <button id="acc-search-btn" type="button" class="btn btn-default btn-sm" data-container="body" data-toggle="popover"
+                                    data-placement="right" data-html="true" data-trigger="click" data-content="
+                                <form id='acc-search' method='post' action='javascript:;'>
+                                <div class='checkbox'>
+                                <!-- BEGIN 店铺列表 ATTRIB= -->
+                                <label class='mg-r-10'><input type='checkbox' name='ShopID' value='{DataID}'><span>{Name}</span></label>
+                                <!-- END 店铺列表 -->
+                                </div>
+                                <button class='btn btn-default btn-xs' type='submit'>查询</button>
+                                </form>
+                            ">账号选择</button>
 
                             <div class="form-group form-group-sm">
                                 <!-- BEGIN 所在团队 ATTRIB= -->
@@ -167,10 +181,8 @@
                             <th><label id="select-all"><input type="checkbox"> 全选</label></th>
                             <th>图片</th>
                             <th>金额</th>
-                            <th>账号</th>
-                            <th>买家ID</th>
-                            <th>收货人</th>
-                            <th>SKU</th>
+                            <th>订单信息</th>
+                            <th>产品</th>
                             <th>下单时间</th>
                             <th>地址</th>
                             <th>买家备注</th>
@@ -199,13 +211,16 @@
                             </td>
                             <td>{Pic}</td>
                             <td>{Amt} <span class="label currency">{Currency}</span></td>
-                            <td>{Shop}</td>
-                            <td>{Buyer}</td>
-                            <td>{Name}</td>
+                            <td>账号：{Shop}<br>买家：{Buyer}<br>收货人：{Name}</td>
                             <td class="product">{TemplateProduct}</td>
                             <td>{CreatedTime}</td>
                             <td title="{Address}"><span class="label state">{Country}</span></td>
-                            <td>{BuyerMessage}</td>
+                            <td>
+                                <button type="button" class="btn btn-default btn-xs buyer-remark" 
+                                data-container="body" data-toggle="popover" data-placement="left"
+                                data-html="true" data-trigger="click" data-content="{BuyerMessage}">
+                                <span data-val="in" class="glyphicon glyphicon-tag poi"></button>
+                            </td>
                             <td>{Date}</td>
                             <td class="waybill-status"><i class="hidden">{Status}</i></td>
                             <td>
@@ -406,12 +421,12 @@
             })();
 
             // 账号查询
-            if (shopID) {
-                shopID = shopID.split(',');
-                for (var i = 0, len = shopID.length; i < len; i++) {
-                    $formFilter.find('input[type="checkbox"][value="' + shopID[i] + '"]').closest('.btn').toggleClass('btn-success').button('toggle');
-                }
-            }
+            // if (shopID) {
+            //     shopID = shopID.split(',');
+            //     for (var i = 0, len = shopID.length; i < len; i++) {
+            //         $formFilter.find('input[type="checkbox"][value="' + shopID[i] + '"]').closest('.btn').toggleClass('btn-success').button('toggle');
+            //     }
+            // }
 
             // 账号按下改变颜色
             $formFilter.find('.btn-shop').on('click', function(){
@@ -525,6 +540,27 @@
             $formFilter.on('submit', function() {
                 location.search = common.URL.stringify(common.URL.parse('?' + $formFilter.serialize()));
             });
+            $('#acc-search-btn').on('shown.bs.popover', function() {
+                var $as = $('#acc-search');
+                // 初始化
+                if (shopID) {
+                    if (typeof(shopID) == 'string') {shopID = shopID.split(',');}
+                    for (var i = 0, len = shopID.length; i < len; i++) {
+                        $as.find('input[type="checkbox"][value="' + shopID[i] + '"]')
+                           .prop('checked', true)
+                           .next().addClass('bg-primary');
+                    }
+                }
+                // 点击查询
+                $as.on('submit', function() {
+                    location.search = common.URL.stringify(common.URL.parse('?Do=' + $('.do').val() 
+                                                                                   + '&TeamID=' 
+                                                                                   + $('#TeamID').val()
+                                                                                   + '&'
+                                                                                   + $(this).serialize()));
+                });
+            });
+            
 
             // 手工建单
             var tempAddProduct = $('#temp-add-product').html(),
@@ -574,6 +610,18 @@
                 var $this = $(this);
                 $this.html(common.order.setStatus($this.text())); 
             });
+
+            // 判断备注是否为空，为空则删除
+            (function(){
+                $('.buyer-remark').each(function() {
+                    var purRemarkVal = $(this).attr('data-content');
+                    if (purRemarkVal == '' || purRemarkVal == null) {
+                        $(this).remove();
+                    }
+                });
+            })();
+            //启动弹出框
+            $("[data-toggle='popover']").popover(); 
 
             // 提交建单
             $createForm.on('submit', function() {
