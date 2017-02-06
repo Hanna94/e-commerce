@@ -248,12 +248,7 @@
 
                         <div id="product" class="maxH400 mg-t-20"></div>
                         <hr />
-                        <div id="remark" class="maxH300 mg-t-10">
-                            <label>备注</label>
-                            <table class="table table-striped table-condensed">
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                        <div id="remark"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-guide="-1" class="btn btn-default pull-left btn-flag">上一个</button>
@@ -435,24 +430,11 @@
         {{/Service}}
     </template>
 
-    <!-- 买家留言与备注模板-->
-    <template id="temp-remark">
-        {{#Message}}
-        <tr>
-            <td>
-                <input type="hidden" id="UID" name="UID" value="{{UID}}" />
-                <input type="hidden" id="DataID" name="DataID" value="{{DataID}}" />
-                <span>{{Remark}}</span>&nbsp;&nbsp;
-                <span style="font-size: 14px;color: #929292;">By：{{UserName}}</span>&nbsp;&nbsp;<i style="font-size: 14px;color: #929292;">{{Date}}</i>
-            </td>
-        </tr>
-        {{/Message}}
-    </template>
-
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/Logistics.js"></script>
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/Remark.js"></script>
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
 
     <script>
@@ -476,7 +458,7 @@
                 oParam = common.URL.parse(),
                 $formSearch = $('#form-search'),
                 $remark = $('#remark'),
-                tempRemark = $('#temp-remark').html();
+                UID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->;
 
             // 初始化页面
             $formSearch.find('.do').val(oParam.Do);
@@ -655,8 +637,15 @@
                                 dataType: 'json',
                                 type: 'get',
                                 success: function(data){
-                                    var mes = data.DataList[0];
-                                    $remark.find('tbody').append(Mustache.render(tempRemark, mes));
+                                    var op = {
+                                        Target : $remark,
+                                        DataID : data.DataID,    // 要更新的单号
+                                        UID    : UID,
+                                        HasWarp: true,
+                                        Title  : '备注',
+                                        Tip    : '提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。'
+                                    };
+                                    Remark(op, data);
                                 }
                             });
                         });
