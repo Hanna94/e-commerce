@@ -194,7 +194,7 @@
             <td><a href="/OMS/?Do=Edit&DataID={{DataID}}" target="_blank">{{DataID}}</a></td>
             <td>{{Status}}</td>
             <td>{{Currency}}{{Amt}}</td>
-            <td><span class="glyphicon glyphicon-time" title="{{CreatedTime}}"></span></td>
+            <td>{{CreatedTime}}</td>
             <td><span data-val="{{DataID}}" class="glyphicon glyphicon-tag poi" title="点击切换备注[{{DataID}}]"></span></td>
         </tr>
         {{/Order}}
