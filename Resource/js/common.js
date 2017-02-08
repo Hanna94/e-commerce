@@ -731,168 +731,6 @@ common.init = function () {
 common.init();
 
 /**
- * 备注方法封装
- * @author Harry
- * @date 2016-05-03 15:23
- * [dataID]:就是dataID
- * [rediv]:包裹整个备注的div
- * [reform]:备注提交框的form
- * [retemp]:备注的记录输出模板
- * [resetBtn]:修改备注时出现的重置按钮
- * [UID]:当前登录用户的UID
- * [uploadURL]:提交接口，如没有传入参数则使用默认
- * [getdataURL]:获取接口，如没有传入参数则使用默认
- * [deleteURL]:删除接口，如没有传入参数则使用默认
- */
-// 参数格式
-
-// 所有方法再封装一次
-common.remarkFunction = function(option) {
-    // 更新备注封装
-    common.remarkUpdate(option.dataID, option.rediv, option.reform, option.retemp, option.resetBtn, option.UID, option.uploadURL, option.getdataURL, option.deleteURL);
-    // 提交备注信息
-    common.remarkSave(option.dataID, option.rediv, option.reform, option.retemp, option.resetBtn, option.UID, option.uploadURL, option.getdataURL, option.deleteURL);
-    // 判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-    common.editAndDel(option.dataID, option.rediv, option.reform, option.retemp, option.resetBtn, option.UID, option.uploadURL, option.getdataURL, option.deleteURL);
-    // 编辑备注的[取消]按钮事件
-    common.reset(option.reform, option.resetBtn);
-}
-
-//提交备注信息
-common.remarkSave = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL){
-    reform.find('input[type="submit"]').on('click', function(){
-        common.ajax({
-            title: '提交备注信息',
-            URL: uploadURL || '/OMS/Order.aspx?Do=MessageSave',
-            type: 'post',
-            data: {
-                DataID: reform.find('#DataIDforEdit').val()?reform.find('#DataIDforEdit').val():null,
-                OID: dataID, 
-                FID: dataID,
-                Remark: reform.find('textarea').val(),
-                Content: reform.find('textarea').val()
-            },
-            good: function(data){
-                common.alert({
-                    type: 'success',
-                    title: '“提交备注”操作：',
-                    msg: data.Message || '成功！'
-                });
-                //检查是否有隐藏的input标签，如果有就删除（更新备注遗留）
-                if(reform.find('#DataIDforEdit')){
-                    reform.find('#DataIDforEdit').remove();
-                }
-                //如果[取消]按钮是显示的，就隐藏掉
-                if(!resetBtn.is(':hidden')){
-                    resetBtn.attr('class', 'btn btn-default hidden');;
-                }
-                //按钮更改为[提交]
-                reform.find('input[type="submit"]').val('提交');
-                //刷新备注
-                common.remarkUpdate(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
-            }
-        });
-    });
-}
-
-//更新备注封装
-common.remarkUpdate = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL){
-    $.ajax({
-        url: getdataURL || '/OMS/API/?Do=Query&DataID=' + dataID,
-        type: 'get',
-        dataType: 'json',
-        success: function(data){
-            var mes;
-            if (getdataURL) {
-                mes = data;
-            }else{
-                mes = data.DataList[0];
-            }
-            rediv.find('tbody').html(Mustache.render(retemp, mes));
-            rediv.find('tr').each(function() {
-                var isLink = LinkChange($(this).find('span:eq(0)').text());
-                $(this).find('span:eq(0)').html(isLink);
-            });
-            reform.find('textarea').val("");
-            //判断备注能否编辑删除
-            common.editAndDel(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
-        }
-    });
-}
-
-//判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-common.editAndDel = function(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL){
-    var $uidList = rediv.find('table tr');
-    //遍历每条备注的按钮，设置为隐藏
-    $uidList.each(function(){
-        var inputUID = $(this).find('#UID').val();
-        $(this).find('#btn-ead').hide();
-        //如果备注的UID符合当前用户UID，则显示编辑和删除按钮
-        if(inputUID == UID){
-            var $thisDiv = $(this).find('#btn-ead'),
-                $thisTr = $(this),
-                $DataID = $thisTr.find('#DataID').val();
-            $thisDiv.show();
-            //绑定按钮事件
-            //编辑备注
-            $thisDiv.find('span:eq(0)').on('click', function(){
-                var $cInput = $('<input id="DataIDforEdit" name="DataID" type="hidden" value=' + $DataID + ' />'),
-                    //预防点击多次出现多个OID
-                    $hidinp = reform.find('input[type="hidden"]');
-                    $hidinp ? reform.find('input[type="hidden"]').remove().end().append($cInput) : form.append($cInput);
-                //把备注内容复制到文本域
-                var copyText = $thisTr.find('span:eq(0)').text();
-                reform.find('textarea').val(copyText);
-                //改变提交按钮为[修改]，并显示隐藏的[取消]按钮
-                reform.find('input[type="submit"]').val('修改');
-                resetBtn.attr('class', 'btn btn-default');
-            });
-            //删除备注
-            $thisDiv.find('span:eq(1)').on('click', function(){
-                common.ajax({
-                    title: '删除备注',
-                    URL: deleteURL || '/OMS/Order.aspx?Do=MessageDelete',
-                    type: 'post',
-                    data: { 
-                        DataID: $DataID,
-                        FID: dataID
-                    },
-                    good: function(data){
-                        common.alert({
-                            type: 'success',
-                            title: '“删除备注”操作：',
-                            msg: data.Message || '成功！'
-                        });
-                        //刷新备注
-                        common.remarkUpdate(dataID, rediv, reform, retemp, resetBtn, UID, uploadURL, getdataURL, deleteURL);
-                    }
-                });
-            });
-        }
-    });
-}
-
-//编辑备注的[取消]按钮事件
-common.reset = function(reform, resetBtn){
-    reform.find('input[type="reset"]').on('click', function(){
-        //删除掉带有DataID的input标签
-        reform.find('input[type="hidden"]').remove();
-        resetBtn.attr('class', 'btn btn-default hidden');
-        //按钮更改为[提交]
-        reform.find('input[type="submit"]').val('提交');
-    });
-}
-
-/**
- * 链接转换为a标签
- * @param {String} _str 备注内容
- */
-function LinkChange(_str) {
-    _str = _str.replace(/\[\[\[(.*)]]]/g, ' 【<a href="$1" target="_blank">附加链接</a>】 ');
-    return _str;
-}
-
-/**
  * 召唤方法封装
  * @author Harry
  * @date 2016-05-21 15:18
@@ -1110,17 +948,19 @@ common.Rendering.order = function(tagDiv){
     }); 
 }
 
-// var option = {
-//     Type : ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
-//     Ch   : ['中文1', '中文2', '中文3'],
-//     Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
-//     Mode : prepend(前插) / append(后插) / replace(替换)
-//}
 
 /**
  * 万用渲染方法
  * @param {Object} _$ 待渲染的元素的父元素集合
  * @param {JSON}   op 配置参数
+ *
+ * 参数格式
+ * var option = {
+ *     Type : ['', 'XX1', 'XX2', 'XX3'],                                // 状态类型
+ *     Ch   : ['中文1', '中文2', '中文3'],
+ *     Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'], // 状态样式，有默认可不填
+ *     Mode : 'prepend'(前插) / 'append'(后插) / 'replace'(替换)
+ * }
  */
 common.Rendering.All = function(_$, op) {
     // 默认渲染样式
@@ -1370,16 +1210,19 @@ common.copy.LoopStock = function(ds) {
  * @param {boolean} inForm    是否有外部form
  * @param {boolean} isLimit   是否是迷你搜索框
  * @param {String}  mode      是否是完整搜索
+ * @param {String}  SkuID     搜索框初始化
  * @param {String}  placement 库存方式位置
  */
 
 // 参考参数
 // var option = {
-//     inForm   : true,
-//     isLimit  : true,
-//     mode     : true,
-//     placement: 'lift' //非必要
+//     inForm   : true,              // 是否在form中
+//     isLimit  : true,              // 是否迷你模式
+//     mode     : true,              // 是否是完整搜索
+//     SkuID    : op.SkuID || false, // 搜索框初始化，使用是时需要有var op = common.URL.parse();
+//     placement: 'lift'             // 库存显示位置，默认为下。非必要
 // };
+// common.SkuSearch(_$, option);
 // 
 // 需要的DOM结构
 // <div id="XXXX"></div> 其实什么元素都行，只要能做容器就好
@@ -1593,4 +1436,23 @@ common.Log = function(_$, d) {
                  + '</tbody>';
     _$.html(Mustache.render(LogHTML, d));
     common.loading.hide();
+}
+
+/**
+ * 页面标签页定位
+ * @param {JSON} option Nav&Do&Form
+ *
+ * 数据格式
+ * var labelOption = {
+ *     Nav    : $('.nav'),        // 标签页元素
+ *     Do     : op.Do,            // URL中Do的值；使用common.URL.parse()获取
+ *     KeyWord: op.KeyWord,       // URL中KeyWord的值；使用common.URL.parse()获取;可能为空
+ *     Form   : $('#form-search') // 搜索框的form元素 
+ * };
+ */
+common.WebCommon = function(option) {
+    // 设置Do的隐藏值、设置标签点击效果
+    option.Form.append('<input type="hidden" name="Do" value="' + option.Do + '">');
+    option.Nav.find('a[href="?Do=' + option.Do + '"]').closest('li').addClass('active');
+    option.Form.find('input[name="KeyWord"]').val(decodeURI((option.KeyWord || '').replace(/\++/g, ' ')));
 }
