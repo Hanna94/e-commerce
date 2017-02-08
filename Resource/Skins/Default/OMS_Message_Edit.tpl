@@ -27,16 +27,6 @@
                     <div class="inputFoot">
                         <button class="btn btn-default pull-right sendEmail" type="button">确认</button>
                     </div>
-                    <!-- 测试区 -->
-                    <!-- <form action="/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=83158820711" method="post">
-                        <div class="inputHead pd-t-5 pd-l-5">这里是测试专用的输入框，请勿在这里回复</div>
-                        <div class="inputBody">
-                            <textarea name="Content"></textarea>
-                        </div>
-                        <div class="inputFoot">
-                            <button class="btn btn-danger" type="submit" disabled="disabled">测试用提交</button>
-                        </div>
-                    </form> -->
                 </div>
             </div>
             <div id="userInfo">
@@ -56,14 +46,14 @@
 
                 <!-- 订单信息 -->
                 <div id="u-order" class="pad mg-b-10">
-                    <table class="tableStyle table">
+                    <table class="tableStyle table table-condensed">
                         <colgroup>
+                            <col width="40px">
+                            <col width="60px">
                             <col>
                             <col>
                             <col>
-                            <col>
-                            <col>
-                            <col>
+                            <col width="40px">
                         </colgroup>
                         <thead>
                             <th>店铺</th>
@@ -71,7 +61,7 @@
                             <th>状态</th>
                             <th>金额</th>
                             <th>时间</th>
-                            <th>备注</th>
+                            <th>操作</th>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -123,6 +113,61 @@
                 <div id="imgCon"></div>
                 <div id="btnR" class="topBtnColor02 btnLR poi" style="font-size: 30px; padding: 7px 25px; width: 80px; height: 50px; position: absolute; bottom: 10px; left: 90px;">
                     <span class="glyphicon glyphicon-chevron-right"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建售后单选择框 -->
+    <div class="modal fade" id="serviceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">新建售后单 - 跳转</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="javascript:;">
+                        <div class="form-group form-group-sm mg-b-5">
+                            <label for="sell-cause" class="control-label col-sm-2">原因</label>
+                            <div class="col-sm-4">
+                                <select id="sell-cause" class="form-control">
+                                    <option value="">请选择</option>
+                                    <option value="仓库漏发">仓库漏发</option>
+                                    <option value="物流商错发">物流商错发</option>
+                                    <option value="供应商错发">供应商错发</option>
+                                    <option value="物流问题">物流问题</option>
+                                    <option value="质量问题">质量问题</option>
+                                    <option value="描述失误">描述失误</option>
+                                    <option value="买家原因">买家原因</option>
+                                    <option value="缺货">缺货</option>
+                                    <option value="关税退回">关税退回</option>
+                                    <option value="运费">运费</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <p id="sell-msg-cause" class="text-danger"></p>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label for="sell-handle" class="control-label col-sm-2">处理方式</label>
+                            <div class="col-sm-4">
+                                <select id="sell-handle" class="form-control">
+                                    <option value="">请选择</option>
+                                    <option value="退款">退款</option>
+                                    <option value="重发">重发</option>
+                                    <option value="额外退款">额外退款</option>
+                                    <option value="账号退款">账号退款</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <p id="sell-msg-handle" class="text-danger"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="service-jump" type="button" class="btn btn-default btn-sm">跳转</button>
                 </div>
             </div>
         </div>
@@ -193,9 +238,12 @@
             <td>{{ShopName}}</td>
             <td><a href="/OMS/?Do=Edit&DataID={{DataID}}" target="_blank">{{DataID}}</a></td>
             <td>{{Status}}</td>
-            <td>{{Currency}}{{Amt}}</td>
+            <td>{{Currency}}<br>{{Amt}}</td>
             <td>{{CreatedTime}}</td>
-            <td><span data-val="{{DataID}}" class="glyphicon glyphicon-tag poi" title="点击切换备注[{{DataID}}]"></span></td>
+            <td>
+                <span data-val="{{DataID}}" class="glyphicon glyphicon-tag poi" title="点击切换备注[{{DataID}}]"></span>
+                <span data-val="{{DataID}}" class="glyphicon glyphicon-new-window poi" title="创建订单号[{{DataID}}]的售后单"></span>
+            </td>
         </tr>
         {{/Order}}
     </template>
@@ -428,13 +476,16 @@
                                         });
 
                                         // 初始标签渲染
-                                        $userInfo.find('#u-order tbody tr td:eq(5) span').attr('style', 'color: rgba(92, 184, 92, 1)');
+                                        $userInfo.find('#u-order tbody tr td:eq(5) span.glyphicon-tag').attr('style', 'color: rgba(92, 184, 92, 1)');
 
                                         // 加载完各种数据后加载备注方法
                                         setRemark(data.Order[0].DataID);
 
                                         // 切换订单方法
                                         orderChange();
+
+                                        // 新建售后单方法
+                                        NewService();
                                     }
                                 }
                             });
@@ -609,6 +660,51 @@
                     Remark(msgOption);
                 }
 
+                // 新建售后单方法
+                function NewService() {
+                    $('#u-order').on('click', 'span.glyphicon-new-window', function() {
+                        var did = $(this).data('val');
+                        // 点击跳转按钮时触发
+                        $('#service-jump').off().on('click', function() {
+                            var sc = IfSelected($('#sell-cause'), $('#sell-msg-cause'), '售后原因');
+                            var sh = IfSelected($('#sell-handle'), $('#sell-msg-handle'), '处理方式');
+                            if (sc && sh) {
+                                var serviceHref = '/CustomerService/?Do=Doing'
+                                                + '&DataID=' + did
+                                                + '&Types=' + $('#sell-cause').val()
+                                                + '&ExecuteMode=' + $('#sell-handle').val();
+                                window.open(serviceHref);
+                                $('#serviceModal').modal('hide');
+                            }
+                            
+                        });
+
+                        $('#serviceModal').modal('show');
+                    });
+                }
+
+                /**
+                 * 判断是否已经选择
+                 * @param {Object} _se   select元素
+                 * @param {Object} _msg  提示框
+                 * @param {String} _text 提示文本
+                 */
+                function IfSelected(_se, _msg, _text) {
+                    var _re;
+                    if (_se.val() == '' || _se.val() == null) {
+                        _se.addClass('fs');
+                        _msg.text('请先选择' + _text);
+                        _re = false;
+                    } else if(_se.hasClass('fs')) {
+                        _se.removeClass('fs');
+                        _msg.empty();
+                        _re = true;
+                    } else {
+                        _re = true;
+                    }
+                    return _re;
+                }
+                
             })(); //获取数据和上传数据-END
         });
     </script>
