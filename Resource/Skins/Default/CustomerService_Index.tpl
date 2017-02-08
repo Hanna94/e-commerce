@@ -15,15 +15,16 @@
             <li><a href="?Do=Complete">已结束</a></li>
             <li><a href="?Do=Cancel">已取消</a></li>
         </ul>
-        <form action="?" class="form-inline mg-r-20 mg-b-10">
+        <form id="form-search" action="?" class="form-inline mg-r-20 mg-b-10">
             <div class="form-group form-group-sm mg-r-15 pull-lift">
                 <select class="form-control" name="ShopID" data-default="{TeamID}">
+                    <option value="">全部</option>
                     <!-- BEGIN 店铺列表 ATTRIB= -->
                     <option value="{DataID}">{Name}</option>
                     <!-- END 店铺列表 -->
                 </select>
                 
-                <input type="text" class="form-control" placeholder="BuyerID">
+                <input type="text" class="form-control" name="KeyWord" placeholder="BuyerID">
                 <button class="btn btn-default btn-sm" type="submit">查询</button>
             </div>
             <div id="common-sreach" class="form-group"></div>
@@ -1413,15 +1414,18 @@
 
             // 标签页定位
             (function() {
-                var op = location.search.split('&');
-                var isDo = location.search.split('&')[0];
                 var $formSearch = $('#form-search');
-                isDo = isDo.split('=')[0] == '?Do' ? isDo : '?Do=Sold';
-                $('.nav a[href="' + isDo + '"]').closest('li').addClass('active');
+                var op = common.URL.parse();
+                var labelOption = {
+                    Nav    : $('.nav'),        // 标签页元素
+                    Do     : op.Do,            // URL中Do的值；使用common.URL.parse()获取
+                    KeyWord: op.KeyWord,       // URL中KeyWord的值；使用common.URL.parse()获取;可能为空
+                    Form   : $formSearch       // 搜索框的form元素 
+                };
+                common.WebCommon(labelOption);
 
-                $formSearch.find('input[type="text"]').val(decodeURI((op.KeyWord || '').replace(/\++/g, ' ')));
-                $formSearch.find('select').find('option[value="' + decodeURI(op.Selected) + '"]').prop('selected', true);
-                $formSearch.find('select option[value="' + (op.TeamID || $formSearch.find('select').data('default')) + '"]').prop('selected', true);
+                $formSearch.find('input[name="KeyWord"]').val(decodeURI((op.KeyWord || '').replace(/\++/g, ' ')));
+                $formSearch.find('select[name="ShopID"]').find('option[value="' + op.ShopID + '"]').prop('selected', true);
             })();
 
             // 列表页脚分页
