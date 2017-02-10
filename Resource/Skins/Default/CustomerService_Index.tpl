@@ -400,7 +400,7 @@
                 var op = common.URL.parse();
                 if (op.DataID && op.Types && op.ExecuteMode) {
                     var _t = decodeURI(op.Types);
-                    var _e = ModeChange(decodeURI(op.ExecuteMode));
+                    var _e = ModeChange(decodeURI(op.ExecuteMode), true);
                     $('#sell-cause').find('option[value="'+ _t +'"]').prop('selected', true);
                     $('#sell-handle').find('option[value="'+ _e +'"]').prop('selected', true);
                     GetNewData(op.DataID); // 获取交易单数据并遍历
@@ -479,24 +479,43 @@
 
             /**
              * 处理方式转换（自己挖的坑，再深也要填下去QAQ）
-             * @param {String} _m 处理方式
+             * @param {String}   _m    处理方式
+             * @param {Boolean } _type true: 中转英，false：英转中
              */
-            function ModeChange(_m) {
+            function ModeChange(_m, _type) {
                 var _mode;
-                switch(_m) {
-                    case '重发':
-                        _mode = 'again';
-                    break;
-                    case '退款':
-                        _mode = 'reimburse';
-                    break;
-                    case '额外退款':
-                        _mode = 'added';
-                    break;
-                    case '账号退款':
-                        _mode = 'account';
-                    break;
+                if (_type) {
+                    switch(_m) {
+                        case '重发':
+                            _mode = 'again';
+                        break;
+                        case '退款':
+                            _mode = 'reimburse';
+                        break;
+                        case '额外退款':
+                            _mode = 'added';
+                        break;
+                        case '账号退款':
+                            _mode = 'account';
+                        break;
+                    }
+                } else {
+                    switch(_m) {
+                        case 'again':
+                            _mode = '重发';
+                        break;
+                        case 'reimburse':
+                            _mode = '退款';
+                        break;
+                        case 'added':
+                            _mode = '额外退款';
+                        break;
+                        case 'account':
+                            _mode = '账号退款';
+                        break;
+                    }
                 }
+                
                 return _mode;
             }
 
@@ -515,7 +534,7 @@
                 DataListHistory(data);
 
                 // 设置选项
-                var _mode = ModeChange(data.Order.ExecuteMode);
+                var _mode = ModeChange(data.Order.ExecuteMode, true);
                 $('#sell-cause').find('option[value="'+ data.Order.Types +'"]').prop('selected', true);
                 $('#sell-handle').find('option[value="'+ _mode +'"]').prop('selected', true);
                 $('#sell-handle').prop('disabled', true).attr('title', '编辑模式不允许更改处理方式！');
@@ -963,7 +982,7 @@
                         $sadd.hasClass('fs') && $sadd.removeClass('fs');
 
                         // 类型参数
-                        var _type = ModeChange(_sh);
+                        var _type = ModeChange(_sh, false);
 
                         // 申请原因拼装
                         var op = {
@@ -1228,7 +1247,7 @@
              */
             function LogisticsDetail(_d) {
                 // 运单信息
-                var tableLogistics = $('<table class="table table-striped table-bordered table-hover table-condensed">'
+                var tableLogistics = $('<table id="logistics-list" class="table table-striped table-bordered table-hover table-condensed">'
                                        + '<caption>运单信息</caption>'
                                        + '<thead>'
                                          + '<th>仓库 - 运单号</th>'
@@ -1246,12 +1265,22 @@
                                       + '<td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>'
                                       + '<td>{{CreatedDate}}</td>'
                                       + '<td>'
-                                        + '<span class="glyphicon glyphicon-list-alt poi" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-Logistics-log"></span>'
+                                        + '<span type="button" class="glyphicon glyphicon-list-alt" '
+                                        + 'title="运单操作记录" data-container="body" '
+                                        + 'data-toggle="popover" data-placement="left" data-html="true" data-content="'
+                                        + '<table>'
+                                          + '<thead><th>操作人</th><th>操作记录</th><th>时间</th></thead>'
+                                          + '<tbody>'
+                                          + '{{#Log}}<tr><td>{{Name}}</td><td>{{Remark}}</td><td>{{Date}}</td></tr>{{/Log}}'
+                                          + '</tbody>'
+                                        + '</table>'
+                                        + '"></span>'
                                       + '</td>'
                                     + '</tr>'
                                  + '{{/Logistics}}';
                 tableLogistics.find('tbody').html(Mustache.render(tmpLogistics, _d));
                 $('#order-detailed').append(tableLogistics);
+                $('#order-detailed span[data-toggle="popover"]').popover();
             }
 
 //=========================================== 模态框方法 ====================================================
