@@ -948,19 +948,17 @@ common.Rendering.order = function(tagDiv){
     }); 
 }
 
+// var option = {
+//     Type : ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
+//     Ch   : ['中文1', '中文2', '中文3'],
+//     Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'] // 状态样式，有默认可不填
+//     Mode : prepend(前插) / append(后插) / replace(替换)
+//}
 
 /**
  * 万用渲染方法
  * @param {Object} _$ 待渲染的元素的父元素集合
  * @param {JSON}   op 配置参数
- *
- * 参数格式
- * var option = {
- *     Type : ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
- *     Ch   : ['中文1', '中文2', '中文3'],
- *     Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'], // 状态样式，有默认可不填
- *     Mode : 'prepend'(前插) / 'append'(后插) / 'replace'(替换)
- * }
  */
 common.Rendering.All = function(_$, op) {
     // 默认渲染样式

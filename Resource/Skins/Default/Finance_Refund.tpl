@@ -63,7 +63,7 @@
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs mg-b-5">
-                        <li class="active"><a id="nav-tag-service" href="#nav-refund" data-toggle="tab">售后设置</a></li>
+                        <li class="active"><a id="nav-tag-service" href="#nav-refund" data-toggle="tab">售后请款</a></li>
                         <li><a id="nav-tag-order" href="#nav-order" data-toggle="tab">订单详情</a></li>
                         <li><a id="nav-tag-log" href="#nav-log" data-toggle="tab">日志</a></li>
                     </ul>
@@ -157,6 +157,58 @@
             </div>
         </div>
     </div>
+    
+    <!-- 模态框请款单列表模板 -->
+    <template id="template-refund">
+        {{#Order}}
+        <tr>
+          <td>{{CurrencyCode}} {{ExecuteAmt}}</td><td>{{ApplyName}}</td><td>{{Status}}</td><td>{{Date}}</td>
+          <td>
+            <div class="btn-group" data-did="{{DataID}}" data-oid="{{OrderID}}" data-tid="{{TransactionID}}">
+              <button type="button" class="btn btn-default btn-xs btn-perform" 
+              data-toggle="popover" data-html="true" data-container="body" data-placement="left" 
+              data-content="
+                <div class=&quot;row&quot;>
+                  <div class=&quot;col-sm-12&quot;>
+                    <form class=&quot;form-horizontal&quot; action=&quot;javascript:;&quot;>
+                      <label class=&quot;col-sm-4 control-label&quot;>TransactionID</label>
+                      <div class=&quot;col-sm-8&quot;>
+                        <p class=&quot;form-control-static&quot;>{{TransactionID}}</p>
+                      </div>
+                      <label class=&quot;col-sm-4 control-label&quot;>Amt</label>
+                      <div class=&quot;col-sm-8&quot;>
+                        <p class=&quot;form-control-static&quot;>{{CurrencyCode}} {{Amt}}</p>
+                      </div>
+                      <label class=&quot;col-sm-4 control-label&quot;>ExecuteAmt</label>
+                      <div class=&quot;col-sm-6&quot;>
+                        <p class=&quot;form-control-static&quot;>{{CurrencyCode}} {{ExecuteAmt}}</p>
+                      </div>
+                      <div class=&quot;col-sm-2&quot;>
+                        <button id=&quot;popover-btn-perform-{{DataID}}&quot; data-did=&quot;{{DataID}}&quot; type=&quot;button&quot; class=&quot;btn btn-default btn-sm&quot;>执行</button>
+                      </div>
+                    </form>
+                  </div>
+                  <div class=&quot;col-sm-12&quot;>
+                    <hr class=&quot;mg-b-5&quot;>
+                    <div id=&quot;result-list-{{DataID}}&quot;>
+                        <table class=&quot;table table-striped table-bordered table-hover table-condensed&quot;>
+                            <thead><th>Project</th><th>Values</th></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                  </div>
+                  <div class=&quot;col-sm-12&quot;>
+                    <small>* 按X可关闭执行框，按Esc可关闭执行框以及售后请款单窗口。</small>
+                  </div>
+                </div>
+              ">执行</button>
+              <button type="button" class="btn btn-default btn-xs btn-see">查看PayPal远程数据</button>
+              <button type="button" class="btn btn-default btn-xs btn-cancel">撤销</button>
+            </div>x
+          </td>
+        </tr>
+        {{/Order}}
+    </template>
 
     {页面底部}{/页面底部}
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
@@ -173,11 +225,13 @@
             // ===================================== 售后请款单模态框 ====================================================
             (function() {
                 // 点击查看按钮
+                var currentDataID;
                 $datalist.on('click', '.btn-edit', function() {
                     var thisDataID = $(this).closest('tr').data('id');
-                    common.loading.show();
                     // 模态框内容加载
-                    ModalLoad(thisDataID);
+                    thisDataID != currentDataID && ModalLoad(thisDataID);
+                    currentDataID = thisDataID;
+                    common.loading.show();
                     // 打开模态框
                     $('#modal-refund').modal('show');
                     common.loading.hide();
@@ -189,6 +243,28 @@
              * @param {String} DataID 售后请款单的DataID
              */
             function ModalLoad(DataID) {
+                // 请款模块加载
+                RefundLoad(DataID);
+                // 订单详情模块加载
+                $('#nav-tag-order').one('click', function() {
+                    common.loading.show();
+                    $.ajax({
+                        url     : '/OMS/API/?Do=Query&DataID=' + OID,
+                        type    : 'GET',
+                        dataType: 'JSON',
+                        success : function(data) {
+                             $('#nav-order').attr('data-id', data.DataID);
+                             OrderDetail(data.DataList[0]);
+                             Remark(orderOption, data);
+                             common.loading.hide();
+                        }
+                    }); 
+                    OrderDetailedLoad(Data);
+                });
+            }
+
+            // 请款模块加载
+            function RefundLoad(DataID) {
                 // 获取售后请款单数据
                 $.ajax({
                     url     : '/Finance/API/?Do=RefundQuery&DataID=' + DataID,
@@ -197,22 +273,14 @@
                     success : function(data) {
                         // 售后单信息
                         $('#service-info p').text(data.Order.Title);
-
                         // 请款单列表
-                        var refundTemplate = '{{#Order}}'
-                                           + '<tr>'
-                                             + '<td>{{CurrencyCode}} {{ExecuteAmt}}</td><td>{{ApplyName}}</td>'
-                                             + '<td>{{Status}}</td><td>{{Date}}</td>'
-                                             + '<td>'
-                                               + '<div class="btn-group" data-did="{{DataID}}" data-oid="{{OrderID}}" data-tid="{{TransactionID}}">'
-                                                 + '<button type="button" class="btn btn-default btn-xs btn-perform">执行</button>'
-                                                 + '<button type="button" class="btn btn-default btn-xs btn-see">查看</button>'
-                                                 + '<button type="button" class="btn btn-default btn-xs btn-cancel">撤销</button>'
-                                               + '</div>'
-                                             + '</td>'
-                                           + '</tr>'
-                                           + '{{/Order}}';
-                        $('#refund-list tbody').html(Mustache.render(refundTemplate, data));
+                        $('#refund-list tbody').html(Mustache.render($('#template-refund').html(), data));
+                        $("[data-toggle='popover']").popover();
+                        // 按Esc键或X键可关闭弹出框
+                        $(document).keydown(function(e) {
+                            e = event || window.event;
+                            (e.keyCode == 88 || e.keyCode == 27) && $(".popover").popover('hide');
+                        });
                         // 绑定请款单操作按钮事件
                         RefundOperation();
 
@@ -239,16 +307,112 @@
                 };
                 Remark(sellOption);
             }
+            // 订单详情模块加载
+            function OrderDetailedLoad(Data) {
+                    var $od = $('#order-detailed');
+                    // 订单详情
+                    var tableOrder = $('<table class="table table-striped table-bordered table-hover table-condensed">'
+                                       + '<caption>订单详情</caption>'
+                                       + '<thead><th>订单号</th><th>账号</th><th>买家</th><th>创建时间</th><th>状态</th><th>出货时间</th><th>期望物流</th></thead><tbody></tbody>'
+                                     + '</table>');
+                    var tmpOrder = '<tr>'
+                                   + '<td>{{OrderID}}</td>'
+                                   + '<td>{{Shop}}</td>'
+                                   + '<td>{{Buyer}}</td>'
+                                   + '{{#BaseStatus}}'
+                                   + '<td>{{CreatedTime}}</td>'
+                                   + '<td>{{OrderStatus}}</td>'
+                                   + '<td>{{ShippedTime}}</td>'
+                                   + '<td class="text-danger">{{ShippingService}}</td>'
+                                   + '{{/BaseStatus}}'
+                                 + '</tr>';
+                    tableOrder.find('tbody').html(Mustache.render(tmpOrder, Data));
+                    $od.html(tableOrder);
+                    // 金额信息
+                    var tableAmount = $('<table class="table table-striped table-bordered table-hover table-condensed">'
+                                        + '<caption>金额信息</caption>'
+                                        + '<thead><th>总额</th><th>货币</th><th>付款时间</th><th>付款状态</th><th>支付方式</th><th>运费</th></thead><tbody></tbody>'
+                                      + '</table>');
+                    var tmpAmount = '{{#AmountOfMoney}}'
+                                  + '<tr>'
+                                    + '<td>{{Amt}}</td>'
+                                    + '<td>{{Currency}}</td>'
+                                    + '<td>{{PaidTime}}</td>'
+                                    + '<td>{{eBayPaymentStatus}}</td>'
+                                    + '<td>{{PaymentMethod}}</td>'
+                                    + '<td>{{ShippingServiceCost}}</td>'
+                                  + '</tr>'
+                                  + '{{/AmountOfMoney}}';
+                    tableAmount.find('tbody').html(Mustache.render(tmpAmount, Data));
+                    $od.append(tableAmount);
+                    // 支付流水
+                    var tablePayments = $('<table class="table table-striped table-bordered table-hover table-condensed">'
+                                          + '<caption>支付流水</caption>'
+                                          + '<thead><th>流水编号</th><th>支付账号</th><th>状态</th><th>收款账号</th><th>金额</th></thead><tbody></tbody>'
+                                        + '</table>');
+                    var tmpPayments = '{{#Payments}}'
+                                    + '<tr>'
+                                      + '<td>{{ReferenceID}}</td>'
+                                      + '<td>{{BuyerEmail}}</td>'
+                                      + '<td>{{Status}}</td>'
+                                      + '<td>{{ReceiverBusiness}}</td>'
+                                      + '<td><span class="label set-currency">{{Currency}}</span> {{Amount}}</td>'
+                                    + '</tr>'
+                                    + '{{/Payments}}';
+                    tablePayments.find('tbody').html(Mustache.render(tmpPayments, Data));              
+                    $od.append(tablePayments);
+                    // 交易信息
+                    var tableTransaction = $('<table class="table table-striped table-bordered table-hover table-condensed">'
+                                             + '<caption>交易信息</caption>'
+                                             + '<thead>'
+                                               + '<th>订单交易号</th><th>产品编码</th><th>SKU</th><th>包含产品</th><th>数量</th><th>价格</th>'
+                                               + '<th>物流商</th><th>追踪号</th><th>创建时间</th></thead>'
+                                             + '<tbody></tbody>'
+                                           + '</table>');
+                    var tmpTransaction = '{{#Transaction}}'
+                                       + '<tr data-id="{{DataID}}">'
+                                         + '<td>{{OrderLineItemID}}</td>'
+                                         + '<td>{{ItemID}}</td>'
+                                         + '<td><input class="form-control input-sm sku" type="text" value="{{SKU}}"></td>'
+                                         + '<td>'
+                                         + '{{#Product}}'
+                                         +   '<p><div class="copy"><span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}} * {{Quantity}}</div></p>'
+                                         + '{{/Product}}'
+                                         + '</td>'
+                                         + '<td><input class="form-control input-sm quantity" type="text" value="{{Quantity}}"></td>'
+                                         + '<td>{{Price}}</td>'
+                                         + '<td>{{CarrierUsed}}</td>'
+                                         + '<td>{{TrackingNumber}}</td>'
+                                         + '<td>{{CreatedTime}}</td>'
+                                       + '</tr>'
+                                       + '{{/Transaction}}';
+                    tableTransaction.find('tbody').html(Mustache.render(tmpTransaction, Data));
+                    $od.append(tableTransaction);
+
+                    // 运单信息
+                    $.ajax({
+                        url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + Data.OrderID,
+                        type    : 'GET',
+                        dataType: 'JSON',
+                        success : function(d) { LogisticsDetail(d); }
+                    });
+            }
+            // 日志模块加载
+            function LogLoad(DataID) {
+
+            }
 
             // 绑定请款单操作按钮事件
             function RefundOperation() {
                 var $refundlist = $('#refund-list');
                 // 执行
-                $refundlist.on('click', '.btn-perform', function() {
-
+                $refundlist.off('click', '.btn-perform').on('click', '.btn-perform', function() {
+                    $('#popover-btn-perform-' + $(this).parent().data('did')).off().on('click', function() {
+                        console.log($(this).data('did'));
+                    });
                 });
                 // 查看
-                $refundlist.on('click', '.btn-see', function() {
+                $refundlist.off('click', '.btn-see').on('click', '.btn-see', function() {
                     common.loading.show();
                     $.ajax({
                         url     : '/OMS/API/PayPal.aspx?Do=SearchTransaction&TransactionID=' + $(this).parent().data('tid'),
@@ -269,7 +433,7 @@
                     });
                 });
                 // 撤销
-                $refundlist.on('click', '.btn-cancel', function() {
+                $refundlist.off('click', '.btn-cancel').on('click', '.btn-cancel', function() {
                     if (confirm('确定撤销该售后请款单？')) {
                         common.loading.show();
                         $.ajax({
@@ -284,7 +448,7 @@
                                 common.alertIf({
                                     data : data,
                                     title: '撤销售后请款单',
-                                    fcb  : function() {
+                                    tcb  : function() {
                                         window.location.reload();
                                     }
                                 });
@@ -295,164 +459,38 @@
                 });
             }
 
-            /**
-             * 订单详情
-             * @param {Object} Data 数据
-             */
-            function OrderDetail(Data) {
-                var $od = $('#order-detailed');
-                // 订单详情
-                var tableOrder = $('<table class="table table-striped table-bordered table-hover table-condensed">'
-                                   + '<caption>订单详情</caption>'
-                                   + '<thead>'
-                                     + '<th>订单号</th>'
-                                     + '<th>账号</th>'
-                                     + '<th>买家</th>'
-                                     + '<th>创建时间</th>'
-                                     + '<th>状态</th>'
-                                     + '<th>出货时间</th>'
-                                     + '<th>期望物流</th>'
-                                   + '</thead>'
-                                   + '<tbody></tbody>'
-                                 + '</table>');
-                var tmpOrder = '<tr>'
-                               + '<td>{{OrderID}}</td>'
-                               + '<td>{{Shop}}</td>'
-                               + '<td>{{Buyer}}</td>'
-                               + '{{#BaseStatus}}'
-                               + '<td>{{CreatedTime}}</td>'
-                               + '<td>{{OrderStatus}}</td>'
-                               + '<td>{{ShippedTime}}</td>'
-                               + '<td class="text-danger">{{ShippingService}}</td>'
-                               + '{{/BaseStatus}}'
-                             + '</tr>';
-                tableOrder.find('tbody').html(Mustache.render(tmpOrder, Data));
-                $od.html(tableOrder);
-                // 金额信息
-                var tableAmount = $('<table class="table table-striped table-bordered table-hover table-condensed">'
-                                    + '<caption>金额信息</caption>'
-                                    + '<thead>'
-                                      + '<th>总额</th>'
-                                      + '<th>货币</th>'
-                                      + '<th>付款时间</th>'
-                                      + '<th>付款状态</th>'
-                                      + '<th>支付方式</th>'
-                                      + '<th>运费</th>'
-                                    + '</thead>'
-                                   + '<tbody></tbody>'
-                                  + '</table>');
-                var tmpAmount = '{{#AmountOfMoney}}'
-                              + '<tr>'
-                                + '<td>{{Amt}}</td>'
-                                + '<td>{{Currency}}</td>'
-                                + '<td>{{PaidTime}}</td>'
-                                + '<td>{{eBayPaymentStatus}}</td>'
-                                + '<td>{{PaymentMethod}}</td>'
-                                + '<td>{{ShippingServiceCost}}</td>'
-                              + '</tr>'
-                              + '{{/AmountOfMoney}}';
-                tableAmount.find('tbody').html(Mustache.render(tmpAmount, Data));
-                $od.append(tableAmount);
-                // 支付流水
-                var tablePayments = $('<table class="table table-striped table-bordered table-hover table-condensed">'
-                                      + '<caption>支付流水</caption>'
-                                      + '<thead>'
-                                        + '<th>流水编号</th>'
-                                        + '<th>支付账号</th>'
-                                        + '<th>状态</th>'
-                                        + '<th>收款账号</th>'
-                                        + '<th>金额</th>'
-                                      + '</thead>'
-                                      + '<tbody></tbody>'
-                                    + '</table>');
-                var tmpPayments = '{{#Payments}}'
-                                + '<tr>'
-                                  + '<td>{{ReferenceID}}</td>'
-                                  + '<td>{{BuyerEmail}}</td>'
-                                  + '<td>{{Status}}</td>'
-                                  + '<td>{{ReceiverBusiness}}</td>'
-                                  + '<td><span class="label set-currency">{{Currency}}</span> {{Amount}}</td>'
-                                + '</tr>'
-                                + '{{/Payments}}';
-                tablePayments.find('tbody').html(Mustache.render(tmpPayments, Data));              
-                $od.append(tablePayments);
-                // 交易信息
-                var tableTransaction = $('<table class="table table-striped table-bordered table-hover table-condensed">'
-                                         + '<caption>交易信息</caption>'
-                                         + '<thead>'
-                                           + '<th>订单交易号</th>'
-                                           + '<th>产品编码</th>'
-                                           + '<th>SKU</th>'
-                                           + '<th>包含产品</th>'
-                                           + '<th>数量</th>'
-                                           + '<th>价格</th>'
-                                           + '<th>物流商</th>'
-                                           + '<th>追踪号</th>'
-                                           + '<th>创建时间</th>'
-                                         + '</thead>'
-                                         + '<tbody></tbody>'
-                                       + '</table>');
-                var tmpTransaction = '{{#Transaction}}'
-                                   + '<tr data-id="{{DataID}}">'
-                                     + '<td>{{OrderLineItemID}}</td>'
-                                     + '<td>{{ItemID}}</td>'
-                                     + '<td><input class="form-control input-sm sku" type="text" value="{{SKU}}"></td>'
-                                     + '<td>'
-                                     + '{{#Product}}'
-                                     +   '<p><div class="copy"><span class="poi mg-r-5" data-status="{{Status}}" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}} * {{Quantity}}</div></p>'
-                                     + '{{/Product}}'
-                                     + '</td>'
-                                     + '<td><input class="form-control input-sm quantity" type="text" value="{{Quantity}}"></td>'
-                                     + '<td>{{Price}}</td>'
-                                     + '<td>{{CarrierUsed}}</td>'
-                                     + '<td>{{TrackingNumber}}</td>'
-                                     + '<td>{{CreatedTime}}</td>'
-                                   + '</tr>'
-                                   + '{{/Transaction}}';
-                tableTransaction.find('tbody').html(Mustache.render(tmpTransaction, Data));
-                $od.append(tableTransaction);
-
-                // 运单信息
-                $.ajax({
-                    url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + Data.OrderID,
-                    type    : 'GET',
-                    dataType: 'JSON',
-                    success : function(d) { LogisticsDetail(d); }
-                });
-            }
-
-            /**
-             * 运单详情
-             * @param {String} OID  订单的OrderID
-             * @param {Object} Data 数据
-             */
-            function LogisticsDetail(_d) {
-                // 运单信息
-                var tableLogistics = $('<table class="table table-striped table-bordered table-hover table-condensed">'
-                                       + '<caption>运单信息</caption>'
-                                       + '<thead>'
-                                         + '<th>仓库 - 运单号</th>'
-                                         + '<th>货代 - 单号</th>'
-                                         + '<th>服务商 - 单号</th>'
-                                         + '<th>提审时间</th>'
-                                         + '<th>操作</th>'
-                                       + '</thead>'
-                                       + '<tbody></tbody>'
-                                     + '</table>');
-                var tmpLogistics = '{{#Logistics}}'
-                                    + '<tr>'
-                                      + '<td>{{Warehouse.Code}} - <a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>'
-                                      + '<td>{{Freight.ISP}} - {{Freight.InsideOrder}}</td>'
-                                      + '<td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>'
-                                      + '<td>{{CreatedDate}}</td>'
-                                      + '<td>'
-                                        + '<span class="glyphicon glyphicon-list-alt poi" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-Logistics-log"></span>'
-                                      + '</td>'
-                                    + '</tr>'
-                                 + '{{/Logistics}}';
-                tableLogistics.find('tbody').html(Mustache.render(tmpLogistics, _d));
-                $('#order-detailed').append(tableLogistics);
-            }
+            // /**
+            //  * 运单详情
+            //  * @param {String} OID  订单的OrderID
+            //  * @param {Object} Data 数据
+            //  */
+            // function LogisticsDetail(_d) {
+            //     // 运单信息
+            //     var tableLogistics = $('<table class="table table-striped table-bordered table-hover table-condensed">'
+            //                            + '<caption>运单信息</caption>'
+            //                            + '<thead>'
+            //                              + '<th>仓库 - 运单号</th>'
+            //                              + '<th>货代 - 单号</th>'
+            //                              + '<th>服务商 - 单号</th>'
+            //                              + '<th>提审时间</th>'
+            //                              + '<th>操作</th>'
+            //                            + '</thead>'
+            //                            + '<tbody></tbody>'
+            //                          + '</table>');
+            //     var tmpLogistics = '{{#Logistics}}'
+            //                         + '<tr>'
+            //                           + '<td>{{Warehouse.Code}} - <a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>'
+            //                           + '<td>{{Freight.ISP}} - {{Freight.InsideOrder}}</td>'
+            //                           + '<td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>'
+            //                           + '<td>{{CreatedDate}}</td>'
+            //                           + '<td>'
+            //                             + '<span class="glyphicon glyphicon-list-alt poi" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-Logistics-log"></span>'
+            //                           + '</td>'
+            //                         + '</tr>'
+            //                      + '{{/Logistics}}';
+            //     tableLogistics.find('tbody').html(Mustache.render(tmpLogistics, _d));
+            //     $('#order-detailed').append(tableLogistics);
+            // }
             // ===================================== 售后请款单模态框 - End ==============================================
             
             // ===================================== 主页面 ==============================================================
@@ -494,15 +532,21 @@
                         success : function(data) {
                             common.Log($('#modal-log .modal-body'), data);
                             $('#modal-log').modal('show');
-                        },
-                        error   : function(q,w,e) {
-                            console.log(q);
-                            console.log(w);
-                            console.log(e);
                         }
                     });
                     
                 });
+                // 模态框关闭时重置
+                $('#modal-refund').on('hidden.bs.modal', function() {
+                    ModalReset();
+                });
+                function ModalReset() {
+                    // 请款单列表重置
+                    RefundListReset();   
+                }
+                function RefundListReset() {
+
+                }
                 // 分页
                 <!-- BEGIN 分页脚本 ATTRIB= -->
                 common.showPage({当前页}, {总条数}, {每页条数});
