@@ -956,7 +956,7 @@ common.Rendering.order = function(tagDiv){
  *
  * 参数格式
  * var option = {
- *     Type : ['', 'XX1', 'XX2', 'XX3'],                                // 状态类型
+ *     Type : ['', 'XX1', 'XX2', 'XX3'],                                 // 状态类型
  *     Ch   : ['中文1', '中文2', '中文3'],
  *     Style: ['label-default', 'label-xxx', 'label-xxx2', 'label-xx3'], // 状态样式，有默认可不填
  *     Mode : 'prepend'(前插) / 'append'(后插) / 'replace'(替换)
