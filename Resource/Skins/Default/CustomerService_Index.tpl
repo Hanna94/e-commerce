@@ -1232,56 +1232,105 @@
                 $od.append(tableTransaction);
 
                 // 运单信息
-                $.ajax({
-                    url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + Data.OrderID,
-                    type    : 'GET',
-                    dataType: 'JSON',
-                    success : function(d) { LogisticsDetail(d); }
-                });
+                // $.ajax({
+                //     url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + Data.OrderID,
+                //     type    : 'GET',
+                //     dataType: 'JSON',
+                //     success : function(d) { LogisticsDetail(d); }
+                // });
+                $od.append('<div id="order-logistics"></div>');
+                var logOption = {
+                    Element  : $('#order-logistics'),      // 容器
+                    OID      : Data.OrderID,               // OID，和数据两者必须至少存在一个
+                    Data     : '',      // 数据，和OID两者必须至少存在一个
+                    Placement: 'left' // 弹出框显示位置
+                };
+                LogisticsModule(logOption);
             }
 
-            /**
-             * 运单详情
-             * @param {String} OID  订单的OrderID
-             * @param {Object} Data 数据
-             */
-            function LogisticsDetail(_d) {
-                // 运单信息
-                var tableLogistics = $('<table id="logistics-list" class="table table-striped table-bordered table-hover table-condensed">'
-                                       + '<caption>运单信息</caption>'
-                                       + '<thead>'
-                                         + '<th>仓库 - 运单号</th>'
-                                         + '<th>货代 - 单号</th>'
-                                         + '<th>服务商 - 单号</th>'
-                                         + '<th>提审时间</th>'
-                                         + '<th>操作</th>'
-                                       + '</thead>'
-                                       + '<tbody></tbody>'
-                                     + '</table>');
-                var tmpLogistics = '{{#Logistics}}'
-                                    + '<tr>'
-                                      + '<td>{{Warehouse.Code}} - <a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>'
-                                      + '<td>{{Freight.ISP}} - {{Freight.InsideOrder}}</td>'
-                                      + '<td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>'
-                                      + '<td>{{CreatedDate}}</td>'
-                                      + '<td>'
-                                        + '<span type="button" class="glyphicon glyphicon-list-alt" '
-                                        + 'title="运单操作记录" data-container="body" '
-                                        + 'data-toggle="popover" data-placement="left" data-html="true" data-content="'
-                                        + '<table>'
-                                          + '<thead><th>操作人</th><th>操作记录</th><th>时间</th></thead>'
-                                          + '<tbody>'
-                                          + '{{#Log}}<tr><td>{{Name}}</td><td>{{Remark}}</td><td>{{Date}}</td></tr>{{/Log}}'
-                                          + '</tbody>'
-                                        + '</table>'
-                                        + '"></span>'
-                                      + '</td>'
-                                    + '</tr>'
-                                 + '{{/Logistics}}';
-                tableLogistics.find('tbody').html(Mustache.render(tmpLogistics, _d));
-                $('#order-detailed').append(tableLogistics);
-                $('#order-detailed span[data-toggle="popover"]').popover();
+            // /**
+            //  * 运单详情
+            //  * @param {String} OID  订单的OrderID
+            //  * @param {Object} Data 数据
+            //  */
+            // function LogisticsDetail(_d) {
+            //     // 运单信息
+            //     var tableLogistics = $('<table id="logistics-list" class="table table-striped table-bordered table-hover table-condensed">'
+            //                            + '<caption>运单信息</caption>'
+            //                            + '<thead>'
+            //                              + '<th>仓库 - 运单号</th>'
+            //                              + '<th>货代 - 单号</th>'
+            //                              + '<th>服务商 - 单号</th>'
+            //                              + '<th>提审时间</th>'
+            //                              + '<th>操作</th>'
+            //                            + '</thead>'
+            //                            + '<tbody></tbody>'
+            //                          + '</table>');
+            //     var tmpLogistics = '{{#Logistics}}'
+            //                         + '<tr>'
+            //                           + '<td>{{Warehouse.Code}} - <a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>'
+            //                           + '<td>{{Freight.ISP}} - {{Freight.InsideOrder}}</td>'
+            //                           + '<td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>'
+            //                           + '<td>{{CreatedDate}}</td>'
+            //                           + '<td>'
+            //                             + '<span type="button" class="glyphicon glyphicon-list-alt" '
+            //                             + 'title="运单操作记录" data-container="body" '
+            //                             + 'data-toggle="popover" data-placement="left" data-html="true" data-content="'
+            //                             + '<table>'
+            //                               + '<thead><th>操作人</th><th>操作记录</th><th>时间</th></thead>'
+            //                               + '<tbody>'
+            //                               + '{{#Log}}<tr><td>{{Name}}</td><td>{{Remark}}</td><td>{{Date}}</td></tr>{{/Log}}'
+            //                               + '</tbody>'
+            //                             + '</table>'
+            //                             + '"></span>'
+            //                           + '</td>'
+            //                         + '</tr>'
+            //                      + '{{/Logistics}}';
+            //     tableLogistics.find('tbody').html(Mustache.render(tmpLogistics, _d));
+            //     $('#order-detailed').append(tableLogistics);
+            //     $('#order-detailed span[data-toggle="popover"]').popover();
+            // }
+
+            
+            function LogisticsModule(option) {
+                // 是否现成数据
+                if (option.Data) {
+                    _LogTagLoad(option.Data);
+                }else {
+                    // 无现成数据，用接口查询
+                    $.ajax({
+                        url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + option.OID,
+                        type    : 'GET',
+                        dataType: 'JSON',
+                        success : function(data) {
+                            _LogTagLoad(option, data);
+                            common.Rendering.order(option.Element);
+                        }
+                    });
+                }
             }
+            // 加载运单主标签
+            function _LogTagLoad(option, data) {
+                var _tmp = '{{#Logistics}}'
+                         + '<span class="label label-success" title="状态">{{Status}}</span> '
+                         + '<span class="label label-warning" title="仓库">{{Warehouse.Code}}</span> '
+                         + '<span class="orderID" title="运单号">{{OrderID}}</span> '
+                         + '<i class="text-muted" title="建单时间">{{CreatedDate}}</i> '
+                         + '<button class="btn btn-default btn-xs" '
+                         + 'data-toggle="popover" data-html="true" data-container="body" data-placement="' + option.Placement + '" '
+                         + 'data-content="'
+                         + 'aaasdfasdfasdf'
+                         + '"><span class="glyphicon glyphicon-plane" title="运单详情"></span></button>'
+                         + '{{/Logistics}}';
+                option.Element.html(Mustache.render(_tmp, data));
+                option.Element.find('[data-toggle="popover"]').popover();
+            }
+
+
+
+
+
+
 
 //=========================================== 模态框方法 ====================================================
 
