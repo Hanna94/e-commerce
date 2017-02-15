@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <header>
             <div class="btn-group btn-group-sm pull-right">
-                <button  class="btn btn-success btn-sm" type="button"><span class="glyphicon glyphicon-remove"></span> 撤销售后单</button>
+                <button id="service-cancel" class="btn btn-success btn-sm" type="button"><span class="glyphicon glyphicon-remove"></span> 撤销售后单</button>
             </div>
         </header>
         <ul class="nav nav-tabs">
@@ -214,6 +214,7 @@
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
     <script src="/Resource/js/Remark.js"></script>
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/logistics-module.js"></script>
     <script>
         $(function(){
             'use strict';
@@ -245,22 +246,6 @@
             function ModalLoad(DataID) {
                 // 请款模块加载
                 RefundLoad(DataID);
-                // 订单详情模块加载
-                $('#nav-tag-order').one('click', function() {
-                    common.loading.show();
-                    $.ajax({
-                        url     : '/OMS/API/?Do=Query&DataID=' + OID,
-                        type    : 'GET',
-                        dataType: 'JSON',
-                        success : function(data) {
-                             $('#nav-order').attr('data-id', data.DataID);
-                             OrderDetail(data.DataList[0]);
-                             Remark(orderOption, data);
-                             common.loading.hide();
-                        }
-                    }); 
-                    OrderDetailedLoad(Data);
-                });
             }
 
             // 请款模块加载
@@ -291,6 +276,29 @@
                                                   + '</tr>'
                                                 + '{{/PayPalTransaction}}';
                         $('#paypal-local-list tbody').html(Mustache.render(PayPalLocalTemplate, data));
+
+                        // 订单详情模块加载
+                        // $('#nav-tag-order').one('click', function() {
+                        //     common.loading.show();
+                        //     $.ajax({
+                        //         url     : '/OMS/API/?Do=Query&DataID=' + OID,
+                        //         type    : 'GET',
+                        //         dataType: 'JSON',
+                        //         success : function(data) {
+                        //              $('#nav-order').attr('data-id', data.DataID);
+                        //              // 订单详情
+                        //              OrderDetailedLoad(data.DataList[0]);
+                        //              Remark(orderOption, data);
+                        //              common.loading.hide();
+                                     
+                        //         }
+                        //     }); 
+                        // });
+
+                        // 操作日志
+                        $('#nav-tag-log').one('click', function() {
+                            common.Log($('#nav-log'), data);
+                        });
                     }
                 });
 
@@ -390,16 +398,15 @@
                     $od.append(tableTransaction);
 
                     // 运单信息
-                    $.ajax({
-                        url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + Data.OrderID,
-                        type    : 'GET',
-                        dataType: 'JSON',
-                        success : function(d) { LogisticsDetail(d); }
-                    });
-            }
-            // 日志模块加载
-            function LogLoad(DataID) {
-
+                    $od.append('<div id="order-logistics"><span class="text-muted mg-b-10">运单信息</span></div>');
+                    var logOption = {
+                        Element  : $('#order-logistics'), // 容器
+                        OID      : Data.OrderID,          // OID，和数据两者必须至少存在一个
+                        Data     : '',                    // 数据，和OID两者必须至少存在一个
+                        Placement: 'top',                 // 弹出框显示位置
+                        Mode     : 'append'
+                    };
+                    LogisticsModule(logOption);
             }
 
             // 绑定请款单操作按钮事件
@@ -459,38 +466,6 @@
                 });
             }
 
-            // /**
-            //  * 运单详情
-            //  * @param {String} OID  订单的OrderID
-            //  * @param {Object} Data 数据
-            //  */
-            // function LogisticsDetail(_d) {
-            //     // 运单信息
-            //     var tableLogistics = $('<table class="table table-striped table-bordered table-hover table-condensed">'
-            //                            + '<caption>运单信息</caption>'
-            //                            + '<thead>'
-            //                              + '<th>仓库 - 运单号</th>'
-            //                              + '<th>货代 - 单号</th>'
-            //                              + '<th>服务商 - 单号</th>'
-            //                              + '<th>提审时间</th>'
-            //                              + '<th>操作</th>'
-            //                            + '</thead>'
-            //                            + '<tbody></tbody>'
-            //                          + '</table>');
-            //     var tmpLogistics = '{{#Logistics}}'
-            //                         + '<tr>'
-            //                           + '<td>{{Warehouse.Code}} - <a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>'
-            //                           + '<td>{{Freight.ISP}} - {{Freight.InsideOrder}}</td>'
-            //                           + '<td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>'
-            //                           + '<td>{{CreatedDate}}</td>'
-            //                           + '<td>'
-            //                             + '<span class="glyphicon glyphicon-list-alt poi" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-Logistics-log"></span>'
-            //                           + '</td>'
-            //                         + '</tr>'
-            //                      + '{{/Logistics}}';
-            //     tableLogistics.find('tbody').html(Mustache.render(tmpLogistics, _d));
-            //     $('#order-detailed').append(tableLogistics);
-            // }
             // ===================================== 售后请款单模态框 - End ==============================================
             
             // ===================================== 主页面 ==============================================================
@@ -536,17 +511,54 @@
                     });
                     
                 });
-                // 模态框关闭时重置
-                $('#modal-refund').on('hidden.bs.modal', function() {
-                    ModalReset();
-                });
-                function ModalReset() {
-                    // 请款单列表重置
-                    RefundListReset();   
-                }
-                function RefundListReset() {
 
+                // 撤销售后请款单
+                $('#service-cancel').on('click', function() {
+                    if($('#data-list input:checked').length != 1) {
+                        alert('每次只支持撤销一条申请。');
+                    }else {
+
+                        if (confirm('确定撤销该售后请款单？')) {
+                            common.loading.show();
+                            $.ajax({
+                                url     : '/Finance/API/?Do=RefundCancel',
+                                type    : 'POST',
+                                dataType: 'JSON',
+                                data    : {
+                                    DataID : $('#data-list input:checked').closest('tr').data('id')
+                                },
+                                success : function(data) {
+                                    common.alertIf({
+                                        data : data,
+                                        title: '撤销售后请款单',
+                                        tcb  : function() {
+                                            window.location.reload();
+                                        }
+                                    });
+                                    common.loading.hide();
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                // 当模态框关闭时，重置模态框
+                (function() {
+                    $('#modal-refund').on('hidden.bs.modal', function() { ModalReset(); });
+                })();
+                // 模态框重置
+                function ModalReset() {
+                    TagReset();             // 标签页重置
                 }
+                // 标签页重置
+                function TagReset() {
+                    $('#nav-tag-service').click();
+                    $('#nav-tag-order').off();
+                    $('#order-detailed').html('<p>暂无订单详情信息。</p>');
+                    $('#nav-tag-log').off();
+                    $('#nav-log').html('<p>暂无操作日志信息。</p>');
+                }
+
                 // 分页
                 <!-- BEGIN 分页脚本 ATTRIB= -->
                 common.showPage({当前页}, {总条数}, {每页条数});
