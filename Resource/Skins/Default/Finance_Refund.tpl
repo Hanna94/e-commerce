@@ -161,14 +161,14 @@
     <!-- 模态框请款单列表模板 -->
     <template id="template-refund">
         {{#Order}}
-        <tr>
+        <tr data-did="{{DataID}}" data-status="{{Status}}">
           <td>{{CurrencyCode}} {{ExecuteAmt}}</td><td>{{ApplyName}}</td><td>{{Status}}</td><td>{{Date}}</td>
           <td>
             <div class="btn-group" data-did="{{DataID}}" data-oid="{{OrderID}}" data-tid="{{TransactionID}}">
               <button type="button" class="btn btn-default btn-xs btn-perform" 
               data-toggle="popover" data-html="true" data-container="body" data-placement="left" 
               data-content="
-                <div class=&quot;row&quot;>
+                <div class=&quot;row maxW400&quot;>
                   <div class=&quot;col-sm-12&quot;>
                     <form class=&quot;form-horizontal&quot; action=&quot;javascript:;&quot;>
                       <label class=&quot;col-sm-4 control-label&quot;>TransactionID</label>
@@ -204,7 +204,7 @@
               ">执行</button>
               <button type="button" class="btn btn-default btn-xs btn-see">查看PayPal远程数据</button>
               <button type="button" class="btn btn-default btn-xs btn-cancel">撤销</button>
-            </div>x
+            </div>
           </td>
         </tr>
         {{/Order}}
@@ -412,8 +412,13 @@
             // 绑定请款单操作按钮事件
             function RefundOperation() {
                 var $refundlist = $('#refund-list');
+                var status = $refundlist.find('tbody tr').data('status');
+                var canOperation = status != '已取消' || status != '已完成';
+                // 状态为已取消时，禁止点击按钮执行和撤销
+                canOperation ? canOperation : $refundlist.find('.btn-perform').prop('disabled', true);
+                canOperation ? canOperation : $refundlist.find('.btn-cancel').prop('disabled', true);
                 // 执行
-                $refundlist.off('click', '.btn-perform').on('click', '.btn-perform', function() {
+                canOperation && $refundlist.off('click', '.btn-perform').on('click', '.btn-perform', function() {
                     $('#popover-btn-perform-' + $(this).parent().data('did')).off().on('click', function() {
                         console.log($(this).data('did'));
                     });
@@ -440,7 +445,7 @@
                     });
                 });
                 // 撤销
-                $refundlist.off('click', '.btn-cancel').on('click', '.btn-cancel', function() {
+                canOperation && $refundlist.off('click', '.btn-cancel').on('click', '.btn-cancel', function() {
                     if (confirm('确定撤销该售后请款单？')) {
                         common.loading.show();
                         $.ajax({
