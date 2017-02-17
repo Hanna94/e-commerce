@@ -53,21 +53,9 @@
                             <div class="input-group">
                                 <button id="openTab" class="btn btn-default btn-xs" type="button">批量打开</button>
                             </div>
-
-                            <!-- <div class="input-group">
-                                <div class="btn-group btn-group-xs" data-toggle="buttons">
-                                    BEGIN 店铺列表 ATTRIB=
-                                    <label class="btn btn-default btn-shop">
-                                        <input type="checkbox" name="ShopID" value="{DataID}" autocomplete="off">{Name}
-                                    </label>
-                                    <label class="btn btn-default btn-shop">
-                                        <input type="checkbox" name="ShopID" value="{DataID}" autocomplete="off">{Name}
-                                    </label>
-                                    END 店铺列表
-                                </div>
-                            </div> -->
                             <button id="acc-search-btn" type="button" class="btn btn-default btn-sm" data-container="body" data-toggle="popover"
                                     data-placement="right" data-html="true" data-trigger="click" data-content="
+                                <div class='maxW400'>
                                 <form id='acc-search' method='post' action='javascript:;'>
                                 <div class='checkbox'>
                                 <!-- BEGIN 店铺列表 ATTRIB= -->
@@ -76,6 +64,7 @@
                                 </div>
                                 <button class='btn btn-default btn-xs' type='submit'>查询</button>
                                 </form>
+                                </div>
                             ">账号选择</button>
 
                             <div class="form-group form-group-sm">
@@ -540,11 +529,14 @@
             $formFilter.on('submit', function() {
                 location.search = common.URL.stringify(common.URL.parse('?' + $formFilter.serialize()));
             });
+            // 如果shopID存在，设置隐藏标签
+            shopID && $formFilter.append('<input type="hidden" name="ShopID" value="' + unescape(shopID) + '">');
+            // 点击账号查询时，渲染已选账号
             $('#acc-search-btn').on('shown.bs.popover', function() {
                 var $as = $('#acc-search');
-                // 初始化
+                // 账号选择初始化
                 if (shopID) {
-                    if (typeof(shopID) == 'string') {shopID = shopID.split(',');}
+                    if (typeof(shopID) == 'string') {shopID = unescape(shopID).split(',');}
                     for (var i = 0, len = shopID.length; i < len; i++) {
                         $as.find('input[type="checkbox"][value="' + shopID[i] + '"]')
                            .prop('checked', true)
