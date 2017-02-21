@@ -8,6 +8,8 @@
  *     OID      : Data.OrderID,          // OID，和数据两者必须至少存在一个
  *     Data     : '',                    // 数据，和OID两者必须至少存在一个
  *     Placement: 'top',                 // 弹出框显示位置
+ *     Style    : 'table' / 'label',     // 显示样式
+ *     Date     : 'show' / 'hide'        // 是否显式的显示建单时间
  *     Mode     : prepend(前插) / append(后插) / replace(替换)
  * };
  *
@@ -52,13 +54,7 @@ function LogisticsModule(option) {
 }
 // 加载运单主标签
 function _LogTagLoad(option, data) {
-    var _tmp = '{{#Logistics}}'
-             + '<div>'
-             + '<span class="label status" title="状态">{{Status}}</span>&nbsp;'
-             + '<span class="label warehouse " title="仓库">{{Warehouse.Code}}</span>&nbsp;'
-             + '<span class="orderID" title="运单号">{{OrderID}}</span> '
-             + '<i class="text-muted" title="建单时间">{{CreatedDate}}</i>&nbsp; '
-             + '<button class="btn btn-default btn-xs" '
+  var _btn = '<button class="btn btn-default btn-xs" '
              + 'data-toggle="popover" data-html="true" data-container="body" data-placement="' + option.Placement + '" '
              + 'data-content="'
                + '<ul class=&quot;nav nav-tabs mg-b-5&quot;>'
@@ -109,24 +105,59 @@ function _LogTagLoad(option, data) {
                    + '</table>'
                  + '</div>'
                + '</div>'
-             + '"><span class="glyphicon glyphicon-plane" title="运单详情"></span></button>'
-             + '</div>'
-             + '{{/Logistics}}';
-    switch(option.Mode) {
-      case 'prepend':
-        option.Element.prepend(Mustache.render(_tmp, data));
-        break;
-      case 'append':
-        option.Element.append(Mustache.render(_tmp, data));
-        break;
-      case 'replace':
-        option.Element.html(Mustache.render(_tmp, data));
-        break;
-    }
-    option.Element.find('[data-toggle="popover"]').popover();
-    // 手动关闭搜索下拉
-    $(document).keydown(function(e) {
-        e = event || window.event;
-        e.keyCode == 27 && $(".popover").popover('hide');
-    });
+             + '"><span class="glyphicon glyphicon-plane" title="运单详情"></span></button>';
+  // 是否显式的显示建单时间
+  var _Date;
+  switch(option.Date) {
+    case 'show' :
+      _Date = '<i class="text-muted" title="建单时间">{{CreatedDate}}</i>';
+      break;
+    case 'hide' :
+      _Date = '<span class="glyphicon glyphicon-time" title="{{CreatedDate}}"></span>';
+      break;
+  }
+  var tableStyle = '<table class="table table-striped table-bordered table-hover table-condensed">'
+                    + '<thead><tr><td>单号</td><td>仓库</td><td>状态</td><td>时间</td><td>详情</td></tr></thead>'
+                    + '<tbody>'
+                    + '{{#Logistics}}'
+                    + '<tr>'
+                      + '<td><span class="orderID" title="运单号">{{OrderID}}</span></td>'
+                      + '<td><span class="label warehouse " title="仓库">{{Warehouse.Code}}</span></td>'
+                      + '<td><span class="label status" title="状态">{{Status}}</span></td>'
+                      + '<td>' + _Date + '</td>'
+                      + '<td>'
+                      + _btn
+                      + '</td>'
+                    + '</tr>'
+                    + '{{/Logistics}}'
+                    + '</tbody>'
+                  + '</table>';
+  var labelStyle = '{{#Logistics}}'
+                 + '<div>'
+                 + '<span class="label status" title="状态">{{Status}}</span>&nbsp;'
+                 + '<span class="label warehouse " title="仓库">{{Warehouse.Code}}</span>&nbsp;'
+                 + '<span class="orderID" title="运单号">{{OrderID}}</span>&nbsp;'
+                 + _Date + '&nbsp;'
+                 + _btn
+                 + '</div>'
+                 + '{{/Logistics}}';
+  var _tmp = option.Style == 'table' ? tableStyle : labelStyle;
+
+  switch(option.Mode) {
+    case 'prepend':
+      option.Element.prepend(Mustache.render(_tmp, data));
+      break;
+    case 'append':
+      option.Element.append(Mustache.render(_tmp, data));
+      break;
+    case 'replace':
+      option.Element.html(Mustache.render(_tmp, data));
+      break;
+  }
+  option.Element.find('[data-toggle="popover"]').popover();
+  // 手动关闭搜索下拉
+  $(document).keydown(function(e) {
+      e = event || window.event;
+      e.keyCode == 27 && $(".popover").popover('hide');
+  });
 }
