@@ -15,7 +15,11 @@
 // <script src="/Resource/js/Remark.js"></script>
 // 
 
-// 外部调用方法
+/**
+ * 备注方法封装、外部调用方法
+ * @param {JSON} op        配置信息
+ * @param {JSON} addedData 现有数据
+ */
 function Remark(op, addedData) {
     // 加载备注的DOM结构
     RemarkDOMLoad(op);
