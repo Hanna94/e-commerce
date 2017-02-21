@@ -436,25 +436,8 @@
                         </div>
 
                         <!-- 备注 -->
-                        <div class="tab-pane fade" id="spu-nav-remark">
-                            <div id="panel-remark">
-                                <form class="form-horizontal" action="javascript:;">
-                                    <div class="input-group input-group-sm">
-                                        <textarea rows="1" name="Remark" class="form-control"></textarea>
-                                        <span class="input-group-btn">
-                                            <input type="submit" class="btn btn-default" value="提交" />
-                                            <input type="reset" class="btn btn-default hidden" value="取消" />
-                                        </span>
-                                    </div>
-                                    <span class="text-danger">提示：如果在IE浏览器下排版混乱，且无法使用编辑和删除功能，请酌情使用谷歌、火狐等其他浏览器。</span>
-                                </form>
-                                <div class="maxH300 mg-t-10">
-                                    <table class="table table-striped table-condensed">
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="tab-pane fade" id="spu-nav-remark"></div>
+
                         <!-- 日志 -->
                         <div class="tab-pane fade" id="spu-nav-log">
                             <div class="maxH400">
@@ -486,24 +469,6 @@
         {{#DataList}}
         <option value="{{DataID}}">{{Name}}</option>
         {{/DataList}}
-    </template>
-
-    <!-- 买家留言与备注模板-->
-    <template id="tmp-remark">
-        {{#MessageData}}
-        <tr>
-            <td>
-                <input type="hidden" id="UID" name="UID" value="{{UID}}" />
-                <input type="hidden" id="DataID" name="DataID" value="{{DataID}}" />
-                <span>{{Content}}</span>&nbsp;&nbsp;
-                <span style="font-size: 14px;color: #929292;">By：{{TrueName}}</span>&nbsp;&nbsp;<i style="font-size: 14px;color: #929292;">{{Date}}</i>
-                <div id="btn-ead" class="poi" style="float: right;">
-                    <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;
-                    <span class="glyphicon glyphicon-remove"></span>
-                </div>
-            </td>
-        </tr>
-        {{/MessageData}}
     </template>
 
     <!-- 款式设置模板 -->
@@ -552,6 +517,7 @@
 
     <script src="/Resource/js/mustache.js"></script>
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
+    <script src="/Resource/js/Remark.js"></script>
 
     <script>
         (function () {
@@ -815,8 +781,15 @@
                             $modalSpu.find('#basic-spu-state').val(data.Status);
                             $modalSpu.find('#basic-spu-battery option[value="' + data.Battery + '"]').attr('selected', true);
 
-                            // 渲染备注列表及加载方法
-                            SetRemark(editId);
+                            // 备注方法
+                            var currentUID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->;
+                            var remarkOption = {
+                                Target : $('#spu-nav-remark'),
+                                DataID : editId,    
+                                UID    : currentUID,
+                                HasWarp: true
+                            };
+                            Remark(remarkOption);
 
                             // 渲染日志列表
                             var log = GetLog(editId);
@@ -1036,34 +1009,6 @@
                         }
                     });
                     return _log;
-                }
-
-                // 设置备注方法
-                function SetRemark(dataDataID){
-                    var currentUID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->;
-                    var $msgRemark = $('#spu-nav-remark');
-                    var $msgForm = $msgRemark.find('form');
-                    var tempRemark = $('#tmp-remark').html();
-                    var $remarkBtn = $msgForm.find('input[type="reset"]');
-                    var urlUp = '/Product/Api/?Do=MessageSave&FID=' + dataDataID;
-                    var urlGet = '/Product/Api/?Do=MessageQuery&FID=' + dataDataID;
-                    var urlDel = '/Product/Api/?Do=MessageDelete&FID=' + dataDataID;
-
-                    // 移除绑定事件
-                    $msgForm.unbind();
-                    $remarkBtn.unbind();
-
-                    // 更新备注
-                    common.remarkUpdate(dataDataID, $msgRemark, $msgForm, tempRemark, $remarkBtn, currentUID, urlUp, urlGet, urlDel);
-
-                    //提交备注
-                    common.remarkSave(dataDataID, $msgRemark, $msgForm, tempRemark, $remarkBtn, currentUID, urlUp, urlGet, urlDel);
-
-                    //判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-                    common.editAndDel(dataDataID, $msgRemark, $msgForm, tempRemark, $remarkBtn, currentUID, urlUp, urlGet, urlDel);
-
-                    //编辑备注的[取消]按钮事件
-                    common.reset($msgForm, $remarkBtn);
                 }
 
             }());
