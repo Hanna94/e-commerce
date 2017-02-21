@@ -569,7 +569,6 @@
 
                 // 显示备注模块
                 $('#sell-remark').hasClass('hidden') && $('#sell-remark').removeClass('hidden');
-                $('#order-remark').hasClass('hidden') && $('#order-remark').removeClass('hidden');
 
                 // 显示模态框
                 $('#modal-sell').modal('show');
@@ -1088,7 +1087,7 @@
              */
             function IfConnection(OID, _d) {
                 common.loading.show();
-                // 售后单备注
+                // 订单备注
                 var orderOption = {
                     Target : $('#order-remark'),
                     Title  : '订单备注',
@@ -1113,6 +1112,8 @@
                        }
                    }); 
                 }
+                // 显示备注模块
+                $('#order-remark').hasClass('hidden') && $('#order-remark').removeClass('hidden');
             }
 
             /**
@@ -1200,36 +1201,37 @@
                 var tableTransaction = $('<table class="table table-striped table-bordered table-hover table-condensed">'
                                          + '<caption>交易信息</caption>'
                                          + '<thead>'
-                                           + '<th>订单交易号</th>'
-                                           + '<th>产品编码</th>'
-                                           + '<th>SKU</th>'
-                                           + '<th>包含产品</th>'
-                                           + '<th>数量</th>'
-                                           + '<th>价格</th>'
-                                           + '<th>物流商</th>'
-                                           + '<th>追踪号</th>'
-                                           + '<th>创建时间</th>'
+                                           + '<th>订单交易号</th><th>产品编码</th><th>SKU</th><th colspan="2">包含产品</th>'
                                          + '</thead>'
-                                         + '<tbody></tbody>'
+                                         + '<tbody class="t-1"></tbody>'
+                                         + '<thead>'
+                                           + '<th>创建时间</th><th>价格</th><th>物流商</th><th>追踪号</th><th>数量</th>'
+                                         + '</thead>'
+                                         + '<tbody class="t-2"></tbody>'
                                        + '</table>');
-                var tmpTransaction = '{{#Transaction}}'
-                                   + '<tr data-id="{{DataID}}">'
-                                     + '<td>{{OrderLineItemID}}</td>'
-                                     + '<td>{{ItemID}}</td>'
-                                     + '<td>{{SKU}}</td>'
-                                     + '<td>'
-                                     + '{{#Product}}'
-                                     +   '{{Status}}&nbsp;[{{FullSKU}}]&nbsp;{{FullName}}&nbsp;*&nbsp;{{Quantity}}<br>'
-                                     + '{{/Product}}'
-                                     + '</td>'
-                                     + '<td>{{Quantity}}</td>'
-                                     + '<td>{{Price}}</td>'
-                                     + '<td>{{CarrierUsed}}</td>'
-                                     + '<td>{{TrackingNumber}}</td>'
-                                     + '<td>{{CreatedTime}}</td>'
-                                   + '</tr>'
-                                   + '{{/Transaction}}';
-                tableTransaction.find('tbody').html(Mustache.render(tmpTransaction, Data));
+                var tmpTransaction_1 = '{{#Transaction}}'
+                                     + '<tr>'
+                                       + '<td>{{OrderLineItemID}}</td>'
+                                       + '<td>{{ItemID}}</td>'
+                                       + '<td>{{SKU}}</td>'
+                                       + '<td colspan="2">'
+                                       + '{{#Product}}'
+                                       +   '[{{FullSKU}}]{{FullName}} * {{Quantity}}'
+                                       + '{{/Product}}'
+                                       + '</td>'
+                                     + '</tr>'
+                                     + '{{/Transaction}}';
+                var tmpTransaction_2 = '{{#Transaction}}'
+                                     + '<tr>'
+                                       + '<td>{{CreatedTime}}</td>'
+                                       + '<td>{{Price}}</td>'
+                                       + '<td>{{CarrierUsed}}</td>'
+                                       + '<td>{{TrackingNumber}}</td>'
+                                       + '<td>{{Quantity}}</td>'
+                                     + '</tr>'
+                                     + '{{/Transaction}}';
+                tableTransaction.find('tbody.t-1').html(Mustache.render(tmpTransaction_1, Data));
+                tableTransaction.find('tbody.t-2').html(Mustache.render(tmpTransaction_2, Data));
                 $od.append(tableTransaction);
 
                 // 运单信息
@@ -1239,6 +1241,7 @@
                     OID      : Data.OrderID,          // OID，和数据两者必须至少存在一个
                     Data     : '',                    // 数据，和OID两者必须至少存在一个
                     Placement: 'top',                 // 弹出框显示位置
+                    Style    : 'table',               // 显示样式
                     Mode     : 'append'
                 };
                 LogisticsModule(logOption);
