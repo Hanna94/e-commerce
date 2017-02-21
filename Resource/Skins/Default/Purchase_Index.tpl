@@ -168,24 +168,29 @@
             (function(){
                 //采购单状态
                 var style = ['label-default', 'a1me', 'a1md', 'm2c', '2gve', 'xytg', 'xyts'], //样式
-                    purchaseS = ['初始', '待审核', '待支付', '待收货', '完成', '取消'], //采购单状态
+                    purchaseS = ['初始', '待审核', '完成', '待支付', '待收货', '取消'], //采购单状态
                     payS = ['未支付', '部分支付', '完成'], //支付状态
                     getGS = ['未收货', '部分收货', '完成']; //收货状态
 
+                var option_5 = {
+                    Type : ['初始', '待审核', '完成', '待支付', '待收货', '取消'],
+                    Mode : 'replace'
+                }
+                var option_6 = {
+                    Type : ['未支付', '部分支付', '完成'],
+                    Mode : 'replace'
+                }
+                var option_7 = {
+                    Type : ['未收货', '部分收货', '完成'],
+                    Mode : 'replace'
+                }
+
                 $dataList.find('tr').each(function(){
                     var ts = $(this);
-                    renderer(ts, purchaseS, 5);
-                    renderer(ts, payS, 6);
-                    renderer(ts, getGS, 7);
+                    common.Rendering.All(ts.find('td:eq(5)'), option_5);
+                    common.Rendering.All(ts.find('td:eq(6)'), option_6);
+                    common.Rendering.All(ts.find('td:eq(7)'), option_7);
                 });
-
-                // 状态渲染
-                function renderer(tar, arr, num){
-                    var val = $.trim(tar.find('td:eq(' + num + ')').text()),
-                        flag = $.inArray(val, arr),
-                        flag = flag > 0 ? flag : 0;
-                    tar.find('td:eq(' + num + ')').html('<span class="label ' + style[flag] + '" >' + val + '</span>');
-                }
 
                 // 采购单号渲染
                 common.Rendering.order($dataList);
