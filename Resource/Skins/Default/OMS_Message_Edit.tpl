@@ -31,7 +31,7 @@
             </div>
             <div id="userInfo">
                 <!-- 用户信息 -->
-                <div id="u-info" class="pad mg-b-10">
+                <div id="u-info" class="pad mg-b-10 hidden">
                     <table class="tableStyle">
                         <colgroup>
                             <col width="80px">
@@ -45,7 +45,7 @@
                 <div id="u-item" class="pad mg-b-10"></div>            
 
                 <!-- 订单信息 -->
-                <div id="u-order" class="pad mg-b-10">
+                <div id="u-order" class="pad mg-b-10 hidden">
                     <table class="tableStyle table table-condensed">
                         <colgroup>
                             <col width="40px">
@@ -66,9 +66,12 @@
                         <tbody></tbody>
                     </table>
                 </div>
+
+                <!-- 运单信息 -->
+                <div id="u-logistics" class="pad mg-b-10 maxH300 hidden"></div>
                 
                 <!-- 备注信息 -->
-                <div id="msg-remark" class="pad mg-b-10">
+                <div id="msg-remark" class="pad mg-b-10 hidden">
                     <h4></h4>
                     <div id="message-remark"></div>
                 </div>
@@ -198,7 +201,7 @@
         {{#PayPal}}
         <tr><td class="text-r">邮箱:</td><td class="tdStyle"></td></tr>
         <tr><td class="text-r">客户名:</td><td class="tdStyle">{{Name}}</td></tr>
-        <tr><td class="text-r" valign="top">订单地址:</td><td class="tdStyle">{{Street1}},{{Street2}},{{City}},{{State}},({{ZIP}}){{Country}}</td></tr>
+        <tr><td class="text-r" valign="top">订单地址:</td><td class="tdStyle">{{FullAddress}}</td></tr>
         {{/PayPal}}
         {{#eBay}}
         <tr><td class="text-r">客户电话:</td><td class="tdStyle">{{Phone}}</td></tr>
@@ -252,6 +255,7 @@
 
     <script src="/Resource/js/mustache.js"></script>
     <script src="/Resource/js/Remark.js"></script>
+    <script src="/Resource/js/logistics-module.js"></script>
     <script>
         $(function(){
             'use strict';
@@ -274,21 +278,6 @@
                 scrollHeight, dataShopID, imgMedie,
                 page = 1;
                 
-            // 根据浏览器宽度自适应
-            (function(){
-                function wthChange(){
-                    var wth = document.documentElement.clientWidth || document.body.clientWidth;
-                        wth -= 35;
-                    $infoList[0].style.width = wth + 'px';
-                    $msgWid[0].style.width = (wth - 410) + 'px';
-                    $userInfo[0].style.left = (wth - 390) + 'px';
-                }
-                wthChange();
-                window.onresize = function(){
-                    wthChange();
-                }
-            })();
-
             // 获取数据和上传数据
             (function(){
                 getMsg();
@@ -455,16 +444,33 @@
                             });
 
                             // 加载用户信息
+
                             $.ajax({
                                 url: '/OMS/API/?Do=UserQuery&BuyerID=' + d.MessageData.Sender,
                                 type: 'get',
                                 dataType: 'json',
                                 success: function(data){
+                                    common.loading.show();
                                     if (data.Order.length !== 0) {
                                         // 渲染用户信息
-                                        var tempUser = '<tr><td class="text-r">BuyerUserID:</td><td class="tdStyle">{{Buyer}}</td></tr>',
-                                            userHtml = Mustache.render(tempUser, data.Order[0]), 
-                                            tempInfoHtml = userHtml + Mustache.render(tempInfo, data);
+                                        var tempUser = '<tr><td class="text-r">BuyerUserID:</td><td class="tdStyle">{{Buyer}}</td></tr>';
+                                        // 拼合地址
+                                        var _address = [], _dap = data.Address.PayPal;
+                                        _address.push(_dap.Street1, _dap.Street2, 
+                                                    _dap.City, _dap.State, _dap.ZIP, 
+                                                    _dap.Country, _dap.Phone);
+                                        // 删除数组中空元素
+                                        for(var i = 0; i < _address.length; i++) {
+                                            if (_address[i].length == 0) {
+                                                _address.splice(i, 1);
+                                                i--;
+                                            }
+                                        }
+                                        // 把删除空元素后的数组组合成字符串,插入数据中
+                                        data.Address.PayPal.FullAddress = _address.join(',');
+
+                                        var userHtml = Mustache.render(tempUser, data.Order[0]);
+                                        var tempInfoHtml = userHtml + Mustache.render(tempInfo, data);
                                         $userInfo.find('#u-info tbody').html(tempInfoHtml);
                                         // 渲染订单信息
                                         $userInfo.find('#u-order tbody').html(Mustache.render(tempOrder, data));
@@ -474,6 +480,29 @@
                                             var ts = $(this).find('td:eq(2)');
                                             ts.html(common.order.setStatus(ts.text()));
                                         });
+
+                                        // 加载运单信息
+                                        console.log(data.Order);
+                                        $.each(data.Order, function(index, event) {
+                                            $.ajax({
+                                                url     : '/OMS/API/?Do=Query&DataID=' + event.DataID,
+                                                type    : 'GET',
+                                                dataType: 'JSON',
+                                                success : function(data){
+                                                    var logOption = {
+                                                        Element  : $('#u-logistics'),       // 容器
+                                                        OID      : data.DataList[0].OrderID,// OID，和数据两者必须至少存在一个
+                                                        Data     : '',                      // 数据，和OID两者必须至少存在一个
+                                                        Placement: 'left',                  // 弹出框显示位置
+                                                        Style    : 'table',                 // 显示样式
+                                                        Date     : 'hide',                  // 是否显式的显示建单时间
+                                                        Mode     : 'append'                 // 后入式
+                                                    };
+                                                    LogisticsModule(logOption);
+                                                }
+                                            });
+                                        });
+                                        $('#u-logistics').hasClass('hidden') && $('#u-logistics').removeClass('hidden');
 
                                         // 初始标签渲染
                                         $userInfo.find('#u-order tbody tr td:eq(5) span.glyphicon-tag').attr('style', 'color: rgba(92, 184, 92, 1)');
@@ -486,7 +515,13 @@
 
                                         // 新建售后单方法
                                         NewService();
+
+                                        // 显示用户信息
+                                        $('#u-info').hasClass('hidden') && $('#u-info').removeClass('hidden');
+                                        $('#u-order').hasClass('hidden') && $('#u-order').removeClass('hidden');
+                                        $('#msg-remark').hasClass('hidden') && $('#msg-remark').removeClass('hidden');
                                     }
+                                    common.loading.hide();
                                 }
                             });
                         }
@@ -645,7 +680,7 @@
                 }
 
                 // 设置备注方法
-                function setRemark(dataDataID){
+                function setRemark(dataDataID, data){
                     var Int_UID = <!-- BEGIN 当前用户ID ATTRIB= --><!-- END 当前用户ID -->;
 
                     // 设置备注标题
@@ -657,7 +692,7 @@
                         UID    : Int_UID,
                         HasWarp: true
                     };
-                    Remark(msgOption);
+                    Remark(msgOption, data);
                 }
 
                 // 新建售后单方法
@@ -706,6 +741,33 @@
                 }
                 
             })(); //获取数据和上传数据-END
+
+            // 根据浏览器宽度自适应
+            (function(){
+                function wthChange(){
+                    var wth = document.documentElement.clientWidth || document.body.clientWidth;
+                    var hei = document.documentElement.clientHeight || document.body.clientHeight;
+                    var navHeight = $('nav')[0].offsetHeight;
+                    var titleHeight = $('.msg-title')[0].offsetHeight; 
+                    var inputHeight = 200; 
+                        wth -= 35;
+                        hei -= (titleHeight + inputHeight + navHeight + 10);
+                    $infoList[0].style.width = wth + 'px';
+                    $msgWid[0].style.width = (wth - 410) + 'px';
+                    $msgContent[0].style.height = hei + 'px';
+                    // $userInfo[0].style.left = (wth - 390) + 'px';
+                    console.log($msgWid[0].offsetHeight);
+                    $userInfo.css({
+                        'left'    : (wth - 390) + 'px',
+                        'height'  : ($msgWid[0].offsetHeight + 30) + 'px', // 30个未知像素，先暂时添加
+                        'overflow': 'auto',
+                    });
+                }
+                wthChange();
+                window.onresize = function(){
+                    wthChange();
+                }
+            })();
         });
     </script>
 </body>
