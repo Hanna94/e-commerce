@@ -518,7 +518,7 @@ tbody tr td:nth-child(1) label {
 #msgWid .msg-content{
     width: 100%;
     min-height: 200px;
-    max-height: 500px;
+    // max-height: 500px;
     overflow: auto;
 }
 #msgWid .msg-content .msg-message-left{
