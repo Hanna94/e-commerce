@@ -77,8 +77,8 @@
                                     <div id="refund-info" class="col-sm-12 bd-r">
                                         <div class="form-horizontal">
                                             <div id="service-info" class="form-group">
-                                                <label class="col-sm-2 control-label">售后单说明：</label>
-                                                <div class="col-sm-10">
+                                                <label class="col-sm-3 control-label">售后单说明：</label>
+                                                <div class="col-sm-9">
                                                     <p class="form-control-static"></p>
                                                 </div>
                                             </div>
@@ -437,6 +437,7 @@
                         Data     : '',                    // 数据，和OID两者必须至少存在一个
                         Placement: 'top',                 // 弹出框显示位置
                         Style    : 'table',               // 显示样式
+                        DateShow : true,
                         Mode     : 'append'
                     };
                     LogisticsModule(logOption);
