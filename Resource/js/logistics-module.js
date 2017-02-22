@@ -9,7 +9,7 @@
  *     Data     : '',                    // 数据，和OID两者必须至少存在一个
  *     Placement: 'top',                 // 弹出框显示位置
  *     Style    : 'table' / 'label',     // 显示样式
- *     Date     : 'show' / 'hide'        // 是否显式的显示建单时间
+ *     DateShow : true / false           // 是否显式的显示建单时间
  *     Mode     : prepend(前插) / append(后插) / replace(替换)
  * };
  *
@@ -21,7 +21,8 @@
 function LogisticsModule(option) {
     // 是否现成数据
     if (option.Data) {
-        _LogTagLoad(option.Data);
+        _LogTagLoad(option, option.Data);
+        _RenderingStatus(option);
     }else {
         // 无现成数据，用接口查询
         $.ajax({
@@ -30,24 +31,7 @@ function LogisticsModule(option) {
             dataType: 'JSON',
             success : function(data) {
                 _LogTagLoad(option, data);
-                // 状态渲染
-                var style  = ['default', 'default',  'info', 'lightseagreen', 'cadetblue', 'success', 'warning', 'warning', 'danger'],
-                    txt    = ['初始', '截单', '已配货', '已交运', '已出库', '已妥投', '已取消', '异常', '退件'],
-                    status = ['', 'CutOff', 'Stock', 'Post', 'OutStock', 'Delivered', 'Cancel', 'Return', 'Exception'];
-                option.Element.find('.status').each(function() {
-                  var statusIndex = status.indexOf($(this).text());
-                  $(this).text(txt[statusIndex]);
-                  $(this).addClass('label-' + style[statusIndex]);
-                });
-                // 仓库渲染
-                var style = ['label-default', 'a1me', 'a1md', 'm2c', '2gve', 'xytg', 'xyts', 'label-warning'],
-                    warehouse = ['', 'A1ME', 'A1MD', 'M2C', 'SXTY', 'XYTG', 'XYTS'];
-                option.Element.find('.warehouse').each(function() {
-                  var warehouseIndex = warehouse.indexOf($(this).text());
-                  warehouseIndex == -1 ? $(this).addClass(style[7]) : $(this).addClass(style[warehouseIndex]);
-                });
-                // 运单号日期渲染
-                common.Rendering.order(option.Element);
+                _RenderingStatus(option);
             }
         });
     }
@@ -106,16 +90,7 @@ function _LogTagLoad(option, data) {
                  + '</div>'
                + '</div>'
              + '"><span class="glyphicon glyphicon-plane" title="运单详情"></span></button>';
-  // 是否显式的显示建单时间
-  var _Date;
-  switch(option.Date) {
-    case 'show' :
-      _Date = '<i class="text-muted" title="建单时间">{{CreatedDate}}</i>';
-      break;
-    case 'hide' :
-      _Date = '<span class="glyphicon glyphicon-time" title="{{CreatedDate}}"></span>';
-      break;
-  }
+
   var tableStyle = '<table class="table table-striped table-bordered table-hover table-condensed">'
                     + '<thead><tr><td>单号</td><td>仓库</td><td>状态</td><td>时间</td><td>详情</td></tr></thead>'
                     + '<tbody>'
@@ -124,7 +99,7 @@ function _LogTagLoad(option, data) {
                       + '<td><span class="orderID" title="运单号">{{OrderID}}</span></td>'
                       + '<td><span class="label warehouse " title="仓库">{{Warehouse.Code}}</span></td>'
                       + '<td><span class="label status" title="状态">{{Status}}</span></td>'
-                      + '<td>' + _Date + '</td>'
+                      + '<td>' + (option.DateShow ? '<i class="text-muted" title="建单时间">{{CreatedDate}}</i>' : '<span class="glyphicon glyphicon-time" title="{{CreatedDate}}"></span>') + '</td>'
                       + '<td>'
                       + _btn
                       + '</td>'
@@ -137,7 +112,7 @@ function _LogTagLoad(option, data) {
                  + '<span class="label status" title="状态">{{Status}}</span>&nbsp;'
                  + '<span class="label warehouse " title="仓库">{{Warehouse.Code}}</span>&nbsp;'
                  + '<span class="orderID" title="运单号">{{OrderID}}</span>&nbsp;'
-                 + _Date + '&nbsp;'
+                 + (option.DateShow ? '<i class="text-muted" title="建单时间">{{CreatedDate}}</i>' : '<span class="glyphicon glyphicon-time" title="{{CreatedDate}}"></span>') + '&nbsp;'
                  + _btn
                  + '</div>'
                  + '{{/Logistics}}';
@@ -160,4 +135,26 @@ function _LogTagLoad(option, data) {
       e = event || window.event;
       e.keyCode == 27 && $(".popover").popover('hide');
   });
+}
+
+// 状态渲染
+function _RenderingStatus(option) {
+  // 状态渲染
+  var style  = ['default', 'default',  'info', 'lightseagreen', 'cadetblue', 'success', 'warning', 'warning', 'danger'],
+      txt    = ['初始', '截单', '已配货', '已交运', '已出库', '已妥投', '已取消', '异常', '退件'],
+      status = ['', 'CutOff', 'Stock', 'Post', 'OutStock', 'Delivered', 'Cancel', 'Return', 'Exception'];
+  option.Element.find('.status').each(function() {
+    var statusIndex = status.indexOf($(this).text());
+    $(this).text(txt[statusIndex]);
+    $(this).addClass('label-' + style[statusIndex]);
+  });
+  // 仓库渲染
+  var style = ['label-default', 'a1me', 'a1md', 'm2c', '2gve', 'xytg', 'xyts', 'label-warning'],
+      warehouse = ['', 'A1ME', 'A1MD', 'M2C', 'SXTY', 'XYTG', 'XYTS'];
+  option.Element.find('.warehouse').each(function() {
+    var warehouseIndex = warehouse.indexOf($(this).text());
+    warehouseIndex == -1 ? $(this).addClass(style[7]) : $(this).addClass(style[warehouseIndex]);
+  });
+  // 运单号日期渲染
+  common.Rendering.order(option.Element);
 }
