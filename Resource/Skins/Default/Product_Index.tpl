@@ -33,8 +33,12 @@
                             <!-- END 销售团队 -->
                         </select>
                     </div>
-
-                    <button class="btn btn-default btn-sm" type="submit">查询</button>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="关键字搜索..." name="KeyWord">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+                        </span>
+                    </div>
                     <div id="common-sreach" class="form-group"></div>
                 </form>
                 <div class="tags mg-10">
