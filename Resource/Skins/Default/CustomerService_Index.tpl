@@ -6,7 +6,7 @@
         <header>
             <div class="btn-group btn-group-sm pull-right">
                 <button class="btn btn-default" data-toggle="modal" data-target="#modal-sell" type="button">创建</button>
-                <button class="btn btn-default" type="button">取消</button>
+                <button id="after-sale" class="btn btn-default" type="button">取消</button>
             </div>
         </header>
         <ul class="nav nav-tabs mg-b-5">
@@ -47,7 +47,7 @@
                         <col width="50px">
                     </colgroup>
                     <thead>
-                        <th><input id="" type="checkbox"></th>
+                        <th></th>
                         <th>单号</th>
                         <th>账号</th>
                         <th>买家ID</th>
@@ -197,7 +197,7 @@
                                         <!-- 可变动模块 -->
                                         <div id="sell-can-change-1st" class="hidden">
                                             <div id="order-list-1st" class="col-sm-12 bd-r hidden">
-                                                <div class="maxH150">
+                                                <!-- <div class="maxH150">
                                                     <table class="table table-striped table-bordered table-hover table-condensed">
                                                         <thead>
                                                             <th>仓库 - 运单号</th>
@@ -208,7 +208,7 @@
                                                         </thead>
                                                         <tbody></tbody>
                                                     </table>
-                                                </div>
+                                                </div> -->
                                                 <hr class="mg-b-5">
                                             </div>
                                             <div class="col-sm-12 bd-r">
@@ -293,6 +293,12 @@
                                                 <div class="row">
                                                     <div class="col-sm-6 maxH200">
                                                         <table id="sell-reimburse-list" class="table table-striped table-bordered table-hover table-condensed hidden">
+                                                            <colgroup>
+                                                                <col>
+                                                                <col width="70">
+                                                                <col>
+                                                                <col width="100">
+                                                            </colgroup>
                                                             <thead>
                                                                 <th>金额</th>
                                                                 <th>申请人</th>
@@ -538,7 +544,10 @@
                 var _mode = ModeChange(data.Order.ExecuteMode, true);
                 $('#sell-cause').find('option[value="'+ data.Order.Types +'"]').prop('selected', true);
                 $('#sell-handle').find('option[value="'+ _mode +'"]').prop('selected', true);
-                $('#sell-handle').prop('disabled', true).attr('title', '编辑模式不允许更改处理方式！');
+                // 根据状态不同禁止功能
+                var _dos = data.Order.Status;
+                _dos != '初始' && $('#sell-handle').prop('disabled', true).attr('title', '非初始状态不允许更改处理方式！');
+                (_dos == '已结束' || _dos == '取消') && $('#sell-application').prop('disabled', true);
 
                 if (_mode == 'again') {
                     // 重发模式
@@ -553,7 +562,7 @@
                     TypeChange(); // 切换显示模块
                 } else if (_mode == 'reimburse' || _mode == 'added' || _mode == 'account') {
                     // 退款模式
-                    LoadReimburse(data, data.Order.ExecuteMode, data.Order.OID);
+                    LoadReimburse(data, data.Order.ExecuteMode, data.Order.OID, data.Order.DataID);
                     TypeChange(); // 切换显示模块
                 }
 
@@ -680,7 +689,7 @@
                                 case 'reimburse':
                                 case 'added':
                                 case 'account':
-                                    LoadReimburse(d.DataList[0], $('#sell-handle').val()); // 退款模块加载
+                                    LoadReimburse(d.DataList[0], $('#sell-handle').val(), d.DataID); // 退款模块加载
                                     clickNum && $('#search-list-toggle').click();     // 隐藏列表
                                     TypeChange();                         // 处理方式切换
 
@@ -783,25 +792,16 @@
              */
             function LogisticsList(d) {
                 // 遍历订单列表
-                var _tmpLogisticsList = '{{#Logistics}}'
-                                    + '<tr>'
-                                      + '<td>{{Warehouse}} - <a name="order-a" href="javascript:;" target="_blank">{{ReferenceID}}</a></td>'
-                                      + '<td>{{Freight}} - {{InsideOrder}}</td>'
-                                      + '<td>{{ServiceName}} - {{TrackingNumber}}</td>'
-                                      + '<td>{{Date}}</td>'
-                                      + '<td>'
-                                        + '<span class="glyphicon glyphicon-list-alt poi" data-oid="{{ReferenceID}}" data-toggle="modal" data-target="#modal-Logistics-log"></span>'
-                                      + '</td>'
-                                    + '</tr>'
-                                 + '{{/Logistics}}';
-                $('#order-list-1st').find('tbody').html(Mustache.render(_tmpLogisticsList, d));
-                var optionOrder = {
-                     Warehouse: {
-                         Ack      : true,
-                         Placement: 'top', // 弹出框显示方向，默认bottom
-                     }
+                var logOption = {
+                    Element  : $('#order-list-1st'),  // 容器
+                    OID      : d.Order.OrderID,       // OID，和数据两者必须至少存在一个
+                    Data     : '',                    // 数据，和OID两者必须至少存在一个
+                    Placement: 'top',                 // 弹出框显示位置
+                    Style    : 'table',               // 显示样式
+                    DateShow : true,                  // 是否显式的显示建单时间
+                    Mode     : 'prepend'
                 };
-                common.copy.SkuCopy($('#order-list-1st').find('.copy'), optionOrder);
+                LogisticsModule(logOption);
 
                 $('#order-list-1st').hasClass('hidden') && $('#order-list-1st').removeClass('hidden');
 
@@ -918,9 +918,10 @@
              * 退款模块加载
              * @param {JSON}   _d      数据
              * @param {String} _type   类型
-             * @param {String} _OID 更新售后单时用到，新建时为空
+             * @param {String} _OID    OID
+             * @param {String} _DataID 更新售后单时用到，新建时为空
              */
-            function LoadReimburse(_d, _type, _OID) {
+            function LoadReimburse(_d, _type, _OID, _DataID) {
 
                 // 渲染交易信息
                 if (_d.Payments && _d.Payments.length != 0) {
@@ -942,7 +943,7 @@
                     var _srl = $('#sell-reimburse-list');
                     var _tmphtml = '{{#Finance}}'
                                  + '<tr>'
-                                    + '<td>{{Amount}}</td>'
+                                    + '<td>' + _d.Order.CurrencyID + '{{Amount}}</td>'
                                     + '<td>{{TrueName}}</td>'
                                     + '<td>{{Status}}</td>'
                                     + '<td>{{Date}}</td>'
@@ -964,7 +965,7 @@
                     $samt.hasClass('fs') && $samt.removeClass('fs');
 
                     // 检测金额输入的是不是符合规范的数字
-                    var reg = /^(([0-9]+)|(([0]|[1-9][0-9]*)\.[0-9]*[1-9]+))$/;
+                    var reg = /^(([0-9]+)|(([0]|[1-9]+[0-9]*)\.[0-9]*[0-9]*))$/;
                     if (!reg.test(_amt)) {
                         $samt.addClass('fs');
                         alert('金额输入不规范！');
@@ -974,7 +975,7 @@
                     if(_sh == 'added' && ($sadd.val() == '' || $sadd.val() == null)) {
                         // 当类型为额外退款时，退款说明必须填写
                         $sadd.addClass('fs');
-                    } else if((_sh == 'reimburse' || _sh == 'account') && parseFloat(_amt) > parseFloat((_OID?_d.Order.AmountPaid:_d.AmountOfMoney.Amt))) {
+                    } else if(_sh == 'reimburse' && parseFloat(_amt) > parseFloat((_DataID?_d.Order.AmountPaid:_d.AmountOfMoney.Amt))) {
                         // 当类型为退款时，输入金额不能大于订单金额
                         $samt.addClass('fs');
                         alert('退款金额不能大于订单金额！');
@@ -986,19 +987,19 @@
 
                         // 申请原因拼装
                         var op = {
-                                OID           : _d.DataID,
+                                DataID        : _DataID,
+                                OID           : _OID,
                                 Types         : $('#sell-cause').val(),
                                 ExecuteMode   : _type,
                                 ToBuyerMessage: $sadd.val(),
                                 Amount        : parseFloat(_amt),
                                 Title         : ''
                         };
-                        if (_OID) {
-                            op.OID = _OID;
+                        if (_DataID) {
                             _d = _d.Order;
-                            op.Title = _d.ShopName + '的买家【' + _d.BuyerID + '】对订单['+ _d.OID +']的'+ _type +'申请';
+                            op.Title = _d.ShopName + '的买家【' + _d.BuyerID + '】对订单['+ _OID +']的'+ _type +'申请';
                         }else {
-                            op.Title = _d.Shop + '的买家【' + _d.Buyer + '】对订单['+ _d.DataID +']的'+ _type +'申请';
+                            op.Title = _d.Shop + '的买家【' + _d.Buyer + '】对订单['+ _OID +']的'+ _type +'申请';
                         }
                         SaveServiceReimburse(op);
                     }
@@ -1249,8 +1250,8 @@
 //=========================================== 模态框方法 ====================================================
 
 //=========================================== 页面基本功能 ==================================================
-            // 搜索方法
             (function() {
+                // 搜索方法
                 var op = common.URL.parse();
                 var option = {
                     inForm : true,
@@ -1267,11 +1268,32 @@
                 };
                 common.SkuSearch($('#common-sreach'), option);
                 common.SkuSearch($('#common-sreach-2nd'), option2nd);
-            })();
 
-            // 当模态框关闭时，重置模态框
-            (function() {
+                // 当模态框关闭时，重置模态框
                 $('#modal-sell').on('hidden.bs.modal', function() { ModalReset(); });
+
+                // 取消售后单
+                $('#after-sale').on('click', function() {
+                    var _checked = $('#data-list').find('input[type="checkbox"]:checked');
+                    _checked.length == 1 ? $.ajax({
+                                                url: '/CustomerService/API/?Do=SetStatus',
+                                                type: 'post',
+                                                dataType: 'json',
+                                                data: {
+                                                    DataID: _checked.val(),
+                                                    Status: '取消'
+                                                },
+                                                success: function(data) {
+                                                    common.alertIf({
+                                                        data : data,
+                                                        title: '撤销售后单',
+                                                        tcb  : function() {
+                                                            window.location.reload();
+                                                        }
+                                                    });
+                                                }
+                                            }) : _checked.length == 0 ? alert('没有选择任何记录！') : alert('每次只能取消一条记录！');
+                });
             })();
 
             // 模态框重置
@@ -1355,6 +1377,7 @@
                 $('#sell-added').val('');
                 $('#sell-amount').val('');
                 !$('#sell-reimburse-list').hasClass('hidden') && $('#sell-reimburse-list').addClass('hidden')
+                $('#sell-application').removeAttr('disabled');
             }
 
             // 产品模块重置
@@ -1381,8 +1404,8 @@
 
                 // 处理原因渲染
                 var exmOption = {
-                    Type : ['退款', '重发', '额外退款'], 
-                    Style: ['label-danger', 'label-primary', 'label-warning'],
+                    Type : ['退款', '重发', '额外退款', '账号退款'], 
+                    Style: ['label-danger', 'label-primary', 'label-warning', 'label-danger'],
                     Mode : 'replace'
                 };
                 common.Rendering.All(_dl.find('.exm'), exmOption);
