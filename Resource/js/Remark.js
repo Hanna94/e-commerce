@@ -1,14 +1,17 @@
 // 数据格式
 // var op = {
-//     Target : $('#xxx'),
-//     DataID : 123,    // 要更新的单号
-//     UID    : 'Harry',
-//     HasWarp: true,
-//     Title  : 'XXXX',
-//     Tip    : '提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。',
-//     SaveURL: '/OMS/Order.aspx?Do=MessageSave',
-//     GetURL : '/OMS/Order.aspx?Do=MessageSave',
-//     DelURL : '/OMS/Order.aspx?Do=MessageSave'
+//     Target  : $('#xxx'),
+//     DataID  : 123,    // 要更新的单号
+//     UID     : 'Harry',
+//     HasWarp : true,
+//     Title   : 'XXXX',
+//     Tip     : '提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。',
+//     SaveURL : '/OMS/Order.aspx?Do=MessageSave',
+//     GetURL  : '/OMS/Order.aspx?Do=MessageSave',
+//     DelURL  : '/OMS/Order.aspx?Do=MessageSave',
+//     GetData : xxx,
+//     SaveData: xxx,
+//     DelData : xxx
 // };
 // 
 // 页面所需加载文件
@@ -149,7 +152,7 @@ function MessageSave(op) {
         dataType: 'JSON',
         data    : {
             DataID : _did?_did.val():null,
-            FID    : op.DataID,
+            FID    : op.SaveData?op.SaveData:op.DataID,
             Content: op.Target.find('._i_remark_input').val()
         },
         success    : function(data){
@@ -182,7 +185,7 @@ function MessageDelete(op, _did) {
         dataType: 'JSON',
         data    : { 
             DataID: _did,
-            FID   : op.DataID
+            FID   : op.DelData?op.DelData:op.DataID
         },
         success : function(data){
             common.alertIf({
@@ -201,7 +204,7 @@ function MessageListLoad(op, addedData) {
         _MessageListLoad(op, addedData);
     }else {
         $.ajax({
-            url     : op.GetURL ? (op.GetURL + op.DataID) : '/OMS/API/?Do=Query&DataID=' + op.DataID,
+            url     : op.GetURL ? (op.GetURL + (op.GetData?op.GetData:op.DataID)) : '/OMS/API/?Do=Query&DataID=' + (op.GetData?op.GetData:op.DataID),
             type    : 'GET',
             dataType: 'JSON',
             success : function(data){
@@ -213,25 +216,27 @@ function MessageListLoad(op, addedData) {
 function _MessageListLoad(op, _d) {
     // 判断数据是否有外层包裹
     var mes;
-    _d.DataList ? mes = _d.DataList[0] : mes = _d;
-    // 存储备注列表模板
-    var tmpList = RemarkTemplate();
-    // 加载备注信息列表
-    op.Target.find('._t_remark_list tbody').html(Mustache.render(tmpList, mes));
-    // 转换备注信息中的链接 & 删除非该用户备注的操作按钮
-    op.Target.find('._t_remark_list tbody tr').each(function() {
-        // 转换备注信息中的链接
-        var isLink = LinkChange($(this).find('._s_remark_message').text());
-        $(this).find('._s_remark_message').html(isLink);
-        // 删除非该用户备注的操作按钮
-        var _tsUID = parseInt($(this).data('uid'));
-        _tsUID != op.UID && $(this).find('._d_remark_btn').remove();
-    });
-    // 清空输入框
-    op.Target.find('._i_remark_input').val("");
+    _d.MessageList ? mes = _d : (_d.DataList ? mes = _d.DataList[0] : mes = false);
+    if (mes) {
+        // 存储备注列表模板
+        var tmpList = RemarkTemplate();
+        // 加载备注信息列表
+        op.Target.find('._t_remark_list tbody').html(Mustache.render(tmpList, mes));
+        // 转换备注信息中的链接 & 删除非该用户备注的操作按钮
+        op.Target.find('._t_remark_list tbody tr').each(function() {
+            // 转换备注信息中的链接
+            var isLink = LinkChange($(this).find('._s_remark_message').text());
+            $(this).find('._s_remark_message').html(isLink);
+            // 删除非该用户备注的操作按钮
+            var _tsUID = parseInt($(this).data('uid'));
+            _tsUID != op.UID && $(this).find('._d_remark_btn').remove();
+        });
+        // 清空输入框
+        op.Target.find('._i_remark_input').val("");
 
-    // 加载备注信息编辑方法
-    MessageEdit(op);
+        // 加载备注信息编辑方法
+        MessageEdit(op);
+    }
 }
 
 // 备注模板
