@@ -188,7 +188,7 @@
                                         </ul>
                                     </div>
                                 </td>
-                                <td class="orderID">{OrderID}</td>
+                                <td><div class="orderID">{OrderID}</div><div class="platform">{Platform}</div></td>
                                 <td class="warehouse-status">仓库：<i>{Warehouse}</i><br>货代：{Freight}<br>服务：{Service}</td>
                                 <td>{Amt} <span class="label currency">{Currency}</span></td>
                                 <td>{Shop}</td>
@@ -631,24 +631,35 @@
                         
                         // 获取备注信息
                         $remark.find('tbody').html(""); // 每次打开清空记录
-                        $.each(data.Order, function(i, val){
-                            $.ajax({
-                                url: '/OMS/API/?Do=Query&OrderID=' + val.ReferenceID,
-                                dataType: 'json',
-                                type: 'get',
-                                success: function(data){
-                                    var op = {
-                                        Target : $remark,
-                                        DataID : data.DataID,    // 要更新的单号
-                                        UID    : UID,
-                                        HasWarp: true,
-                                        Title  : '备注',
-                                        Tip    : '提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。'
-                                    };
-                                    Remark(op, data);
-                                }
-                            });
+                        var ifAfterSale = (data.Order && data.Order[0].Platform == 'AfterSale');
+                        var _g = ifAfterSale ? '/CustomerService/API/?Do=AfterSaleQuery&OrderID=' : '/OMS/API/?Do=Query&OrderID=';
+                        var _option = {
+                                        GetURL : _g,
+                                        SaveURL: (ifAfterSale ? '/CustomerService/API/?Do=MessageSave' : ''),
+                                        DelURL : (ifAfterSale ? '/CustomerService/API/?Do=MessageDelete' : ''),
+                                        GetData: data.Order[0].ReferenceID
+                                      };
+                        // 先获取一次数据，得到DataID ._.b
+                        $.ajax({
+                            url     : _g + _option.GetData,
+                            type    : 'GET',
+                            dataType: 'JSON',
+                            success : function(data){
+                                var logisticsOption = {
+                                    Target : $remark,
+                                    Title  : '备注',
+                                    DataID : data.DataID,
+                                    UID    : UID,
+                                    HasWarp: true,
+                                    GetURL : _option.GetURL ? _option.GetURL : '',
+                                    SaveURL: _option.SaveURL ? _option.SaveURL : '',
+                                    DelURL : _option.DelURL ? _option.DelURL : '',
+                                    GetData: _option.GetData
+                                };
+                                Remark(logisticsOption, data);
+                            }
                         });
+                        
                     }
                 });
 
@@ -1376,6 +1387,14 @@
 
                 // 运单号时间高亮
                 common.Rendering.order($dataList);
+
+                // 区分是否售后单
+                var platformOption = {
+                    Type : ['eBay', 'AfterSale'],
+                    Style: ['label-primary', 'label-danger'],
+                    Mode : 'replace'
+                }
+                common.Rendering.All($dataList.find('.platform'), platformOption);
 
                 //Packstation packstation Postnummer三个地址字段加上背景色
                 $dataList.find('tbody tr').each(function(){
