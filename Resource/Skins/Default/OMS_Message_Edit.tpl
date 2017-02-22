@@ -455,19 +455,22 @@
                                         // 渲染用户信息
                                         var tempUser = '<tr><td class="text-r">BuyerUserID:</td><td class="tdStyle">{{Buyer}}</td></tr>';
                                         // 拼合地址
+                                        
                                         var _address = [], _dap = data.Address.PayPal;
-                                        _address.push(_dap.Street1, _dap.Street2, 
-                                                    _dap.City, _dap.State, _dap.ZIP, 
-                                                    _dap.Country, _dap.Phone);
-                                        // 删除数组中空元素
-                                        for(var i = 0; i < _address.length; i++) {
-                                            if (_address[i].length == 0) {
-                                                _address.splice(i, 1);
-                                                i--;
+                                        if (_dap != null && _dap != '') {
+                                            _address.push(_dap.Street1, _dap.Street2, 
+                                                        _dap.City, _dap.State, _dap.ZIP, 
+                                                        _dap.Country, _dap.Phone);
+                                            // 删除数组中空元素
+                                            for(var i = 0; i < _address.length; i++) {
+                                                if (_address[i].length == 0) {
+                                                    _address.splice(i, 1);
+                                                    i--;
+                                                }
                                             }
+                                            // 把删除空元素后的数组组合成字符串,插入数据中
+                                            data.Address.PayPal.FullAddress = _address.join(',');
                                         }
-                                        // 把删除空元素后的数组组合成字符串,插入数据中
-                                        data.Address.PayPal.FullAddress = _address.join(',');
 
                                         var userHtml = Mustache.render(tempUser, data.Order[0]);
                                         var tempInfoHtml = userHtml + Mustache.render(tempInfo, data);
@@ -495,7 +498,7 @@
                                                         Data     : '',                      // 数据，和OID两者必须至少存在一个
                                                         Placement: 'left',                  // 弹出框显示位置
                                                         Style    : 'table',                 // 显示样式
-                                                        Date     : 'hide',                  // 是否显式的显示建单时间
+                                                        DateShow : false,                   // 是否显式的显示建单时间
                                                         Mode     : 'append'                 // 后入式
                                                     };
                                                     LogisticsModule(logOption);
