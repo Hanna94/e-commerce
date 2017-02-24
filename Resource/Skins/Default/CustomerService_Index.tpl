@@ -1369,7 +1369,7 @@
             function LogisticsListReset() {
                 var $dom = $('#order-list-1st');
                 !$dom.hasClass('hidden') && $dom.addClass('hidden');
-                $dom.find('tbody').empty();
+                $dom.empty();
             }
             
             // 退款模块重置
