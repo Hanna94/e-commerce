@@ -134,19 +134,7 @@
                         <div class="form-group form-group-sm mg-b-5">
                             <label for="sell-cause" class="control-label col-sm-2">原因</label>
                             <div class="col-sm-4">
-                                <select id="sell-cause" class="form-control">
-                                    <option value="">请选择</option>
-                                    <option value="仓库漏发">仓库漏发</option>
-                                    <option value="物流商错发">物流商错发</option>
-                                    <option value="供应商错发">供应商错发</option>
-                                    <option value="物流问题">物流问题</option>
-                                    <option value="质量问题">质量问题</option>
-                                    <option value="描述失误">描述失误</option>
-                                    <option value="买家原因">买家原因</option>
-                                    <option value="缺货">缺货</option>
-                                    <option value="关税退回">关税退回</option>
-                                    <option value="运费">运费</option>
-                                </select>
+                                <select id="sell-cause" class="form-control customer-service-cause"></select>
                             </div>
                             <div class="col-sm-6">
                                 <p id="sell-msg-cause" class="text-danger"></p>
@@ -256,6 +244,7 @@
     <script src="/Resource/js/mustache.js"></script>
     <script src="/Resource/js/Remark.js"></script>
     <script src="/Resource/js/logistics-module.js"></script>
+    <script src="/Resource/js/customer-service-option.js"></script>
     <script>
         $(function(){
             'use strict';
