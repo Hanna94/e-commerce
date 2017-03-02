@@ -971,7 +971,8 @@ common.Rendering.All = function(_$, op) {
             var index = op.Type.indexOf(text);
             text == '' ? text = '初始' : text;
             if (index != -1) {
-                tempLabel.addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(op.Ch ? op.Ch[index] : op.Type[index]);
+            // op.Style[index].indexOf('#') > 0 ? tempLabel.attr('style', 'background-color: ' + op.Style[index]) 
+            tempLabel.addClass((op.Style && op.Style[index]) || defaultStyle[index]).text(op.Ch ? op.Ch[index] : op.Type[index]);
                 switch(op.Mode) {
                     case 'prepend':
                         $(this).prepend(tempLabel);
