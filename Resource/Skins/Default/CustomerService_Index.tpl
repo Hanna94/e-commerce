@@ -159,19 +159,7 @@
                                             <div class="form-group form-group-sm mg-b-5">
                                                 <label for="sell-cause" class="control-label col-sm-2">原因</label>
                                                 <div class="col-sm-4">
-                                                    <select id="sell-cause" class="form-control">
-                                                        <option value="">请选择</option>
-                                                        <option value="仓库漏发">仓库漏发</option>
-                                                        <option value="物流商错发">物流商错发</option>
-                                                        <option value="供应商错发">供应商错发</option>
-                                                        <option value="物流问题">物流问题</option>
-                                                        <option value="质量问题">质量问题</option>
-                                                        <option value="描述失误">描述失误</option>
-                                                        <option value="买家原因">买家原因</option>
-                                                        <option value="缺货">缺货</option>
-                                                        <option value="关税退回">关税退回</option>
-                                                        <option value="运费">运费</option>
-                                                    </select>
+                                                    <select id="sell-cause" class="form-control customer-service-cause"></select>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <p id="sell-msg-cause" class="text-danger"></p>
@@ -197,18 +185,6 @@
                                         <!-- 可变动模块 -->
                                         <div id="sell-can-change-1st" class="hidden">
                                             <div id="order-list-1st" class="col-sm-12 bd-r hidden">
-                                                <!-- <div class="maxH150">
-                                                    <table class="table table-striped table-bordered table-hover table-condensed">
-                                                        <thead>
-                                                            <th>仓库 - 运单号</th>
-                                                            <th>货代 - 单号</th>
-                                                            <th>服务商- 单号</th>
-                                                            <th>提审时间</th>
-                                                            <th>操作</th>
-                                                        </thead>
-                                                        <tbody></tbody>
-                                                    </table>
-                                                </div> -->
                                                 <hr class="mg-b-5">
                                             </div>
                                             <div class="col-sm-12 bd-r">
@@ -395,6 +371,7 @@
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
     <script src="/Resource/js/Remark.js"></script>
     <script src="/Resource/js/logistics-module.js"></script>
+    <script src="/Resource/js/customer-service-option.js"></script>
 
     <script>
         (function() {
@@ -553,7 +530,7 @@
                     // 重发模式
                     LogisticsList(data);     // 渲染订单列表
                     SetAddress(data);        // 渲染地址
-                    SetProduct(data, false); // 渲染产品列表
+                    SetProduct(data, false, data.Order.Status); // 渲染产品列表
                     ProductChange();         // 添加和删除产品的方法
                     // 保存编辑后的售后单 - 重发
                     $('#sell-save').off().on('click', function() {
@@ -562,7 +539,7 @@
                     TypeChange(); // 切换显示模块
                 } else if (_mode == 'reimburse' || _mode == 'added' || _mode == 'account') {
                     // 退款模式
-                    LoadReimburse(data, data.Order.ExecuteMode, data.Order.OID, data.Order.DataID);
+                    LoadReimburse(data, data.Order.ExecuteMode, data.Order.OID, data.Order.DataID, data.Order.Status);
                     TypeChange(); // 切换显示模块
                 }
 
@@ -840,10 +817,11 @@
 
             /**
              * 遍历产品列表
-             * @param {JSON}    _d   数据
-             * @param {Boolean} _new 判断是新建或是编辑售后单
+             * @param {JSON}    _d       数据
+             * @param {Boolean} _new     判断是新建或是编辑售后单
+             * @param {String}  _status  售后单状态
              */
-            function SetProduct(_d, _new) {
+            function SetProduct(_d, _new, _status) {
                 // 遍历产品列表
                 var _tmpProduct = (_new && '{{#Transaction}}')
                                 + '{{#Product}}'
@@ -863,8 +841,8 @@
                 $spl.hasClass('hidden') && $spl.removeClass('hidden');
                 common.copy.SkuCopy($('#sell-product-list').find('.copy'));
 
-                // 编辑状态时，隐藏重发按钮（因为要运单取消才能重发，所以暂时隐藏掉）
-                !_new && $('#sell-save').addClass('hidden');
+                // 编辑状态时，售后单为初始状态才允许更改并重发
+                (_status && _status != '初始') ? $('#sell-save').prop('disabled', true) : $('#sell-save').removeAttr('disabled');
             }
 
             /**
@@ -921,7 +899,7 @@
              * @param {String} _OID    OID
              * @param {String} _DataID 更新售后单时用到，新建时为空
              */
-            function LoadReimburse(_d, _type, _OID, _DataID) {
+            function LoadReimburse(_d, _type, _OID, _DataID, _status) {
 
                 // 渲染交易信息
                 if (_d.Payments && _d.Payments.length != 0) {
@@ -953,9 +931,12 @@
                     $('#sell-currency').text(_d.Order.CurrencyID);
                     _srl.is(':hidden') && _srl.removeClass('hidden');
                 }
+
+                var _btn_ap = $('#sell-application');
+                (_status && _status == '初始') ? _btn_ap.removeAttr('disabled') : _status ? _btn_ap.prop('disabled', true) : _btn_ap.removeAttr('disabled');
                 
                 // 输入金额
-                $('#sell-application').off().on('click', function() {
+                _btn_ap.off().on('click', function() {
                     var _amt = $('#sell-amount').val();
                     var $sadd = $('#sell-added');
                     var $samt = $('#sell-amount');
