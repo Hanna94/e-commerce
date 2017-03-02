@@ -237,18 +237,18 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">运单信息</h3>
                     </div>
-                    <!-- <table class="table table-striped table-bordered table-hover table-condensed">
+                    <table class="table table-striped table-bordered table-hover table-condensed">
                         <thead>
                             <tr>
-                                <th>仓库:运单号</th>
-                                <th>货代:单号</th>
-                                <th>服务商:单号</th>
+                                <th>仓库\运单号</th>
+                                <th>货代\单号</th>
+                                <th>服务商\单号</th>
                                 <th>提审时间</th>
-                                <th>操作</th>
+                                <th>日志</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
-                    </table> -->
+                    </table>
                 </div>
             </div>
 
@@ -355,19 +355,7 @@
                         <div class="form-group form-group-sm mg-b-5">
                             <label for="sell-cause" class="control-label col-sm-2">原因</label>
                             <div class="col-sm-4">
-                                <select id="sell-cause" class="form-control">
-                                    <option value="">请选择</option>
-                                    <option value="仓库漏发">仓库漏发</option>
-                                    <option value="物流商错发">物流商错发</option>
-                                    <option value="供应商错发">供应商错发</option>
-                                    <option value="物流问题">物流问题</option>
-                                    <option value="质量问题">质量问题</option>
-                                    <option value="描述失误">描述失误</option>
-                                    <option value="买家原因">买家原因</option>
-                                    <option value="缺货">缺货</option>
-                                    <option value="关税退回">关税退回</option>
-                                    <option value="运费">运费</option>
-                                </select>
+                                <select id="sell-cause" class="form-control customer-service-cause"></select>
                             </div>
                             <div class="col-sm-6">
                                 <p id="sell-msg-cause" class="text-danger"></p>
@@ -482,11 +470,11 @@
     <template id="temp-order">
         {{#Logistics}}
         <tr>
-            <td>{{Warehouse.Code}} - <a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>
-            <td>{{Freight.ISP}} - {{Freight.InsideOrder}}</td>
-            <td>{{Freight.Service.Support}} - {{Freight.Service.TrackingNumber}}</td>
+            <td>{{Warehouse.Code}}<br><a name="order-a" href="javascript:;" target="_blank">{{OrderID}}</a></td>
+            <td>{{Freight.ISP}}<br>{{Freight.InsideOrder}}</td>
+            <td>{{Freight.Service.Support}}<br>{{Freight.Service.TrackingNumber}}</td>
             <td>{{CreatedDate}}</td>
-            <td><span class="glyphicon glyphicon-list-alt" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-log"></span></td>
+            <td><span class="glyphicon glyphicon-list-alt poi" data-oid="{{OrderID}}" data-toggle="modal" data-target="#modal-log"></span></td>
         </tr>
         {{/Logistics}}
     </template>
@@ -508,6 +496,7 @@
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
     <script src="/Resource/js/Remark.js"></script>
     <script src="/Resource/js/logistics-module.js"></script>
+    <script src="/Resource/js/customer-service-option.js"></script>
     <script>
         (function () {
             'use strict';
@@ -599,26 +588,26 @@
                     type: 'get',
                     dataType: 'json',
                     success: function(data){
-                        // var d = data,
-                        //     url = "/Logistics/?Do=EDIT&OrderID=" + d.Logistics[0].OrderID;
-                        // $panelOrder.find('tbody').html(Mustache.render(tempOrder, d));
-                        // $panelOrder.find('tbody a').attr('href', url);
-                        // $panelOrder.find('tbody tr').each(function(i, n){
-                        //     var ts = $(this);
-                        //     ts.on('click', 'td:last span', function(){
-                        //         $modalLog.find('tbody').html(Mustache.render(tempLog, d.Logistics[i]));
-                        //     });
-                        // });
-                        var logOption = {
-                            Element  : $('#panel-order>div.panel'), // 容器
-                            OID      : '',                          // OID，和数据两者必须至少存在一个
-                            Data     : data,                        // 数据，和OID两者必须至少存在一个
-                            Placement: 'top',                       // 弹出框显示位置
-                            Style    : 'table',                     // 显示样式
-                            DateShow : true,
-                            Mode     : 'append'
-                        };
-                        LogisticsModule(logOption);
+                        var d = data,
+                            url = "/Logistics/?Do=EDIT&OrderID=" + d.Logistics[0].OrderID;
+                        $panelOrder.find('tbody').html(Mustache.render(tempOrder, d));
+                        $panelOrder.find('tbody a').attr('href', url);
+                        $panelOrder.find('tbody tr').each(function(i, n){
+                            var ts = $(this);
+                            ts.on('click', 'td:last span', function(){
+                                $modalLog.find('tbody').html(Mustache.render(tempLog, d.Logistics[i]));
+                            });
+                        });
+                        // var logOption = {
+                        //     Element  : $('#panel-order>div.panel'), // 容器
+                        //     OID      : '',                          // OID，和数据两者必须至少存在一个
+                        //     Data     : data,                        // 数据，和OID两者必须至少存在一个
+                        //     Placement: 'top',                       // 弹出框显示位置
+                        //     Style    : 'table',                     // 显示样式
+                        //     DateShow : true,
+                        //     Mode     : 'append'
+                        // };
+                        // LogisticsModule(logOption);
                     },
                     error: function(data, status, e){
                         console.log("发生错误：" + e);
