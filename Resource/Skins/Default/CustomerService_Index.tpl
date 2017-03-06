@@ -258,7 +258,19 @@
                                                         </table>
                                                     </div>
                                                     <div class="col-sm-7">
-                                                        <button id="sell-save" class="btn btn-default btn-sm pull-right" type="button">申请重发</button>
+                                                        <!-- <div class="form-group form-group-sm"> -->
+                                                            <!-- <label for="sell-handle" class="control-label col-sm-4">重发库存选择</label>
+                                                            <div class="col-sm-4">
+                                                                <select id="" class="form-control">
+                                                                    <option>测试仓库1</option>
+                                                                    <option>测试仓库2</option>
+                                                                    <option>测试仓库3</option>
+                                                                </select>
+                                                            </div> -->
+                                                            <!-- <div class="col-sm-4"> -->
+                                                                <button id="sell-save" class="btn btn-default btn-sm pull-right" type="button">申请重发</button>
+                                                            <!-- </div> -->
+                                                        <!-- </div> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -528,10 +540,10 @@
 
                 if (_mode == 'again') {
                     // 重发模式
-                    LogisticsList(data);     // 渲染订单列表
-                    SetAddress(data);        // 渲染地址
-                    SetProduct(data, false, data.Order.Status); // 渲染产品列表
-                    ProductChange();         // 添加和删除产品的方法
+                    LogisticsList(data);                               // 渲染订单列表
+                    SetAddress(data);                                  // 渲染地址
+                    SetProduct(data, false, data.Order.Status);        // 渲染产品列表
+                    ProductChange(data.DataID, data.Order.Status);     // 添加和删除产品的方法
                     // 保存编辑后的售后单 - 重发
                     $('#sell-save').off().on('click', function() {
                         SaveServiceAgain(data.Order.OID, data.DataID); 
@@ -825,10 +837,12 @@
                 // 遍历产品列表
                 var _tmpProduct = (_new && '{{#Transaction}}')
                                 + '{{#Product}}'
-                                + '<tr data-id="{{DataID}}">'
+                                + '<tr data-id="' + (_new ? '{{DataID}}' : '{{SkuID}}') + '">'
                                     + '<td>'
                                     + '<div class="copy">'
-                                        + '<span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="{{DataID}}" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}}'
+                                        + '<span class="poi mg-r-5" data-clipboard-text="{{FullSKU}}" data-id="'
+                                        + (_new ? '{{DataID}}' : '{{SkuID}}')
+                                        + '" title="点击复制该SKU">[{{FullSKU}}]</span>{{FullName}}'
                                     + '</div>'
                                     + '</td>'
                                     + '<td><input type="text" class="form-control input-sm maxW50" value="{{Quantity}}"></td>'
@@ -846,9 +860,11 @@
             }
 
             /**
-             * 添加和删除产品的方法
+             * 添加删除产品
+             * @param {String || Boolean}  fid     售后单的DataID, 新建传空值
+             * @param {String}             status  售后单的状态, 新建传空值
              */
-            function ProductChange() {
+            function ProductChange(fid, status) {
                 var _2nd = $('#common-sreach-2nd');
                 var _spl = $('#sell-product-list');
                 var _tmpProduct ='<tr data-id="{{DataID}}">'
@@ -888,8 +904,41 @@
                 });
 
                 // remove product
-                _spl.find('tbody').on('click', '.glyphicon-remove', function() {
-                    $(this).closest('tr').remove();
+                _spl.find('tbody').off('click', '.glyphicon-remove').on('click', '.glyphicon-remove', function() {
+                    if (fid) {
+                        if (status == '初始') {
+                            common.loading.show();
+                            $(this).closest('tr').remove();
+                            $.ajax({
+                                url: '/CustomerService/Api/?Do=ProductDelete',
+                                type: 'post',
+                                dataType: 'json',
+                                data: {
+                                    FID: fid,
+                                    SkuID: $(this).closest('tr').data('id')
+                                },
+                                success: function(data) {
+                                    common.loading.hide();
+                                    if (data.Ack) {
+                                        common.loading.hide();
+                                    }else {
+                                        common.loading.hide();
+                                        alert('删除失败，请刷新重试！');
+                                    }
+                                },
+                                error: function() {
+                                    alert('删除失败，请刷新重试！');
+                                }
+                            });
+                        }else {
+                            alert('该售后单处于【进行中】状态，不可更改产品。');
+                        }
+                        
+                        console.log('this is edit ' + fid);
+                    }else {
+                        console.log('this is new');
+                        $(this).closest('tr').remove();
+                    }
                 });
             }
             /**
@@ -1227,6 +1276,14 @@
                     Mode     : 'append'
                 };
                 LogisticsModule(logOption);
+            }
+
+            /**
+             * 获取重发产品列表仓库
+             * @param {[type]} _$ [description]
+             */
+            function GetWarehouse(_$) {
+
             }
 //=========================================== 模态框方法 ====================================================
 
