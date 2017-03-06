@@ -265,7 +265,8 @@
                 $imgUpload = $('#imgUpload'),
                 tempOrder = $('#temp-order').html(),
                 scrollHeight, dataShopID, imgMedie,
-                page = 1;
+                page = 1,
+                hasOrder, lastMsgForBuyer;
                 
             // 获取数据和上传数据
             (function(){
@@ -277,6 +278,8 @@
                         type: 'get',
                         success: function(data){
                             var d = data;
+                            lastMsgForBuyer = d.Content[0].FolderID
+                            console.log('最后一条信息发送人(Inbox为Buyer，Send为客服)：' + lastMsgForBuyer);
                             d.Content = d.Content.reverse();
                             dataShopID = d.MessageData.ShopID;
 
@@ -433,18 +436,18 @@
                             });
 
                             // 加载用户信息
-
                             $.ajax({
                                 url: '/OMS/API/?Do=UserQuery&BuyerID=' + d.MessageData.Sender,
                                 type: 'get',
                                 dataType: 'json',
                                 success: function(data){
+                                    hasOrder = data.Ack
+                                    console.log('是否有订单信息：' + hasOrder);
                                     common.loading.show();
                                     if (data.Order.length !== 0) {
                                         // 渲染用户信息
                                         var tempUser = '<tr><td class="text-r">BuyerUserID:</td><td class="tdStyle">{{Buyer}}</td></tr>';
                                         // 拼合地址
-                                        
                                         var _address = [], _dap = data.Address.PayPal;
                                         if (_dap != null && _dap != '') {
                                             _address.push(_dap.Street1, _dap.Street2, 
@@ -474,7 +477,6 @@
                                         });
 
                                         // 加载运单信息
-                                        console.log(data.Order);
                                         $.each(data.Order, function(index, event) {
                                             $.ajax({
                                                 url     : '/OMS/API/?Do=Query&DataID=' + event.DataID,
@@ -526,6 +528,16 @@
                     ts.on('click', function(){
                         var sta = ts.attr('data-name'),
                             val = ts.attr('data-sta');
+                        if (sta == 'Executes') {
+                            if (hasOrder && lastMsgForBuyer == 'Inbox') {
+                                if (confirm('是否确认要更改处理状态？')) {
+
+                                }else {
+                                    return false;
+                                }
+                            }
+                        }
+                        
                         $.ajax({
                             url: '/OMS/API/?Do=SetMessageStatus',
                             type: 'post',
