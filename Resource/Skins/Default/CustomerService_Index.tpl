@@ -258,19 +258,17 @@
                                                         </table>
                                                     </div>
                                                     <div class="col-sm-7">
-                                                        <!-- <div class="form-group form-group-sm"> -->
-                                                            <!-- <label for="sell-handle" class="control-label col-sm-4">重发库存选择</label>
+                                                        <div class="form-group form-group-sm">
+                                                            <label class="control-label col-sm-4">期望库存选择</label>
                                                             <div class="col-sm-4">
-                                                                <select id="" class="form-control">
-                                                                    <option>测试仓库1</option>
-                                                                    <option>测试仓库2</option>
-                                                                    <option>测试仓库3</option>
+                                                                <select id="sell-warehouse-select" class="form-control">
+                                                                    <option value="0">请选择</option>
                                                                 </select>
-                                                            </div> -->
-                                                            <!-- <div class="col-sm-4"> -->
+                                                            </div>
+                                                            <div class="col-sm-4">
                                                                 <button id="sell-save" class="btn btn-default btn-sm pull-right" type="button">申请重发</button>
-                                                            <!-- </div> -->
-                                                        <!-- </div> -->
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -544,6 +542,10 @@
                     SetAddress(data);                                  // 渲染地址
                     SetProduct(data, false, data.Order.Status);        // 渲染产品列表
                     ProductChange(data.DataID, data.Order.Status);     // 添加和删除产品的方法
+                    // 设置已选库存。非初始状态下，不允许更改库存
+                    var warh = $('#sell-warehouse-select');
+                    warh.find('option:contains('+ data.Logistics[0].Warehouse  +')').prop('selected', true);
+                    _dos != '初始' && warh.prop('disabled', true);
                     // 保存编辑后的售后单 - 重发
                     $('#sell-save').off().on('click', function() {
                         SaveServiceAgain(data.Order.OID, data.DataID); 
@@ -1041,6 +1043,17 @@
              * @param {String} _DataID 更新售后单时用到，新建时为空
              */
             function SaveServiceAgain(_OID, _DataID) {
+                // 当仓库没有选择时，不予进行
+                // if ($('#sell-warehouse-select').val() == 0) {
+                //     common.alert({
+                //         type : 'danger',
+                //         title: '请选择重发仓库！！',
+                //         msg  : '',
+                //         time : 2000
+                //     });
+                //     return false;
+                // }
+
                 common.loading.show();
                 // 产品
                 var productJson         = {};
@@ -1053,6 +1066,7 @@
 
                 // 保存数据
                 var $sellAdd = $('#sell-address');
+                var warh     = $('#sell-warehouse-select');
                 $.ajax({
                     url     : '/CustomerService/API/?Do=AfterSaleSave',
                     type    : 'POST',
@@ -1060,6 +1074,7 @@
                     data: {
                         DataID     : _DataID,
                         OID        : _OID,
+                        WID        : warh.val(),
                         Types      : $('#sell-cause').val(),
                         ExecuteMode: '重发',
                         Name       : $sellAdd.find('input[name="Name"]').val(),
@@ -1079,6 +1094,8 @@
                             title: '保存售后单：',
                             msg  : data.Message,
                             cb   : function() {
+                                var RASDataID = _DataID ? _DataID : data.DataID;
+                                RemarkAfterSave(RASDataID, warh.find('option[value="'+ warh.val() +'"]').text());
                                 WebAssign();
                             }
                         });
@@ -1277,14 +1294,28 @@
                 };
                 LogisticsModule(logOption);
             }
-
             /**
-             * 获取重发产品列表仓库
-             * @param {[type]} _$ [description]
+             * 如果售后重发期望仓库不为空，则在备注中自动添加期望仓库
+             * @param {String} DataID    售后单ID
+             * @param {String} warehouse 期望库存
              */
-            function GetWarehouse(_$) {
-
+            function RemarkAfterSave(DataID, warehouse) {
+                // /CustomerService/API/?Do=MessageSave
+                $.ajax({
+                    url     : '/CustomerService/API/?Do=MessageSave',
+                    type    : 'POST',
+                    dataType: 'JSON',
+                    data    : {
+                        DataID : '',
+                        FID    : DataID,
+                        Content: '期望库存：' + warehouse
+                    },
+                    success    : function(data){
+                        console.log(data.Message);
+                    }
+                });
             }
+
 //=========================================== 模态框方法 ====================================================
 
 //=========================================== 页面基本功能 ==================================================
@@ -1346,6 +1377,7 @@
                 LogisticsListReset();   // 订单处理记录列表重置
                 ReimburseReset();       // 退款模块重置
                 ProductReset();         // 产品模块重置
+                WarehouseReset();       // 仓库选择重置
                 RemarkReset();          // 备注重置
             }
 
@@ -1425,6 +1457,11 @@
                 $('#sell-save').hasClass('hidden') && $('#sell-save').removeClass('hidden');
             }
 
+            // 仓库选择重置
+            function WarehouseReset() {
+                $('#sell-warehouse-select').removeAttr('disabled').find('option[value="0"]').prop('selected', true);
+            }
+
             // 备注重置
             function RemarkReset() {
                 var $domSell = $('#sell-remark');
@@ -1481,12 +1518,29 @@
                 $formSearch.find('select[name="ShopID"]').find('option[value="' + op.ShopID + '"]').prop('selected', true);
             })();
 
+            // 获取仓库列表并遍历
+            !function() {
+                var template = '{{#DataList}}'
+                             + '<option value="{{DataID}}">{{Code}}</option>'
+                             + '{{/DataList}}';
+                $.ajax({
+                    url: '/Logistics/Api/?Do=List',
+                    type: 'get',
+                    dataType: 'json',
+                    async: false, // 设置为同步
+                    success: function(data) {
+                        $('#sell-warehouse-select').append(Mustache.render(template, data));
+                    }
+                });
+            }();
+
             // 列表页脚分页
             (function() {
                 <!-- BEGIN 分页脚本 ATTRIB= -->
                 common.showPage({当前页}, {总条数}, {每页条数});
                 <!-- END 分页脚本 -->
             })();
+
 
 //=========================================== 页面基本功能 ====================================================
         })();
