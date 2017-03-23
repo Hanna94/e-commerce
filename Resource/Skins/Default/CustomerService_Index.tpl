@@ -259,13 +259,13 @@
                                                     </div>
                                                     <div class="col-sm-7">
                                                         <div class="form-group form-group-sm">
-                                                            <label class="control-label col-sm-4">期望库存选择</label>
-                                                            <div class="col-sm-4">
+                                                            <label class="control-label col-sm-3">期望库存选择</label>
+                                                            <div class="col-sm-6">
                                                                 <select id="sell-warehouse-select" class="form-control">
                                                                     <option value="0">请选择</option>
                                                                 </select>
                                                             </div>
-                                                            <div class="col-sm-4">
+                                                            <div class="col-sm-3">
                                                                 <button id="sell-save" class="btn btn-default btn-sm pull-right" type="button">申请重发</button>
                                                             </div>
                                                         </div>
@@ -544,7 +544,11 @@
                     ProductChange(data.DataID, data.Order.Status);     // 添加和删除产品的方法
                     // 设置已选库存。非初始状态下，不允许更改库存
                     var warh = $('#sell-warehouse-select');
-                    warh.find('option:contains('+ data.Logistics[0].Warehouse  +')').prop('selected', true);
+                    if (data.Logistics.length != 0) {
+                        warh.find('option:contains('+ data.Logistics[0].Warehouse  +')').prop('selected', true);
+                    }else {
+                        warh.find('option[value="0"]').prop('selected', true);
+                    }
                     _dos != '初始' && warh.prop('disabled', true);
                     // 保存编辑后的售后单 - 重发
                     $('#sell-save').off().on('click', function() {
@@ -1043,16 +1047,6 @@
              * @param {String} _DataID 更新售后单时用到，新建时为空
              */
             function SaveServiceAgain(_OID, _DataID) {
-                // 当仓库没有选择时，不予进行
-                // if ($('#sell-warehouse-select').val() == 0) {
-                //     common.alert({
-                //         type : 'danger',
-                //         title: '请选择重发仓库！！',
-                //         msg  : '',
-                //         time : 2000
-                //     });
-                //     return false;
-                // }
 
                 common.loading.show();
                 // 产品
@@ -1095,7 +1089,8 @@
                             msg  : data.Message,
                             cb   : function() {
                                 var RASDataID = _DataID ? _DataID : data.DataID;
-                                RemarkAfterSave(RASDataID, warh.find('option[value="'+ warh.val() +'"]').text());
+                                var _wv = warh.val(); // 仓库select的值
+                                _wv != 0 && RemarkAfterSave(RASDataID, warh.find('option[value="'+ _wv +'"]').text());
                                 WebAssign();
                             }
                         });
@@ -1521,7 +1516,7 @@
             // 获取仓库列表并遍历
             !function() {
                 var template = '{{#DataList}}'
-                             + '<option value="{{DataID}}">{{Code}}</option>'
+                             + '<option value="{{DataID}}">{{Code}}&nbsp;-&nbsp;{{Name}}</option>'
                              + '{{/DataList}}';
                 $.ajax({
                     url: '/Logistics/Api/?Do=List',
