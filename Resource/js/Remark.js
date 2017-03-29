@@ -6,9 +6,9 @@
 //     HasWarp : true,
 //     Title   : 'XXXX',
 //     Tip     : '提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。',
-//     SaveURL : '/OMS/Order.aspx?Do=MessageSave',
-//     GetURL  : '/OMS/Order.aspx?Do=MessageSave',
-//     DelURL  : '/OMS/Order.aspx?Do=MessageSave',
+//     SaveURL : '/Purchase/API/?Do=MessageSave',
+//     GetURL  : '/Purchase/API/?Do=MessageQuery&FID=',
+//     DelURL  : '/Purchase/API/?Do=MessageDelete'
 //     GetData : xxx,
 //     SaveData: xxx,
 //     DelData : xxx
