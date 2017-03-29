@@ -20,6 +20,7 @@
             <li><a href="?Do=UnStock">待收货</a></li>
             <li><a href="?Do=Complete">已完成</a></li>
             <li><a href="?Do=Cancel">已取消</a></li>
+            <li><a href="?Do=UnOrderID">未传单号</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active">
