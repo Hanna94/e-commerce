@@ -206,7 +206,7 @@
                             <td title="{Address}"><span class="label state">{Country}</span></td>
                             <td>
                                 <button type="button" class="btn btn-default btn-xs buyer-remark" 
-                                data-container="body" data-toggle="popover" data-placement="left"
+                                data-container="body" data-toggle="popover" data-placement="bottom"
                                 data-html="true" data-trigger="click" data-content="{BuyerMessage}">
                                 <span data-val="in" class="glyphicon glyphicon-tag poi"></button>
                             </td>
