@@ -791,7 +791,10 @@
                                 Target : $('#spu-nav-remark'),
                                 DataID : editId,    
                                 UID    : currentUID,
-                                HasWarp: true
+                                HasWarp: true,
+                                SaveURL : '/Product/API/?Do=MessageSave',
+                                GetURL  : '/Product/API/?Do=MessageQuery&FID=',
+                                DelURL  : '/Product/API/?Do=MessageDelete'
                             };
                             Remark(remarkOption);
 
