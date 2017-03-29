@@ -182,25 +182,8 @@
                     
                     
                     <!-- 备注 -->
-                    <div class="col-sm-12">
-                        <hr class="mg-t-5 mg-b-10">
-                        <div id="purchaseRemark" class="form-group">
-                            <div id="replaceForm" class="col-sm-12">
-                                <div class="input-group input-group-sm">
-                                    <textarea rows="1" name="Remark" class="form-control"></textarea>
-                                    <span class="input-group-btn">
-                                        <input type="submit" class="btn btn-default" value="备注提交" />
-                                        <input type="reset" class="btn btn-default hidden" value="取消" />
-                                    </span>
-                                </div>
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="maxH300 col-sm-12 mg-t-10">
-                                <table class="table table-striped table-condensed">
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="col-sm-6">
+                        <div id="purchase-remark"></div>
                     </div>
                 </div>
                 <div class="panel-footer clearfix">
@@ -317,6 +300,7 @@
     {页面底部}{/页面底部}
 
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/Remark.js"></script>
 
     <script>
         (function() {
@@ -460,6 +444,23 @@
 
                         // 单号渲染
                         common.Rendering.order($PE);
+
+                        // 备注
+                        var pruOption = {
+                            Target  : $('#purchase-remark'),
+                            DataID  : op.DataID,    // 要更新的单号
+                            UID     : Int_UID,
+                            HasWarp : true,
+                            Title   : '采购单备注',
+                            // Tip     : '提示：如需要在备注中加入链接地址，请使用三层英文中括号包裹链接，如：[[[http://erp.v0.xytinc.com]]]。',
+                            SaveURL : '/Purchase/API/?Do=MessageSave',
+                            GetURL  : '/Purchase/API/?Do=MessageQuery&FID=',
+                            DelURL  : '/Purchase/API/?Do=MessageDelete'
+                            // GetData : xxx,
+                            // SaveData: xxx,
+                            // DelData : xxx
+                        };
+                        Remark(pruOption, d);
                     }
                 });
                 
@@ -746,25 +747,6 @@
                     }
                 });
             });
-
-            // 备注
-            (function(){
-                if (op.DataID) {
-                    // 初始化和更新备注
-                    common.remarkUpdate(op.DataID, $purchaseRemark, $remarkForm, tmRemark, $resetBtn, Int_UID, uploadURL, getdataURL, deleteURL);
-
-                    //提交备注
-                    common.remarkSave(op.DataID, $purchaseRemark, $remarkForm, tmRemark, $resetBtn, Int_UID, uploadURL, getdataURL, deleteURL);
-
-                    //判断备注能否编辑和删除，如果备注的UID符合当前用户UID，则可以编辑或删除，并且绑定事件
-                    common.editAndDel(op.DataID, $purchaseRemark, $remarkForm, tmRemark, $resetBtn, Int_UID, uploadURL, getdataURL, deleteURL);
-
-                    //编辑备注的[取消]按钮事件
-                    common.reset($remarkForm, $resetBtn);
-                }
-            })();
-            
-
 
         }());
     </script>
