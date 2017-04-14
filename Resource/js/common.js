@@ -1162,7 +1162,13 @@ common.copy.UpdateStock = function(_$, _skuID, update) {
                 $(_$).find('.popover-content table tbody').html(common.copy.LoopStock(ds));
             } else {
                 _$.attr({
-                    'data-content'  : '<span class="pull-right mg-b-5">获取时间：'
+                    'data-content'  : '<ul class="nav nav-tabs mg-b-5">'
+                                    + '<li class="active"><a href="#kc" data-toggle="tab">库存</a></li>'
+                                    + '<li><a href="#cg" data-toggle="tab">采购</a></li>'
+                                    + '</ul>'
+                                    + '<div class="tab-content">'
+                                    + '<div class="tab-pane fade in active" id="kc">'
+                                    + '<span class="pull-right mg-b-5">获取时间：'
                                     + '<span class="glyphicon glyphicon-time text-danger mg-r-5 poi" title="刷新库存" '
                                     + 'onclick=""></span><span name="time">' + nowTime + '</span></span>'
                                     + '<table class="table table-bordered table-condensed">'
@@ -1174,11 +1180,30 @@ common.copy.UpdateStock = function(_$, _skuID, update) {
                                     + '<tbody>'
                                     + common.copy.LoopStock(ds)
                                     + '</tbody>'
-                                  + '</table>'
+                                    + '</table>'
+                                    + '</div>'
+                                    + '<div class="tab-pane fade" id="cg">'
+                                    + '<table class="table table-bordered table-condensed">'
+                                    + '<thead>'
+                                        + '<tr>'
+                                            + '<th>单号</th><th>快递</th><th>备注</th><th>应收/已收</th><th>备注</th>' 
+                                        + '</tr>'
+                                    + '</thead>'
+                                    + '<tbody>'
+                                    + common.copy.Purchase(d.DataID)
+                                    + '</tbody>'
+                                    + '</table>'
+                                    + '</div>'
+                                    + '</div>'
                 });
             }
 
         }
+    });
+
+    // 按ESC关闭弹出框
+    $(document).keydown(function() {
+        $('.glyphicon-home').popover('hide');
     });
 }
 
@@ -1192,13 +1217,91 @@ common.copy.LoopStock = function(ds) {
     for(var i = 0; i < ds.length; i++) {
         tempTr += '<tr>'
                     + '<td>' + ds[i].Name
-                    + '<td>' + ds[i].InsideNo
+                    + '</td><td>' + ds[i].InsideNo
                     + '</td><td>' + ds[i].AllQuantity
                     + '</td><td>' + ds[i].LockQuantity
                     + '</td><td>' + ds[i].Quantity + '</td>' 
                 + '</tr>';
     }
     return tempTr;
+}
+
+/**
+ * 采购信息
+ */
+common.copy.Purchase = function(DataID) {
+    var tempTr = '';
+    $.ajax({
+        url: '/Purchase/API/?Do=QueryProduct&SkuID=' + DataID,
+        type: 'get',
+        dataType: 'json',
+        async: false,
+        success: function(data) {
+            d = data.DataList;
+            for(var i = 0; i < data.DataList.length; i++) {
+                tempTr += '<tr>'
+                        + '<td>' + d[i].OrderID
+                        + '</td><td>' + d[i].ShippingCarrierUsed
+                        + '</td><td>' + d[i].Remark
+                        + '</td><td>' + d[i].Quantity + '/' + d[i].Receive
+                        + '</td><td><button class="btn btn-default btn-xs" type="button" onclick="common.copy.RemarkForPurchase(&quot;' + d[i].OrderID + '&quot;)"><span class=" glyphicon glyphicon-list-alt"></span></button></td>'
+                        + '</tr>';
+            }
+        }
+    });
+    return tempTr;
+}
+/**
+ * 采购信息备注
+ */
+common.copy.RemarkForPurchase = function(OrderID) {
+    common.loading.show();
+    $.ajax({
+        url: '/Purchase/API/?Do=Query&OrderID=' + OrderID,
+        type: 'get',
+        dataType: 'json',
+        success: function(data) {
+            if (data.MessageList.length == 0) {
+                common.loading.hide();
+                alert('该采购单暂无备注信息。');
+                return false;
+            }
+            var tmpHTML =  '{{#MessageList}}'
+                            + '<tr>'
+                                + '<td>{{TrueName}}</td>'
+                                + '<td>{{Content}}</td>'
+                                + '<td>{{Date}}</td>'
+                            + '</tr>'
+                            + '{{/MessageList}}';
+            $('body').append('<div class="modal fade" id="ewejkhjkhu_modal" tabindex="-1">'
+                        + '<div class="modal-dialog">'
+                        + '<div class="modal-content">'
+                        + '<div class="modal-header">'
+                          + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
+                          + '<h4 class="modal-title">采购单备注</h4>'
+                        + '</div>'
+                        + '<div class="modal-body">'
+                        + '<table class="table table-striped table-bordered table-hover table-condensed">'
+                         + '<thead>'
+                            + '<tr>'
+                                + '<th>用户</th>'
+                                + '<th>备注</th>'
+                                + '<th>时间</th>'
+                            + '</tr>'
+                         + '</thead>'
+                         + '<tbody>'
+                            
+                         + '</tbody>'
+                         + '</table>'
+                         + '</div>'
+                         + '</div>'
+                         + '</div>');
+
+            $('#ewejkhjkhu_modal').find('tbody').html(Mustache.render(tmpHTML, data));
+            $('#ewejkhjkhu_modal').modal('show');
+            common.loading.hide();
+        }
+    });
 }
 
 
@@ -1432,7 +1535,8 @@ common.Log = function(_$, d) {
                         + '<td>{{Date}}</td>'
                     + '</tr>'
                     + '{{/Log}}'
-                 + '</tbody>';
+                 + '</tbody>'
+                 + '</table>';
     _$.html(Mustache.render(LogHTML, d));
     common.loading.hide();
 }
