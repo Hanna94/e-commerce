@@ -461,7 +461,7 @@
                                                 }
                                             }
                                             // 把删除空元素后的数组组合成字符串,插入数据中
-                                            data.Address.PayPal.FullAddress = _address.join(',');
+                                            data.Address.PayPal.FullAddress = _address.join(', ');
                                         }
 
                                         var userHtml = Mustache.render(tempUser, data.Order[0]);
