@@ -383,24 +383,27 @@
                         $payApply.find('tbody').html(Mustache.render(tmPayApply, d));
 
                         // 单据
-                        $.ajax({
-                            url: '/Finance/API/?Do=Query&OrderID=' + d.Finance.OrderID + '&DataID=' + d.DataID,
-                            dataType: 'json',
-                            type: 'get',
-                            success: function(data) {
-                                var imgtmp = '{{#Payment}}'
-                                +'<img class="poi" src="{{File}}" title="{{OrderID}}" style="width:auto;height:20px;"/>'
-                                +'{{/Payment}}';
-                                $payApply.find('tbody td:last').html(Mustache.render(imgtmp, data));
+                        if (d.Finance.length > 0) {
+                            $.ajax({
+                                url: '/Finance/API/?Do=Query&OrderID=' + d.Finance[0].OrderID + '&DataID=' + d.Finance[0].DataID,
+                                dataType: 'json',
+                                type: 'get',
+                                success: function(data) {
+                                    var imgtmp = '{{#Payment}}'
+                                    +'<img class="poi" src="{{File}}" title="{{OrderID}}" style="width:auto;height:20px;"/>'
+                                    +'{{/Payment}}';
+                                    $payApply.find('tbody td:last').html(Mustache.render(imgtmp, data));
 
-                                // 单据图片放大
-                                $payApply.find('tbody td:last img').on('click', function(){
-                                    console.log(111);
-                                    $imgModal.find('.modal-content').empty().html('<img src="' + $(this).attr('src') + '" />');
-                                    $imgModal.modal('show');
-                                });
-                            }
-                        });
+                                    // 单据图片放大
+                                    $payApply.find('tbody td:last img').on('click', function(){
+                                        $imgModal.find('.modal-content').empty().html('<img src="' + $(this).attr('src') + '" />');
+                                        $imgModal.modal('show');
+                                    });
+                                }
+                            });
+                        }else {
+                            console.log('暂无单据信息。');
+                        }
 
                         //总金额、已支付、待支付
                         $payAmount.find('.text-def').text('总金额：' + d.Order.Amount);
