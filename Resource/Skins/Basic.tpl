@@ -7,7 +7,8 @@
 	<title>{标题}</title>
 	<link rel="shortcut icon" href="/Resource/Images/favicon.ico">
     <link href="/Resource/css/bootstrap.css" rel="stylesheet">
-	<link href="/Resource/css/bt-theme.css" rel="stylesheet">
+    <link href="/Resource/css/bt-theme.css" rel="stylesheet">
+	<link href="/Resource/css/bootstrap-switch.min.css" rel="stylesheet">
 	<link href="/Resource/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/Resource/css/main.css" rel="stylesheet">
 	<link href="/Resource/css/jquery-ui.min.css" rel="stylesheet">

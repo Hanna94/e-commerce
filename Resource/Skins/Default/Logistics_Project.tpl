@@ -175,15 +175,133 @@
                     <button class="close" type="button" data-dismiss="modal">x</button>
                     <h4 class="modal-title">物流方案配置</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body maxH500">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button class="addStock btn btn-default btn-sm pull-right" type="button">增加仓库</button>
+                            <button class="addStock btn btn-default btn-xs pull-right" type="button">增加仓库</button>
                         </div>
                     </div>
                     <hr>
                     <table class="table table-bordered table-condensed table-striped">
-                        <caption>广州仓</caption>
+                        <caption>广州仓<button class="btn btn-default btn-xs pull-right">增加国家</button></caption>
+                        <thead>
+                            <th>国家</th>
+                            <th>货代</th>
+                            <th>服务</th>
+                            <th>终端</th>
+                            <th>状态</th>
+                            <th>费用</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>China</td>
+                                <td colspan="5"></td>
+                                <td>开关、新增</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>货代</td>
+                                <td>服务</td>
+                                <td>终端</td>
+                                <td>状态</td>
+                                <td>费用</td>
+                                <td>操作</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>货代</td>
+                                <td>服务</td>
+                                <td>终端</td>
+                                <td>状态</td>
+                                <td>费用</td>
+                                <td>操作</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-bordered table-condensed table-striped">
+                        <caption>广州仓<button class="btn btn-default btn-xs pull-right">增加国家</button></caption>
+                        <thead>
+                            <th>国家</th>
+                            <th>货代</th>
+                            <th>服务</th>
+                            <th>终端</th>
+                            <th>状态</th>
+                            <th>费用</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>China</td>
+                                <td colspan="5"></td>
+                                <td>开关、新增</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>货代</td>
+                                <td>服务</td>
+                                <td>终端</td>
+                                <td>状态</td>
+                                <td>费用</td>
+                                <td>操作</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>货代</td>
+                                <td>服务</td>
+                                <td>终端</td>
+                                <td>状态</td>
+                                <td>费用</td>
+                                <td>操作</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-bordered table-condensed table-striped">
+                        <caption>广州仓<button class="btn btn-default btn-xs pull-right">增加国家</button></caption>
+                        <thead>
+                            <th>国家</th>
+                            <th>货代</th>
+                            <th>服务</th>
+                            <th>终端</th>
+                            <th>状态</th>
+                            <th>费用</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>China</td>
+                                <td colspan="5"></td>
+                                <td>
+                                    <button class="btn btn-default btn-xs" type="button">新增</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>货代</td>
+                                <td>服务</td>
+                                <td>终端</td>
+                                <td>状态</td>
+                                <td>费用</td>
+                                <td>
+                                    <div class="switch" data-on="success" data-off="warning">
+                                        <input type="checkbox" checked />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>货代</td>
+                                <td>服务</td>
+                                <td>终端</td>
+                                <td>状态</td>
+                                <td>费用</td>
+                                <td>
+                                    <div class="switch" data-on="success" data-off="warning">
+                                        <input type="checkbox" checked />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -236,6 +354,7 @@
     
     <script src="/Resource/js/mustache.js"></script>
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
+    <script src="/Resource/js/bootstrap-switch.min.js"></script>
     <script>
         (function(){
             'use strict';
@@ -276,6 +395,9 @@
             let schemeConfig = {
                 // 打开模态框
                 OpenModal: function() {
+                    $('.switch input').bootstrapSwitch({
+                        size: 'mini'
+                    });
                     $('#schemeConfig').modal("show");
                 },
                 // 获取数据
