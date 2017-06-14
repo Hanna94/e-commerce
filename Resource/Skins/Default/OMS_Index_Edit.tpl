@@ -588,8 +588,13 @@
                     type: 'get',
                     dataType: 'json',
                     success: function(data){
-                        var d = data,
+                        var d = data;
+                        var url;
+                        if (d.Logistics) {
                             url = "/Logistics/?Do=EDIT&OrderID=" + d.Logistics[0].OrderID;
+                        } else {
+                            url = "#";
+                        }
                         $panelOrder.find('tbody').html(Mustache.render(tempOrder, d));
                         $panelOrder.find('tbody a').attr('href', url);
                         $panelOrder.find('tbody tr').each(function(i, n){

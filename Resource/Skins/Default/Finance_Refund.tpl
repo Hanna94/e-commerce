@@ -35,7 +35,7 @@
                             <td><label class="checkbox-inline"><input type="checkbox">{DataID}</label></td>
                             <td class="orderID">{ReferenceID}</td>
                             <td>{ApplyName}</td>
-                            <td>{Title}</td>
+                            <td class="title">{Title}</td>
                             <td><span class="label currency">{CurrencyID}</span> {Amt}</td>
                             <td><span class="label currency">{CurrencyID}</span> {ExecuteAmt}</td>
                             <td class="status">{Status}</td>
@@ -636,6 +636,15 @@
                 function PayPalReset() {
                     $('#paypal-online-list').addClass('hidden').find('tbody').empty();
                 }
+
+                // 渲染额外退款
+                !function() {
+                    $('#data-list .title').each(function(index, element) {
+                        var text = $(element).text();
+                        text = text.replace('额外退款', '<span class="label label-danger">额外退款</span>');
+                        $(element).html(text);
+                    });
+                }();
 
                 // 分页
                 <!-- BEGIN 分页脚本 ATTRIB= -->

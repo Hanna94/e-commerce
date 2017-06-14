@@ -10,13 +10,19 @@
             </div>
         </header>
         <form action="" method="post">
-            <div id="selectProduct" class="form-group">
-                <div class="input-group input-group-sm col-sm-4 col-lg-4">
-                    <input type="text" class="form-control" placeholder="Search..." name="KeyWord">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
-                    </span>
+                <div id="selectProduct" class="form-group">
+                    <div class="input-group input-group-sm col-sm-4 col-lg-4">
+                        <input type="text" class="form-control" placeholder="Search..." name="KeyWord">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+                        </span>
+                    </div>
                 </div>
+        </form>
+        <form action="javascript:;" class="form-inline mg-b-10">
+            <div class="form-group">
+                <div id="common-sreach" class="form-group"></div>
+                <button id="scheme-config" type="button" class="btn btn-default btn-sm">配置</button>
             </div>
         </form>
         
@@ -161,6 +167,32 @@
         </div>
     </div>
 
+    <!-- 物流方案配置模态框 -->
+    <div class="modal fade" id="schemeConfig" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" type="button" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">物流方案配置</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button class="addStock btn btn-default btn-sm pull-right" type="button">增加仓库</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <table class="table table-bordered table-condensed table-striped">
+                        <caption>广州仓</caption>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm" class="btn btn-default" type="button" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 搜索栏搜索结果列表 -->
     <template id="temp-search">
         {{#DataList}}
@@ -203,6 +235,7 @@
     {页面底部}{/页面底部}
     
     <script src="/Resource/js/mustache.js"></script>
+    <script src="/Resource/js/ZeroClipboard.min.js"></script>
     <script>
         (function(){
             'use strict';
@@ -236,7 +269,51 @@
                 keySelect = null,
                 setHeight = null,
                 Freight,
-                checkboxNum = 0;
+                checkboxNum = 0,
+                oParam = common.URL.parse();
+
+            // 物流方案配置
+            let schemeConfig = {
+                // 打开模态框
+                OpenModal: function() {
+                    $('#schemeConfig').modal("show");
+                },
+                // 获取数据
+                ProjectConQuery: function() {
+                    let skuID = $('#common-sreach input[name="SkuID"]').val();
+                    if (!skuID) {
+                        alert('请先搜索需要配置的产品。');
+                        return false;
+                    }
+                    common.loading.show();
+                    $.ajax({
+                        url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=' + skuID,
+                        type: 'GET',
+                        success: function(data) {
+                            schemeConfig.RenderList(data);
+                        }
+                    });
+                },
+                // 提交数据
+                PostDate: function() {},
+                // 渲染物流方案列表
+                RenderList: function(data) {
+                    common.loading.hide();
+                    schemeConfig.OpenModal();
+                    // let template = 
+                },
+                // 增加仓库
+                AddStock: function() {},
+                // 增加国家
+                AddCountry: function() {},
+                // 绑定事件
+                AttachEvent: function() {
+                    $('#scheme-config').on('click', function() {
+                        schemeConfig.ProjectConQuery();
+                    });
+                } 
+            };
+            schemeConfig.AttachEvent();
 
             // 产品筛选
             $selectPrecept[0].oninput = function(){
@@ -617,6 +694,14 @@
                 });
             }
 
+            // 搜索方法
+            var option = {
+                inForm : true,
+                isLimit: false,
+                mode   : true,
+                SkuID  : oParam.SkuID || false
+            };
+            common.SkuSearch($('#common-sreach'), option);
 
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});

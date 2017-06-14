@@ -209,7 +209,7 @@
             </colgroup>
             <tbody>
                 <tr>
-                    <td rowspan="2" style="text-align: center;"><img class="poi" data-url="{{GalleryURL}}" src="{{GalleryURL-Small}}"></td>
+                    <td rowspan="2" style="text-align: center;"><img class="poi" style="height:42px;width:auto;" data-url="{{GalleryURL}}" src="{{GalleryURL-Small}}"></td>
                     <td>金额：</td>
                     <td><span class="label currency">{{CurrencyID}}</span>{{StartPrice}}</td>
                 </tr>
