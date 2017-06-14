@@ -169,11 +169,11 @@
 
     <!-- 物流方案配置模态框 -->
     <div class="modal fade" id="schemeConfig" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog"  style="width:990px">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="close" type="button" data-dismiss="modal">x</button>
-                    <h4 class="modal-title">物流方案配置</h4>
+                    <h4 class="modal-title">{{Product.Name}}的物流方案配置</h4>
                 </div>
                 <div class="modal-body maxH500">
                     <div class="row">
@@ -182,8 +182,8 @@
                         </div>
                     </div>
                     <hr>
-                    <table class="table table-bordered table-condensed table-striped">
-                        <caption>广州仓<button class="btn btn-default btn-xs pull-right">增加国家</button></caption>
+                    <table class="table table-bordered table-condensed table-striped" v-for="(pro, index) in Project">
+                        <caption>{{pro.WarehouseName}}<button :data-war="pro.WarehouseID" class="btn btn-default btn-xs pull-right">增加国家</button></caption>
                         <thead>
                             <th>国家</th>
                             <th>货代</th>
@@ -194,113 +194,28 @@
                             <th>操作</th>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>China</td>
-                                <td colspan="5"></td>
-                                <td>开关、新增</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>货代</td>
-                                <td>服务</td>
-                                <td>终端</td>
-                                <td>状态</td>
-                                <td>费用</td>
-                                <td>操作</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>货代</td>
-                                <td>服务</td>
-                                <td>终端</td>
-                                <td>状态</td>
-                                <td>费用</td>
-                                <td>操作</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered table-condensed table-striped">
-                        <caption>广州仓<button class="btn btn-default btn-xs pull-right">增加国家</button></caption>
-                        <thead>
-                            <th>国家</th>
-                            <th>货代</th>
-                            <th>服务</th>
-                            <th>终端</th>
-                            <th>状态</th>
-                            <th>费用</th>
-                            <th>操作</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>China</td>
-                                <td colspan="5"></td>
-                                <td>开关、新增</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>货代</td>
-                                <td>服务</td>
-                                <td>终端</td>
-                                <td>状态</td>
-                                <td>费用</td>
-                                <td>操作</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>货代</td>
-                                <td>服务</td>
-                                <td>终端</td>
-                                <td>状态</td>
-                                <td>费用</td>
-                                <td>操作</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered table-condensed table-striped">
-                        <caption>广州仓<button class="btn btn-default btn-xs pull-right">增加国家</button></caption>
-                        <thead>
-                            <th>国家</th>
-                            <th>货代</th>
-                            <th>服务</th>
-                            <th>终端</th>
-                            <th>状态</th>
-                            <th>费用</th>
-                            <th>操作</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>China</td>
-                                <td colspan="5"></td>
-                                <td>
-                                    <button class="btn btn-default btn-xs" type="button">新增</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>货代</td>
-                                <td>服务</td>
-                                <td>终端</td>
-                                <td>状态</td>
-                                <td>费用</td>
-                                <td>
-                                    <div class="switch" data-on="success" data-off="warning">
-                                        <input type="checkbox" checked />
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>货代</td>
-                                <td>服务</td>
-                                <td>终端</td>
-                                <td>状态</td>
-                                <td>费用</td>
-                                <td>
-                                    <div class="switch" data-on="success" data-off="warning">
-                                        <input type="checkbox" checked />
-                                    </div>
-                                </td>
-                            </tr>
+                            <template v-for="(c, index) in pro.Country">
+                                <tr>
+                                    <td>{{c.CountryName}}</td>
+                                    <td colspan="5"></td>
+                                    <td>
+                                        <button class="btn btn-default btn-xs" type="button">新增</button>
+                                    </td>
+                                </tr>
+                                <tr v-for="(p, index) in c.Project">
+                                    <td></td>
+                                    <td>{{p.FreightName}}</td>
+                                    <td>{{p.Support}}</td>
+                                    <td>{{p.ServiceName}}</td>
+                                    <td>{{p.Status}}</td>
+                                    <td>没钱</td>
+                                    <td>
+                                        <div class="switch" data-on="success" data-off="warning">
+                                            <input type="checkbox" checked />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
                         </tbody>
                     </table>
                 </div>
@@ -355,6 +270,7 @@
     <script src="/Resource/js/mustache.js"></script>
     <script src="/Resource/js/ZeroClipboard.min.js"></script>
     <script src="/Resource/js/bootstrap-switch.min.js"></script>
+    <script src="/Resource/js/vue.js"></script>
     <script>
         (function(){
             'use strict';
@@ -395,9 +311,6 @@
             let schemeConfig = {
                 // 打开模态框
                 OpenModal: function() {
-                    $('.switch input').bootstrapSwitch({
-                        size: 'mini'
-                    });
                     $('#schemeConfig').modal("show");
                 },
                 // 获取数据
@@ -409,7 +322,8 @@
                     }
                     common.loading.show();
                     $.ajax({
-                        url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=' + skuID,
+                        url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=3079',
+                        // url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=' + skuID,
                         type: 'GET',
                         success: function(data) {
                             schemeConfig.RenderList(data);
@@ -421,8 +335,22 @@
                 // 渲染物流方案列表
                 RenderList: function(data) {
                     common.loading.hide();
+                    console.log(data);
+                    let schemeVue = new Vue({
+                        el: '#schemeConfig',
+                        data: data,
+                        methods: {
+                            render: function() {
+
+                            },
+                            switch: function() {
+                                $('.switch input').bootstrapSwitch({size: 'mini'});
+                            }
+                        }
+                    });
+                    schemeVue.switch();
                     schemeConfig.OpenModal();
-                    // let template = 
+                    
                 },
                 // 增加仓库
                 AddStock: function() {},
