@@ -173,16 +173,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="close" type="button" data-dismiss="modal">x</button>
-                    <h4 class="modal-title">{{Product.Name}}的物流方案配置</h4>
+                    <h4 class="modal-title" v-if="data.Product.Name">{{data.Product.Name}}&nbsp;的物流方案配置</h4>
+                    <h4 v-else>该产品还没有物流方案，要不你添加一个？</h4>
                 </div>
-                <div class="modal-body maxH500">
+                <div class="modal-body maxH500" v-if="data.Product.Name">
                     <div class="row">
                         <div class="col-sm-12">
                             <button class="addStock btn btn-default btn-xs pull-right" type="button">增加仓库</button>
                         </div>
                     </div>
                     <hr>
-                    <table class="table table-bordered table-condensed table-striped" v-for="(pro, index) in Project">
+                    <table class="table table-bordered table-condensed table-striped" v-for="(pro, index) in data.Project">
                         <caption>{{pro.WarehouseName}}<button :data-war="pro.WarehouseID" class="btn btn-default btn-xs pull-right">增加国家</button></caption>
                         <thead>
                             <th>国家</th>
@@ -205,13 +206,13 @@
                                 <tr v-for="(p, index) in c.Project">
                                     <td></td>
                                     <td>{{p.FreightName}}</td>
-                                    <td>{{p.Support}}</td>
                                     <td>{{p.ServiceName}}</td>
+                                    <td>{{p.Support}}</td>
                                     <td>{{p.Status}}</td>
                                     <td>没钱</td>
                                     <td>
-                                        <div class="switch" data-on="success" data-off="warning">
-                                            <input type="checkbox" checked />
+                                        <div :class="['switch', 'switch_'+p.DataID]" data-on="success" data-off="danger" @click="switchChange($event, p.Execute)">
+                                            <input type="checkbox"  :checked="p.Execute" />
                                         </div>
                                     </td>
                                 </tr>
@@ -221,6 +222,62 @@
                 </div>
                 <div class="modal-footer">
                     <button id="confirm" class="btn btn-default" type="button" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 物流方案 - 新增仓库 - 模态框 -->
+    <div class="modal fade" id="schemeConfig-addStock" tabindex="-1">
+        <div class="modal-dialog"  style="width:990px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" type="button" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">新增仓库</h4>
+                </div>
+                <div class="modal-body maxH500">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form>
+                                <div class="form-group">
+                                    <label for="">选择仓库</label>
+                                    <select class="form-control">
+                                        <!-- BEGIN 仓库列表 ATTRIB= -->
+                                        <option value="{DataID}" title="{Location}">[{Code}] {Name}</option>
+                                        <!-- END 仓库列表 -->
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 物流方案 - 新增国家 - 模态框 -->
+    <div class="modal fade" id="schemeConfig-addCountry" tabindex="-1">
+        <div class="modal-dialog"  style="width:990px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" type="button" data-dismiss="modal">x</button>
+                    <h4 class="modal-title">在&nbsp;&nbsp;方案中新增国家</h4>
+                </div>
+                <div class="modal-body maxH500">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form>
+                                <div class="form-group">
+                                    <label for="">选择仓库</label>
+                                    <select class="form-control">
+                                        <!-- BEGIN 仓库列表 ATTRIB= -->
+                                        <option value="{DataID}" title="{Location}">[{Code}] {Name}</option>
+                                        <!-- END 仓库列表 -->
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -308,9 +365,106 @@
                 oParam = common.URL.parse();
 
             // 物流方案配置
+            let schemeVue = new Vue({
+                el: '#schemeConfig',
+                data: {
+                    data: {
+                        Ack: '',
+                        Message: '',
+                        Product: {
+                            ID: '',
+                            Sku: '',
+                            Name: '',
+                            Status: '',
+                            Size: '',
+                            Weight: ''
+                        },
+                        Project: [
+                            {
+                                WarehouseID: '',
+                                WarehouseCode: '',
+                                WarehouseName: '',
+                                Country: [
+                                    {
+                                        CountryID: '',
+                                        CountryName: '',
+                                        Project: [
+                                            {
+                                                DataID: '',
+                                                WarehouseID: '',
+                                                WarehouseCode: '',
+                                                WarehouseName: '',
+                                                CountryID: '',
+                                                CountryName: '',
+                                                FreightID: '',
+                                                FreightName: '',
+                                                ServiceID: '',
+                                                ServiceName: '',
+                                                Support: '',
+                                                Cost: '',
+                                                Status: '',
+                                                Execute: ''
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                methods: {
+                    getData: function(skuID) {
+                        $.ajax({
+                            url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=' + skuID,
+                            type: 'GET',
+                            success: function(data) {
+                                schemeVue.data = data;
+                                schemeVue.$nextTick(function() {
+                                    $('.switch').bootstrapSwitch('destroy');
+                                    $('.switch input').bootstrapSwitch({size: 'mini'});
+                                    $.each(schemeVue.data.Project, function(i_1, v_1) {
+                                        $.each(v_1.Country, function(i_2, v_2) {
+                                            $.each(v_2.Project, function(i_3, v_3) {
+                                                // $('.switch_' + v_3.DataID).bootstrapSwitch('setState', v_3.Execute);
+                                                $('.switch_' + v_3.DataID).on('switchChange.bootstrapSwitch', function (e, data) {
+                                                    let _thisData = schemeVue.data.Project[i_1].Country[i_2].Project[i_3];
+                                                    if (data) {
+                                                        _thisData.Status = '执行';
+                                                        _thisData.Execute = true;
+                                                    } else {
+                                                        _thisData.Status = '停止';
+                                                        _thisData.Execute = false;
+                                                    }
+                                                    console.log(_thisData.Status);
+                                                    console.log(_thisData.Execute);
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                                schemeConfig.OpenModal();
+                                common.loading.hide();
+                            }
+                        });
+                    },
+                    switchChange: function(e, status) {
+                        console.log(e, status);
+                    }
+                },
+                nextTick: function() {
+                    
+
+                },
+                updated: function() {
+                    
+                }
+            });
             let schemeConfig = {
+                currentID: 0,
                 // 打开模态框
                 OpenModal: function() {
+                    // $('.switch').bootstrapSwitch('destroy');
+                    
                     $('#schemeConfig').modal("show");
                 },
                 // 获取数据
@@ -320,38 +474,16 @@
                         alert('请先搜索需要配置的产品。');
                         return false;
                     }
-                    common.loading.show();
-                    $.ajax({
-                        url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=3079',
-                        // url: '/Logistics/Api/?Do=ProjectConQuery&SkuID=' + skuID,
-                        type: 'GET',
-                        success: function(data) {
-                            schemeConfig.RenderList(data);
-                        }
-                    });
+                    if (schemeConfig.currentID == skuID) {
+                        schemeConfig.OpenModal();
+                    } else {
+                        schemeConfig.currentID = skuID;
+                        common.loading.show();
+                        schemeVue.getData(skuID);
+                    }
                 },
                 // 提交数据
                 PostDate: function() {},
-                // 渲染物流方案列表
-                RenderList: function(data) {
-                    common.loading.hide();
-                    console.log(data);
-                    let schemeVue = new Vue({
-                        el: '#schemeConfig',
-                        data: data,
-                        methods: {
-                            render: function() {
-
-                            },
-                            switch: function() {
-                                $('.switch input').bootstrapSwitch({size: 'mini'});
-                            }
-                        }
-                    });
-                    schemeVue.switch();
-                    schemeConfig.OpenModal();
-                    
-                },
                 // 增加仓库
                 AddStock: function() {},
                 // 增加国家
@@ -364,6 +496,12 @@
                 } 
             };
             schemeConfig.AttachEvent();
+
+            // 物流方案 - 新增仓库 - 新增国家
+            // let addStock = new Vue({
+            //     el: '#schemeConfig-addStock',
+            //     data: 
+            // });
 
             // 产品筛选
             $selectPrecept[0].oninput = function(){

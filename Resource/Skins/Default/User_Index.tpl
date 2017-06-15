@@ -271,7 +271,7 @@
             $dataList.on('click', '.btn-edit', function() {
                 common.ajax({
                     title: '编辑',
-                    URL: '?Do=Query&DataID=' + $(this).closest('tr').data('id'),
+                    URL: '/user/API/?Do=Query&DataID=' + $(this).closest('tr').data('id'),
                     good: function(data) {
                         $addDataPanel.find('#DataID').val(data.DataID);
                         $addDataPanel.find('#UserName').val(data.UserName);
