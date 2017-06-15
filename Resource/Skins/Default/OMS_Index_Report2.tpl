@@ -51,7 +51,7 @@
             $.ajax({
                 url: '/OMS/API/?Do=QueryPurchase&ShopID=' + op.ShopID,
                 type: 'get',
-                dataType: 'json',
+                
                 success: function(d){
 
                     $printTar.find('tbody').html(Mustache.render(tmReport, d));

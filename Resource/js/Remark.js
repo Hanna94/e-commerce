@@ -149,7 +149,7 @@ function MessageSave(op) {
     $.ajax({
         url     : op.SaveURL || '/OMS/API/?Do=MessageSave',
         type    : 'POST',
-        dataType: 'JSON',
+        
         data    : {
             DataID : _did?_did.val():null,
             FID    : op.SaveData?op.SaveData:op.DataID,
@@ -182,7 +182,7 @@ function MessageDelete(op, _did) {
     $.ajax({
         url     : op.DelURL || '/OMS/API/?Do=MessageDelete',
         type    : 'POST',
-        dataType: 'JSON',
+        
         data    : { 
             DataID: _did,
             FID   : op.DelData?op.DelData:op.DataID
@@ -206,7 +206,7 @@ function MessageListLoad(op, addedData) {
         $.ajax({
             url     : op.GetURL ? (op.GetURL + (op.GetData?op.GetData:op.DataID)) : '/OMS/API/?Do=Query&DataID=' + (op.GetData?op.GetData:op.DataID),
             type    : 'GET',
-            dataType: 'JSON',
+            
             success : function(data){
                 _MessageListLoad(op, data);
             }

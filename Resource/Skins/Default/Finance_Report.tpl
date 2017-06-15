@@ -122,7 +122,7 @@
                     $.ajax({
                         url: '/Purchase/API/?Do=SupplierQuery&DataID=' + di + '&KeyWord=' + kw,
                         type: 'get',
-                        dataType: 'json',
+                        
                         success: function(data){
                             if (data.DataList.length === 0) {
                                 $supList.html('<p>无搜索结果！</p>');

@@ -39,7 +39,6 @@
                     $.ajax({
                         url: $btn.data('api'),
                         success: function(data) {
-                            data = JSON.parse(data);
 
                             // 判断是否错误与列表长度
                             if (data.Ack && data.DataList.length) {
@@ -89,7 +88,6 @@
                         $.ajax({
                             url: URL,
                             success: function (data) {
-                                data = JSON.parse(data);
                                 appendData(data.Ack ? (data.Message ? 'success' : 'info') : 'danger',
                                     data.Message || '获取API·2单条数据结束，无Message！');
 

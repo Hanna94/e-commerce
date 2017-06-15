@@ -265,10 +265,10 @@
 
             // 编辑操作
             $dataList.on('click', '.btn-edit', function() {
-                $.ajax({ 
-                    type: 'GET',
-                    url: 'Api/?Do=Query&DataID=' + $(this).closest('tr').data('id'), 
-                    success: function(data){
+                common.ajax({
+                    title: '编辑',
+                    URL: '/user/API/?Do=Query&DataID=' + $(this).closest('tr').data('id'),
+                    good: function(data) {
                         $addDataPanel.find('#DataID').val(data.DataID);
                         $addDataPanel.find('#UserName').val(data.UserName);
                         $addDataPanel.find('#TrueName').val(data.TrueName);

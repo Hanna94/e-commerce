@@ -348,7 +348,7 @@
             // 获取数据
             $.ajax({
                 url: '/Finance/API/?Do=PayPalQuery&TransactionID=' + op.TransactionID + '&DataID=' + op.DataID,
-                dataType: 'json',
+                
                 type: 'get',
                 success: function(d){
                     $paBasicInfo.find('.t1 tbody').html(Mustache.render(tmBasicInfo1, d)); //基本信息

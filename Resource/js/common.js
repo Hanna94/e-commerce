@@ -562,7 +562,7 @@ common.ajax = function (item) {
         data: item.data || {},
         type: item.type || 'get',
         success: function(data) {
-            data = JSON.parse(data);
+            // data = JSON.parse(data);
 
             // console.info(data);
             common.loading.hide();
@@ -1150,7 +1150,7 @@ common.copy.UpdateStock = function(_$, _skuID, update) {
     $.ajax({
         url: '/Logistics/Logistics.aspx?Do=GetStockBySkuID&DataID=' + _skuID,
         type: 'GET',
-        dataType: 'JSON',
+        
         async: false,
         success: function(d) {
             var ds = d.DataList;
@@ -1234,7 +1234,7 @@ common.copy.Purchase = function(DataID) {
     $.ajax({
         url: '/Purchase/API/?Do=QueryProduct&SkuID=' + DataID,
         type: 'get',
-        dataType: 'json',
+        
         async: false,
         success: function(data) {
             d = data.DataList;
@@ -1259,7 +1259,7 @@ common.copy.RemarkForPurchase = function(OrderID) {
     $.ajax({
         url: '/Purchase/API/?Do=Query&OrderID=' + OrderID,
         type: 'get',
-        dataType: 'json',
+        
         success: function(data) {
             if (data.MessageList.length == 0) {
                 common.loading.hide();
@@ -1377,7 +1377,7 @@ common.SkuSearch = function(_$, op) {
         $.ajax({
             url: '/Product/API/?Do=SkuSearch&Mode=' + (op.mode ? 'Full' : '') + '&QueryLimitNumber=100&Page=3&KeyWord=' + _input,
             type: 'GET',
-            dataType: 'JSON',
+            
             success: function(d) {
                 
                 // 如果输入框为空，则清空列表
@@ -1493,7 +1493,7 @@ function InitialSetUp(_$, op) {
     $.ajax({
         url: '/Product/API/?Do=SkuSearch&Mode=' + (op.mode ? 'Full' : '') + '&QueryLimitNumber=100&Page=3&KeyWord=' + op.SkuID,
         type: 'GET',
-        dataType: 'JSON',
+        
         success: function(d) {
             var ds = d.DataList[0];
             var _d = {

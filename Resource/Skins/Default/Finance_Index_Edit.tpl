@@ -217,7 +217,7 @@
             $.ajax({
                 url: '/Finance/API/?Do=Query&OrderID=' + op.OrderID + '&DataID=' + op.DataID,
                 type: 'get',
-                dataType: 'json',
+                
                 success: function(data){
                     var d = data;
                     $FinFinance.find('tbody').html(Mustache.render(tmFinance, d)); //Finance
@@ -275,7 +275,7 @@
                 $.ajax({
                     url: '/Finance/API/?Do=PaymentCancel',
                     type: 'post',
-                    dataType: 'json',
+                    
                     data: { OrderID: OID },
                     success: function(data){
                         if (data.Ack) {
@@ -340,7 +340,7 @@
                     title: '单据上传',
                     URL: '/Finance/API/?Do=PaymentCreate',
                     FE: 'StrFile-Payment',
-                    dataType: 'json',
+                    
                     type: 'post',
                     data: {
                         FID: op.DataID,

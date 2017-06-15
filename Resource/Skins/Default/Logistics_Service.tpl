@@ -187,7 +187,7 @@
                 $.ajax({
                     url: '/Logistics/Logistics.aspx?Do=ServiceSort',
                     type: 'POST',
-                    dataType: 'JSON',
+                    
                     data: {DataID: _arr},
                     success: function(d) {
                         location.reload();

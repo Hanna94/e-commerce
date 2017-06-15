@@ -264,7 +264,7 @@
                 $.ajax({
                     url     : '/Finance/API/?Do=RefundQuery&DataID=' + DataID,
                     type    : 'GET',
-                    dataType: 'JSON',
+                    
                     success : function(data) {
                         // 售后单信息
                         $('#service-info p').text(data.Order.Title);
@@ -299,7 +299,7 @@
                             $.ajax({
                                 url     : '/OMS/API/?Do=Query&DataID=' + data.Order.OID,
                                 type    : 'GET',
-                                dataType: 'JSON',
+                                
                                 success : function(data_o) {
                                      $('#nav-order').attr('data-id', data_o.DataID);
                                      // 订单详情
@@ -456,7 +456,7 @@
                         $.ajax({
                             url: '/Finance/API/?Do=RefundExecute',
                             type: 'POST',
-                            dataType: 'JSON',
+                            
                             data: {
                                 DataID: Data.DataID
                             },
@@ -494,7 +494,7 @@
                         $.ajax({
                             url     : '/Finance/API/?Do=RefundCancel',
                             type    : 'POST',
-                            dataType: 'JSON',
+                            
                             data    : {
                                 OrderID: Data.OrderID,
                                 DataID : Data.DataID
@@ -521,7 +521,7 @@
                 $.ajax({
                     url     : '/OMS/API/PayPal.aspx?Do=SearchTransaction&TransactionID=' + Data.TransactionID,
                     type    : 'GET',
-                    dataType: 'JSON',
+                    
                     success : function(data) {
                         // PayPal远程数据列表
                         var PayPalOnlineTemplate = '{{#DataList}}'
@@ -596,7 +596,7 @@
                             $.ajax({
                                 url     : '/Finance/API/?Do=RefundCancel',
                                 type    : 'POST',
-                                dataType: 'JSON',
+                                
                                 data    : {
                                     DataID : $('#data-list input:checked').closest('tr').data('id')
                                 },

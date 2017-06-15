@@ -168,7 +168,7 @@
             function eachList($this){
                 $.ajax({
                     url: '/Logistics/API/?Do=ReceiveQuery',
-                    dataType: 'json',
+                    
                     type: 'get',
                     data: {
                         DataID: $this
@@ -211,7 +211,7 @@
                     + $(this).closest('tr').data('id') + '&OrderID='
                     + $(this).closest('tr').find('.orderID:eq(0)').text(),
                     type: 'post',
-                    dataType: 'json',
+                    
                     success: function(data) {
                         common.alert({
                             type: 'success',
@@ -237,7 +237,7 @@
                 $.ajax({
                     url: '/Logistics/API/?Do=ReceiveProduct',
                     type: 'post',
-                    dataType: 'json',
+                    
                     data: {
                         DataID: $(this).closest('tr').attr('data-id'),
                         FID: $('#modal-create .modal-body tbody:eq(0) tr').attr('data-id'),

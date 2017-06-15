@@ -271,7 +271,7 @@
                     $.ajax({
                         url: '/Ticket/API/?Do=Query&UID=' + Int_UID,
                         type: 'get',
-                        dataType: 'json',
+                        
                         data: {
                             OrderID: oParam.OrderID,
                             DataID: oParam.DataID
@@ -309,7 +309,7 @@
                                             $.ajax({
                                                 url: '/Ticket/API/?Do=Feedback',
                                                 type: 'post',
-                                                dataType: 'json',
+                                                
                                                 data: {
                                                     DataID: TicketID,
                                                     UID: FromID,
@@ -371,7 +371,7 @@
                                 ts.on('click', function(){
                                     $.ajax({
                                         url: '/Ticket/API/?Do=FileDelete',
-                                        dataType: 'json',
+                                        
                                         type: 'post',
                                         data: {
                                             DataID: ts.attr('data-id')
@@ -391,7 +391,7 @@
                                     title: '工单附件上传',
                                     URL: '/Ticket/API/?Do=Upload',
                                     FE: 'StrFile',
-                                    dataType: 'json',
+                                    
                                     type: 'post',
                                     data: {
                                         OrderID: oParam.OrderID,
@@ -416,7 +416,7 @@
                                 $.ajax({
                                     url: '/Ticket/API/?Do=Result',
                                     type: 'post',
-                                    dataType: 'json',
+                                    
                                     data: {
                                         DataID: TicketID,
                                         OrderID: oParam.OrderID,
@@ -451,7 +451,7 @@
                     $.ajax({
                         url: '/Ticket/API/?Do=Query&UID=' + Int_UID,
                         type: 'get',
-                        dataType: 'json',
+                        
                         data: {
                             OrderID: oParam.OrderID
                         },
@@ -470,7 +470,7 @@
                     $.ajax({
                         url: '/Ticket/API/?Do=' + val,
                         type: 'post',
-                        dataType: 'json',
+                        
                         data: {
                             DataID: TicketID,
                             UID: Int_UID
@@ -493,7 +493,7 @@
                 $modalNote.find('input[type="submit"]').on('click', function(){
                     $.ajax({
                         url: '/Ticket/API/?Do=AddNote',
-                        dataType: 'json',
+                        
                         type: 'post',
                         data: {
                             DataID: TicketID,

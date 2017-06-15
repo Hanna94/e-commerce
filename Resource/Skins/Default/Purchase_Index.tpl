@@ -142,7 +142,7 @@
                         $.ajax({
                             url: '/Purchase/API/?Do=SetStatus',
                             type: 'post',
-                            dataType: 'json',
+                            
                             data: {
                                 DataID: DID,
                                 Status: STU

@@ -132,7 +132,7 @@
                 url: '/Ticket/API/?Do=Post',
                 data: { UID: Int_UID },
                 type: 'post',
-                dataType: 'json',
+                
                 success: function(data){
                     var d = data.OrderID;
                     $orderid.text("工单号：" + d);
@@ -177,7 +177,7 @@
                             title: '工单附件上传',
                             URL: '/Ticket/API/?Do=Upload',
                             FE: 'StrFile',
-                            dataType: 'json',
+                            
                             type: 'post',
                             data: {
                                 OrderID: $orderid.data('val'),

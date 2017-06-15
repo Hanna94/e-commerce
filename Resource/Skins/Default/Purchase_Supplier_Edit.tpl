@@ -78,7 +78,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=SupplierQuery&DataID=' + op.DataID,
                     type: 'get',
-                    dataType: 'json',
+                    
                     success: function(data){
                         var d = data.DataList[0];
                         $SupplierName.val(d.Name);
@@ -101,7 +101,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=SupplierSave',
                     type: 'post',
-                    dataType: 'json',
+                    
                     data: {
                         DataID: op.DataID || null,
                         Name: $SupplierName.val(),

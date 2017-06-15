@@ -28,7 +28,7 @@ function LogisticsModule(option) {
         $.ajax({
             url     : '/logistics/API/?Do=LogisticsList&ReferenceID=' + option.OID,
             type    : 'GET',
-            dataType: 'JSON',
+            
             success : function(data) {
                 _LogTagLoad(option, data);
                 _RenderingStatus(option);

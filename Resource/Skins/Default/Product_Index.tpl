@@ -1005,7 +1005,7 @@
                     $.ajax({
                         url: '/Product/Api/?Do=SkuQuery&DataID=' + id,
                         type: 'GET',
-                        dataType: 'JSON',
+                        
                         async: false,
                         success: function(d) {
                             if (typeof(d) == 'object') {
@@ -1104,7 +1104,7 @@
                     $.ajax({
                         url: '/Product/Api/?Do=SkuQuery&DataID=' + skuid,
                         type: 'GET',
-                        dataType: 'JSON',
+                        
                         success: function(spuData) {
                             // 遍历数据
                             $modalSkuEdit.attr('data-sku', spuData.Sku.SkuCode);
@@ -1133,7 +1133,7 @@
                     $.ajax({
                         url: '/Product/Product.aspx?Do=SpuGetSkuList&DataID=' + spuid,
                         type: 'get',
-                        dataType: 'json',
+                        
                         success: function(d){
                             if (spuName) {
                                 // 更改模态框的标题

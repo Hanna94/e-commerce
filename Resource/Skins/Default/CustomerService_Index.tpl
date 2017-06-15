@@ -414,7 +414,7 @@
                                 $.ajax({
                                     url     : '/CustomerService/API/?Do=AfterSaleQuery',
                                     type    : 'GET',
-                                    dataType: 'JSON',
+                                    
                                     data    : {
                                         DataID: _did
                                     },
@@ -454,7 +454,7 @@
                         $.ajax({
                             url     : '/CustomerService/API/?Do=AfterSaleQuery',
                             type    : 'GET',
-                            dataType: 'JSON',
+                            
                             data    : {
                                 DataID: _did
                             },
@@ -607,7 +607,7 @@
                     $.ajax({
                         url     : '/OMS/API/?Do=List&QueryLimitNumber=20&KeyWord=' + $search.find('input').val(),
                         type    : 'GET',
-                        dataType: 'JSON',
+                        
                         success : function(d) {
                             // 是否有搜到相应数据
                             if (!d.Ack) {
@@ -653,7 +653,7 @@
                 $.ajax({
                     url     : '/OMS/API/?Do=Query&DataID=' + _did,
                     type    : 'GET',
-                    dataType: 'JSON',
+                    
                     success : function(d) {
                         // clickNum: 用于隐藏搜索列表的判断值，初始为true，执行过_ModeChange后赋值为fase，为false时不执行点击搜索显示/隐藏按钮
                         var clickNum = true; 
@@ -918,7 +918,7 @@
                             $.ajax({
                                 url: '/CustomerService/Api/?Do=ProductDelete',
                                 type: 'post',
-                                dataType: 'json',
+                                
                                 data: {
                                     FID: fid,
                                     SkuID: $(this).closest('tr').data('id')
@@ -1064,7 +1064,7 @@
                 $.ajax({
                     url     : '/CustomerService/API/?Do=AfterSaleSave',
                     type    : 'POST',
-                    dataType: 'JSON',
+                    
                     data: {
                         DataID     : _DataID,
                         OID        : _OID,
@@ -1108,7 +1108,7 @@
                 $.ajax({
                     url     : '/CustomerService/API/?Do=AfterSaleSave',
                     type    : 'POST',
-                    dataType: 'JSON',
+                    
                     data    : op,
                     success : function(d) {
                         common.alert({
@@ -1146,7 +1146,7 @@
                    $.ajax({
                        url     : '/OMS/API/?Do=Query&DataID=' + OID,
                        type    : 'GET',
-                       dataType: 'JSON',
+                       
                        success : function(data) {
                             $('#nav-order').attr('data-id', data.DataID);
                             OrderDetail(data.DataList[0]);
@@ -1299,7 +1299,7 @@
                 $.ajax({
                     url     : '/CustomerService/API/?Do=MessageSave',
                     type    : 'POST',
-                    dataType: 'JSON',
+                    
                     data    : {
                         DataID : '',
                         FID    : DataID,
@@ -1342,7 +1342,7 @@
                     _checked.length == 1 ? $.ajax({
                                                 url: '/CustomerService/API/?Do=SetStatus',
                                                 type: 'post',
-                                                dataType: 'json',
+                                                
                                                 data: {
                                                     DataID: _checked.val(),
                                                     Status: '取消'
@@ -1521,7 +1521,7 @@
                 $.ajax({
                     url: '/Logistics/Api/?Do=List',
                     type: 'get',
-                    dataType: 'json',
+                    
                     async: false, // 设置为同步
                     success: function(data) {
                         $('#sell-warehouse-select').append(Mustache.render(template, data));
