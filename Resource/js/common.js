@@ -562,7 +562,7 @@ common.ajax = function (item) {
         data: item.data || {},
         type: item.type || 'get',
         success: function(data) {
-            data = JSON.parse(data);
+            // data = JSON.parse(data);
 
             // console.info(data);
             common.loading.hide();
