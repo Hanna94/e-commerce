@@ -208,7 +208,6 @@
                     $.ajax({ 
                         type: 'GET',
                         url: 'Api/?Do=GetRoleList', 
-                        dataType:"json",
                         success: function(data){
                             roleList = data.DataList;
                             getSelfRole(id);                                              
@@ -228,7 +227,6 @@
                 $.ajax({ 
                     type: 'GET',
                     url: 'Api/?Do=Correlation&DataID=' + id, 
-                    dataType:"json",
                     // contentType: "application/json;charset=utf-8",
                     success: function(data){
                         activeList = data.DataList.map(function(ele) {
@@ -270,7 +268,6 @@
                 $.ajax({ 
                     type: 'GET',
                     url: 'Api/?Do=Query&DataID=' + $(this).closest('tr').data('id'), 
-                    dataType:"json",
                     success: function(data){
                         $addDataPanel.find('#DataID').val(data.DataID);
                         $addDataPanel.find('#UserName').val(data.UserName);
