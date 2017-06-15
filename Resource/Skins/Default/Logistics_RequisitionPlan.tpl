@@ -369,7 +369,7 @@
                 $.ajax({
                     url: '/Logistics/API/?Do=RequisitionPlanQuery&DataID=' + _id,
                     type: 'GET',
-                    dataType: 'JSON',
+                    
                     async: false,
                     success: function(d) {
                         dataJSON = d;
@@ -393,7 +393,7 @@
                 $.ajax({
                     url: '/Logistics/API/?Do=List',
                     type: 'GET',
-                    dataType: 'JSON',
+                    
                     success: function(d) {
                         var _td = {
                             'DataList': [
@@ -429,7 +429,7 @@
                 $.ajax({
                     url: '/Product/API/?Do=SkuSearch&KeyWord=' + kw + '&QueryLimitNumber=50',
                     type: 'GET',
-                    dataType: 'JSON',
+                    
                     success: function(d){
                         if (d.DataList.length === 0) {
                             $('#product-search-result').html('<p>并没有这种产品！</p>')
@@ -494,7 +494,7 @@
                     common.ajax({
                         URL: '/Logistics/API/?Do=RequisitionPlanDeleteProduct',
                         type: 'POST',
-                        dataType: 'JSON',
+                        
                         data: {
                             OrderID: _or,
                             DataID: _id
@@ -547,7 +547,7 @@
                 common.ajax({
                     URL: '/Logistics/API/?Do=RequisitionPlanSave',
                     type: 'POST',
-                    dataType: 'JSON',
+                    
                     data: dataJSON,
                     good: function(d) {
                         common.alert({
@@ -579,7 +579,7 @@
                 $.ajax({
                     url: '/Logistics/API/?Do=RequisitionPlanQuery&DataID=' + _d,
                     type: 'GET',
-                    dataType: 'JSON',
+                    
                     success: function(d) {
                         $('#modal-log tbody').html(Mustache.render(logHTML, d));
                         $('#modal-log').modal('show');

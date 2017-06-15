@@ -214,7 +214,7 @@
             $.ajax({
                 url: '/OMS/API/?Do=ItemQuery&DataID=' + op.DataID + '&ItemID=' + op.ItemID,
                 type: 'get',
-                dataType: 'json',
+                
                 success: function(data){
                     var d = data;
                     $lsItem.find('tbody').html(Mustache.render(tempItem, d));

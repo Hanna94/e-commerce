@@ -279,7 +279,7 @@
                     remarkID = d.Order[0].ReferenceID;
                     $.ajax({
                         url: '/OMS/API/?Do=Query&OrderID=' + remarkID,
-                        dataType: 'json',
+                        
                         type: 'get',
                         success: function(data, status, e){
                             var md = data.DataList[0];

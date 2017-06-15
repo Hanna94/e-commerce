@@ -577,7 +577,7 @@
                 $btnUcfile.on('click', function(){
                     $.ajax({
                         url: '/Logistics/Logistics.aspx?Do=FreightAll',
-                        dataType: 'json',
+                        
                         type: 'get',
                         success: function(data){
                             $modalfreight.html(Mustache.render(htmlFreight, data));
@@ -590,7 +590,7 @@
                     common.ajaxFE({
                         URL: '/Logistics/Logistics.aspx?Do=LogisticsCost',
                         title: '上传物流单',
-                        dataType: 'json',
+                        
                         type: 'post',
                         FE: 'ucUpload',
                         data: {
@@ -643,7 +643,7 @@
                         $.ajax({
                             url     : _g + _option.GetData,
                             type    : 'GET',
-                            dataType: 'JSON',
+                            
                             success : function(data){
                                 var logisticsOption = {
                                     Target : $remark,
@@ -1002,7 +1002,7 @@
                             $.ajax({
                                 url: '/Logistics/API/?Do=ProjectExecute',
                                 type: 'post',
-                                dataType: 'json',
+                                
                                 data: { DataID: tempArr[timeNum] },
                                 success: function(data){
                                     if (timeNum < tempArr.length - 1 && data.Ack) {
@@ -1051,7 +1051,7 @@
                             $.ajax({
                                 url: '/Logistics/Logistics.aspx?Do=LogisticsQuery&Guide=0&DataID=' + DID,
                                 type: 'get',
-                                dataType: 'json',
+                                
                                 success: function(data){
                                     var d = data;
                                     tempJSON = {}; //初始化JSON
@@ -1151,7 +1151,7 @@
                             $.ajax({
                                 url: '/Logistics/Logistics.aspx?Do=LogisticsUnpack',
                                 type: 'post',
-                                dataType: 'json',
+                                
                                 data: JSON.stringify(tempJSON),
                                 success: function(data){
                                     if (data.Ack) {
@@ -1304,7 +1304,7 @@
                 $.ajax({
                     url: '/Logistics/Logistics.aspx?Do=LogisticsDownloadOutOfStock&WID=10',
                     type: 'post',
-                    dataType: 'json',
+                    
                     success: function(data){
                         common.alertIf({
                             data:data,

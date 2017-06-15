@@ -260,7 +260,7 @@
                         $.ajax({
                             url: '/OMS/API/?Do=SetMessageStatus',
                             type: 'post',
-                            dataType: 'json',
+                            
                             traditional: true,
                             data: {
                                 DataID: DID,
@@ -290,7 +290,7 @@
                         $.ajax({
                             url: '/OMS/API/?Do=SetMessageStatus',
                             type: 'post',
-                            dataType: 'json',
+                            
                             data: {
                                 DataID: ts.attr('data-id'),
                                 Status: 'Read',
@@ -351,7 +351,7 @@
                     $.ajax({
                         url: '/OMS/API/?Do=SetMessageStatus',
                         type: 'post',
-                        dataType: 'json',
+                        
                         traditional: true,
                         data: {
                             DataID: did,

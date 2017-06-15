@@ -318,7 +318,7 @@
                     $.ajax({
                         url: '/Control/?Do=SetStatus',
                         type: 'post',
-                        dataType: 'json',
+                        
                         traditional: true,
                         data: {
                             DataID: DID,

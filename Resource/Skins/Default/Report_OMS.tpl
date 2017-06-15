@@ -50,7 +50,7 @@
         // 获取数据
         $.ajax({
             url: '/Report/API/?Do=ProductSale&ProductID=' + op.ProductID + '&Guide=' + op.Guide,
-            dataType: 'json',
+            
             type: 'get',
             success: function(data){
                 var d = data;

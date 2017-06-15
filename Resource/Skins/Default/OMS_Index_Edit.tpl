@@ -586,7 +586,7 @@
                 $.ajax({
                     url: ourl,
                     type: 'get',
-                    dataType: 'json',
+                    
                     success: function(data){
                         var d = data;
                         var url;

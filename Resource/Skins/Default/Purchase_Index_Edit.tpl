@@ -349,7 +349,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=Query',
                     type: 'get',
-                    dataType: 'json',
+                    
                     data: {
                         DataID: op.DataID
                     },
@@ -386,7 +386,7 @@
                         if (d.Finance.length > 0) {
                             $.ajax({
                                 url: '/Finance/API/?Do=Query&OrderID=' + d.Finance[0].OrderID + '&DataID=' + d.Finance[0].DataID,
-                                dataType: 'json',
+                                
                                 type: 'get',
                                 success: function(data) {
                                     var imgtmp = '{{#Payment}}'
@@ -498,7 +498,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=SupplierQuery&DataID=' + di + '&KeyWord=' + kw,
                     type: 'get',
-                    dataType: 'json',
+                    
                     success: function(data){
                         if (data.DataList.length === 0) {
                             $supList.html('<p>无搜索结果！</p>');
@@ -554,7 +554,7 @@
                 $.ajax({
                     url: '/Product/API/?Do=SkuSearch&KeyWord=' + kw + '&QueryLimitNumber=50',
                     type: 'get',
-                    dataType: 'json',
+                    
                     success: function(data){
                         var d = data;
                         if (d.DataList.length === 0) {
@@ -628,7 +628,7 @@
                 $.ajax({
                     url: '/Finance/API/?Do=Create',
                     type: 'post',
-                    dataType: 'json',
+                    
                     data: {
                         ReferenceID: $('#dataSave').attr('data-OrderID'),
                         Type: 'Purchase',
@@ -672,7 +672,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=Save',
                     type: 'post',
-                    dataType: 'json',
+                    
                     data: {
                         DataID: op.DataID || null,
                         SupplierID: $supName.data('sid'),
@@ -709,7 +709,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=WaybillSave',
                     type: 'post',
-                    dataType: 'json',
+                    
                     data: {
                         DataID: op.DataID,
                         ShippingCarrierUsed: $('#ShippingCarrier .expSel').val(),
@@ -734,7 +734,7 @@
                 $.ajax({
                     url: '/Purchase/API/?Do=ReceiveCreate&OrderID=' + $('#dataSave').attr('data-OrderID'),
                     type: 'post',
-                    dataType: 'json',
+                    
                     success: function(data) {
                         var typeTitle, msgTitle;
                         typeTitle = data.Ack ? 'success' : 'error';

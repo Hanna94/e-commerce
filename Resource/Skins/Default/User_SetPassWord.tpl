@@ -145,7 +145,7 @@
             $PWconfirm.on('click', function(){
                 $.ajax({
                     url: '/user/API/?Do=SetPassWord',
-                    dataType: 'json',
+                    
                     type: 'post',
                     data: {
                         Name: Str_Name,

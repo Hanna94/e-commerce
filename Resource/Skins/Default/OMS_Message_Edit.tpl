@@ -274,7 +274,7 @@
                 function getMsg(){
                     $.ajax({
                         url: '/OMS/API/?Do=MessageQuery&DataID=' + oParam.DataID + '&Page=' + page,
-                        dataType: 'json',
+                        
                         type: 'get',
                         success: function(data){
                             var d = data;
@@ -439,7 +439,7 @@
                             $.ajax({
                                 url: '/OMS/API/?Do=UserQuery&BuyerID=' + d.MessageData.Sender,
                                 type: 'get',
-                                dataType: 'json',
+                                
                                 success: function(data){
                                     hasOrder = data.Ack
                                     console.log('是否有订单信息：' + hasOrder);
@@ -481,7 +481,7 @@
                                             $.ajax({
                                                 url     : '/OMS/API/?Do=Query&DataID=' + event.DataID,
                                                 type    : 'GET',
-                                                dataType: 'JSON',
+                                                
                                                 success : function(data){
                                                     var logOption = {
                                                         Element  : $('#u-logistics'),       // 容器
@@ -541,7 +541,7 @@
                         $.ajax({
                             url: '/OMS/API/?Do=SetMessageStatus',
                             type: 'post',
-                            dataType: 'json',
+                            
                             traditional: true,
                             data: {
                                 DataID: oParam.DataID,
@@ -595,7 +595,7 @@
                     $.ajax({
                         url: '/OMS/API/eBay.aspx?Do=MessageRTQ&MessageID=' + oParam.MessageID,
                         type: 'post',
-                        dataType: 'json',
+                        
                         data: {
                             Content: text,
                             Media: imgMedie
@@ -615,7 +615,7 @@
                             $.ajax({
                                 url: '/OMS/API/?Do=SetMessageStatus',
                                 type: 'post',
-                                dataType: 'json',
+                                
                                 traditional: true,
                                 data: {
                                     DataID: oParam.DataID,

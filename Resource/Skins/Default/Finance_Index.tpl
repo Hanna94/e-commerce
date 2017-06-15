@@ -110,7 +110,7 @@
                     url: '/Finance/API/?Do=PaymentCheck&OrderID=' + $(this).closest('tr')
                         .find('.orderID').text(),
                     type: 'post',
-                    dataType: 'json',
+                    
                     success: function(data) {
                         common.alert({
                             type: 'success',

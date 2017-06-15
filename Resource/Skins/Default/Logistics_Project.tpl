@@ -509,7 +509,7 @@
                 // 获取产品的数据
                 $.ajax({
                     url: '/Product/API/?Do=SkuSearch&KeyWord=' + ts.val(),
-                    dataType: 'json',
+                    
                     type: 'get',
                     success: function(data){
                         var d = data;
@@ -538,7 +538,7 @@
                 // 获取所有国家的数据
                 $.ajax({
                     url: '/Plus/API/?Do=GetCountry&Name=' + ts.val(),
-                    dataType: 'json',
+                    
                     type: 'get',
                     success: function(data){
                         var d = data;
@@ -587,7 +587,7 @@
                 $.ajax({
                     url: '/Logistics/Logistics.aspx?Do=ServiceList&DataID=' + didF,
                     type: 'get',
-                    dataType: 'json',
+                    
                     success: function(data){
                         Freight = data;
                         $seleceF.html(Mustache.render(tempF, Freight));
@@ -634,7 +634,7 @@
                 var title = $modalNewPrecept.attr('data-val') ? "物流方案修改" : "物流方案创建";
                 $.ajax({
                     url: '/Logistics/API/?Do=ProjectSave',
-                    dataType: 'json',
+                    
                     type: 'post',
                     data: {
                         DataID: $modalNewPreceptForm.find('input[name="DataID"]').val(),
@@ -674,7 +674,7 @@
                     did = ts.closest('tr').data('val');
                     $.ajax({
                         url: '/Logistics/API/?Do=GetProject&DataID=' + did,
-                        dataType: 'json',
+                        
                         type: 'post',
                         success: function(data){
                             var d = data.Project;
@@ -751,7 +751,7 @@
                     $.ajax({
                         url: '/Logistics/API/?Do=SetProject',
                         type: 'post',
-                        dataType: 'json',
+                        
                         traditional: true,
                         data: {
                             DataID: DID,
