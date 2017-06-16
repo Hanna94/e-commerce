@@ -168,6 +168,7 @@
     </div>
 
     <!-- 物流方案配置模态框 -->
+    <section id="scheme">
     <div class="modal fade" id="schemeConfig" tabindex="-1">
         <div class="modal-dialog"  style="width:990px">
             <div class="modal-content">
@@ -179,12 +180,14 @@
                 <div class="modal-body maxH500" v-if="data.Product.Name">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button class="addStock btn btn-default btn-xs pull-right" type="button">增加仓库</button>
+                            <button class="btn btn-default btn-xs pull-right" type="button" @click="addStock">增加仓库</button>
                         </div>
                     </div>
                     <hr>
                     <table class="table table-bordered table-condensed table-striped" v-for="(pro, index) in data.Project">
-                        <caption>{{pro.WarehouseName}}<button :data-war="pro.WarehouseID" class="btn btn-default btn-xs pull-right">增加国家</button></caption>
+                        <caption>{{pro.WarehouseName}}
+                            <button :data-war="pro.WarehouseID" class="btn btn-default btn-xs pull-right" @click="addCountry(pro.WarehouseID, pro.WarehouseName)">增加国家</button>
+                        </caption>
                         <thead>
                             <th>国家</th>
                             <th>货代</th>
@@ -210,11 +213,7 @@
                                     <td>{{p.Support}}</td>
                                     <td>{{p.Status}}</td>
                                     <td>没钱</td>
-                                    <td>
-                                        <div :class="['switch', 'switch_'+p.DataID]" data-on="success" data-off="danger" @click="switchChange($event, p.Execute)">
-                                            <input type="checkbox"  :checked="p.Execute" />
-                                        </div>
-                                    </td>
+                                    <td :class="'switch_' + p.DataID"></td>
                                 </tr>
                             </template>
                         </tbody>
@@ -229,7 +228,7 @@
 
     <!-- 物流方案 - 新增仓库 - 模态框 -->
     <div class="modal fade" id="schemeConfig-addStock" tabindex="-1">
-        <div class="modal-dialog"  style="width:990px">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="close" type="button" data-dismiss="modal">x</button>
@@ -238,18 +237,29 @@
                 <div class="modal-body maxH500">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form>
+                            <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="">选择仓库</label>
-                                    <select class="form-control">
-                                        <!-- BEGIN 仓库列表 ATTRIB= -->
-                                        <option value="{DataID}" title="{Location}">[{Code}] {Name}</option>
-                                        <!-- END 仓库列表 -->
-                                    </select>
+                                    <label class="col-sm-2 control-label">已选仓库</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static">{{stockChecked.Name}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="name">选择仓库</label>
+                                    <div class="col-sm-3">
+                                        <select class="form-control" @change="stockChange($event)">
+                                            <option value="" :selected="stockChecked.DataID==''?true:false">请选择</option>
+                                            <option v-for="(s, index) in stock" :value="[s.DataID, s.Name]">{{s.Name}}</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </form>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal" @click="addCountry" :disabled="stockChecked.DataID==''?true:false">确定</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" @click="addStockCancel">取消</button>
                 </div>
             </div>
         </div>
@@ -257,31 +267,49 @@
 
     <!-- 物流方案 - 新增国家 - 模态框 -->
     <div class="modal fade" id="schemeConfig-addCountry" tabindex="-1">
-        <div class="modal-dialog"  style="width:990px">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="close" type="button" data-dismiss="modal">x</button>
-                    <h4 class="modal-title">在&nbsp;&nbsp;方案中新增国家</h4>
+                    <h4 class="modal-title">在&nbsp;{{stockChecked.Name}}&nbsp;中新增国家</h4>
                 </div>
                 <div class="modal-body maxH500">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form>
+                            <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="">选择仓库</label>
-                                    <select class="form-control">
-                                        <!-- BEGIN 仓库列表 ATTRIB= -->
-                                        <option value="{DataID}" title="{Location}">[{Code}] {Name}</option>
-                                        <!-- END 仓库列表 -->
-                                    </select>
+                                    <label class="col-sm-2 control-label">已选国家</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static">{{country.countryChecked}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">国家搜索</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="country.countrySearch" placeholder="请输入要搜索的国家">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">可选国家</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control" @change="countryChange($event)">
+                                            <option v-for="(c, index) in country.countryList" :value="[c.DataID, c.Name]">[{{c.Name}}]&nbsp;{{c.cName}}</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal" @click="saveConfig" :disabled="country.countryID==''?true:false">确定</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" @click="addCountryCancel">取消</button>
+                </div>
             </div>
         </div>
     </div>
+
+    </section>
 
     <!-- 搜索栏搜索结果列表 -->
     <template id="temp-search">
@@ -320,6 +348,12 @@
         {{#Service}}
         <option value="{{DataID}}">[{{Code}}] {{Name}}</option>
         {{/Service}}
+    </template>
+
+    <template id="vue-switch">
+        <div class="switch" data-on-label="执行" data-off-labe="停止" data-on="success" data-off="warning">
+            <input type="checkbox" checked/>
+        </div>
     </template>
 
     {页面底部}{/页面底部}
@@ -366,7 +400,7 @@
 
             // 物流方案配置
             let schemeVue = new Vue({
-                el: '#schemeConfig',
+                el: '#scheme',
                 data: {
                     data: {
                         Ack: '',
@@ -410,6 +444,27 @@
                                 ]
                             }
                         ]
+                    },
+                    stock: [
+                        {
+                            DataID: '',
+                            Name: '',
+                            Code: '',
+                            Supplier: '',
+                            Type: '',
+                            Location: '',
+                            Date: ''
+                        }
+                    ],
+                    stockChecked: {
+                        DataID: '',
+                        Name: ''
+                    },
+                    country: {
+                        countryID: '',
+                        countryChecked: '',
+                        countrySearch: '',
+                        countryList: ''
                     }
                 },
                 methods: {
@@ -420,13 +475,17 @@
                             success: function(data) {
                                 schemeVue.data = data;
                                 schemeVue.$nextTick(function() {
-                                    $('.switch').bootstrapSwitch('destroy');
-                                    $('.switch input').bootstrapSwitch({size: 'mini'});
                                     $.each(schemeVue.data.Project, function(i_1, v_1) {
                                         $.each(v_1.Country, function(i_2, v_2) {
                                             $.each(v_2.Project, function(i_3, v_3) {
-                                                // $('.switch_' + v_3.DataID).bootstrapSwitch('setState', v_3.Execute);
-                                                $('.switch_' + v_3.DataID).on('switchChange.bootstrapSwitch', function (e, data) {
+                                                $('.switch_' + v_3.DataID).html($('#vue-switch').html());
+                                                $('.switch_' + v_3.DataID + ' .switch').bootstrapSwitch({
+                                                    size: 'mini',
+                                                    onText: '执行',
+                                                    offText: '停止',
+                                                    state: v_3.Execute
+                                                });
+                                                $('.switch_' + v_3.DataID + ' .switch').on('switchChange.bootstrapSwitch', function (e, data) {
                                                     let _thisData = schemeVue.data.Project[i_1].Country[i_2].Project[i_3];
                                                     if (data) {
                                                         _thisData.Status = '执行';
@@ -435,8 +494,6 @@
                                                         _thisData.Status = '停止';
                                                         _thisData.Execute = false;
                                                     }
-                                                    console.log(_thisData.Status);
-                                                    console.log(_thisData.Execute);
                                                 });
                                             });
                                         });
@@ -447,24 +504,67 @@
                             }
                         });
                     },
-                    switchChange: function(e, status) {
-                        console.log(e, status);
+                    addStock: function() {
+                        $.ajax({
+                            url: '/Logistics/Logistics.aspx?Do=List',
+                            type: "GET",
+                            success: function(data) {
+                                schemeVue.stock = data.DataList
+                                $('#schemeConfig-addStock').modal('show');
+                            }
+                        });
+                    },
+                    stockChange: function(e) {
+                        e = e.currentTarget.value.split(',');
+                        schemeVue.stockChecked.DataID = e[0];
+                        schemeVue.stockChecked.Name = e[1];
+                    },
+                    addStockCancel: function() {
+                        schemeVue.clearData();
+                    },
+                    addCountry: function(cID, cName) {
+                        if (cID && cName) {
+                            schemeVue.stockChecked.DataID = cID;
+                            schemeVue.stockChecked.Name = cName;
+                        }
+                        $('#schemeConfig-addCountry').modal("show");
+                    },
+                    countryChange: function(e) {
+                        e = e.currentTarget.value.split(',');
+                        schemeVue.country.countryID = e[0];
+                        schemeVue.country.countryChecked = e[1];
+                    },
+                    addCountryCancel: function() {
+                        schemeVue.clearData();
+                    },
+                    saveConfig: function() {
+                        alert('保存的方案是在' + schemeVue.stockChecked.Name + '下添加了' + schemeVue.country.countryChecked);
+                        schemeVue.clearData();
+                    },
+                    clearData: function() {
+                        schemeVue.country.countryID = '';
+                        schemeVue.country.countryChecked = '';
+                        schemeVue.country.countrySearch = '';
+                        schemeVue.country.countryList = '';
+                        schemeVue.stockChecked.DataID = '';
+                        schemeVue.stockChecked.Name = '';
                     }
-                },
-                nextTick: function() {
-                    
-
-                },
-                updated: function() {
-                    
                 }
+            });
+            // 观察国家搜索值变化
+            schemeVue.$watch('country.countrySearch', function(nv, ov) {
+                $.ajax({
+                    url: '/Plus/API/?Do=GetCountry&Name=' + this.country.countrySearch,
+                    type: "GET",
+                    success: function(data) {
+                        schemeVue.country.countryList = data.Datalist;
+                    }
+                });
             });
             let schemeConfig = {
                 currentID: 0,
                 // 打开模态框
                 OpenModal: function() {
-                    // $('.switch').bootstrapSwitch('destroy');
-                    
                     $('#schemeConfig').modal("show");
                 },
                 // 获取数据
@@ -482,26 +582,12 @@
                         schemeVue.getData(skuID);
                     }
                 },
-                // 提交数据
-                PostDate: function() {},
-                // 增加仓库
-                AddStock: function() {},
-                // 增加国家
-                AddCountry: function() {},
                 // 绑定事件
                 AttachEvent: function() {
-                    $('#scheme-config').on('click', function() {
-                        schemeConfig.ProjectConQuery();
-                    });
+                    $('#scheme-config').on('click', function() {schemeConfig.ProjectConQuery()});
                 } 
             };
             schemeConfig.AttachEvent();
-
-            // 物流方案 - 新增仓库 - 新增国家
-            // let addStock = new Vue({
-            //     el: '#schemeConfig-addStock',
-            //     data: 
-            // });
 
             // 产品筛选
             $selectPrecept[0].oninput = function(){
@@ -587,7 +673,6 @@
                 $.ajax({
                     url: '/Logistics/Logistics.aspx?Do=ServiceList&DataID=' + didF,
                     type: 'get',
-                    
                     success: function(data){
                         Freight = data;
                         $seleceF.html(Mustache.render(tempF, Freight));
