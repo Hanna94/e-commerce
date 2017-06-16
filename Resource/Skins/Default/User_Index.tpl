@@ -4,20 +4,32 @@
     <!-- 内容-->
     <article class="container-fluid">
         <header>
-            <form id="form-search" class="form-inline" action="?">
-                <div class="input-group input-group-sm">
-                    <input class="form-control" placeholder="Search..." name="KeyWord">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
-                    </span>
-                </div>
-                <button class="btn btn-success btn-sm pull-right btn-add-data" type="button" data-toggle="modal" data-target="#add-data"><span class="glyphicon glyphicon-plus-sign"></span> 添加数据</button>
-            </form>
+            <ul class="nav nav-tabs">
+                <li class=""><a href="?Do=All">全部</a></li>
+                <li class=""><a href="?Do=InService">在职</a></li>
+                <li class=""><a href="?Do=TimeOff">离岗</a></li>
+                <li class=""><a href="?Do=Dimission">离职</a></li>
+                <!-- <li class="All"><a onclick="changePara('All')">全部</a></li>
+                <li class="InService"><a onclick="changePara('InService')">在职</a></li>
+                <li class="TimeOff"><a onclick="changePara('TimeOff')">离岗</a></li>
+                <li class="Dimission"><a onclick="changePara('Dimission')">离职</a></li> -->
+            </ul>
+            
         </header>
 
         <!-- 数据列表-->
         <table id="data-list" class="table table-hover table-bordered table-striped table-condensed">
-            <caption>用户列表</caption>
+            <caption>
+                <form id="form-search" class="form-inline" action="?">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control" placeholder="Search..." name="KeyWord">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+                        </span>
+                    </div>
+                    <button class="btn btn-success btn-sm pull-right btn-add-data" type="button" data-toggle="modal" data-target="#add-data"><span class="glyphicon glyphicon-plus-sign"></span> 添加数据</button>
+                </form>
+            </caption>
             <thead>
                 <tr>
                     <th>用户编号</th>
@@ -46,8 +58,6 @@
                         <a title="编辑" class="btn-edit" href="javascript:;"><span class="glyphicon glyphicon-pencil"></span></a>
                         &nbsp;&nbsp;
                         <a class="btn-role" href="javascript:;" title="角色设置"><span class="glyphicon glyphicon-user text-success"></span></a>
-                        &nbsp;&nbsp;
-                        <a title="删除" class="btn-del" href="javascript:;"><span class="glyphicon glyphicon-remove text-danger"></span></a>
                     </td>
 				</tr>
 				<!-- END 数据列表 -->
@@ -60,7 +70,7 @@
 	<div id="add-data" class="modal fade" tabIndex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<form  class="form-horizontal" method="post" action="?Do=Save" autocomplete="off">
+				<form  class="form-horizontal" method="post" action="Api/?Do=Save" autocomplete="off">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
 						<h4 class="modal-title">进行用户设置</h4>
@@ -199,15 +209,17 @@
                 var id = $(this).closest('tr').data('id');
                 if (!roleList) {
                     // 所有角色
-                    common.ajax({
-                        notload: true,
-                        title: '获取所有角色',
-                        URL: '?Do=List',
-                        good: function(data) {
+                    $.ajax({ 
+                        type: 'GET',
+                        url: 'Api/?Do=GetRoleList', 
+                        success: function(data){
                             roleList = data.DataList;
-                            getSelfRole(id);
-                        }
-                    });
+                            getSelfRole(id);                                              
+                        },
+                        error:function(data){               
+                            console.log(data);
+                        }                 
+                    });  
                     return;
                 }
 
@@ -216,63 +228,51 @@
 
             // 获取自身权限
             function getSelfRole(id) {
-                common.ajax({
-                    title: '获取自身权限',
-                    URL: '?Do=Correlation&DataID=' + id,
-                    good: function(data) {
+                $.ajax({ 
+                    type: 'GET',
+                    url: 'Api/?Do=Correlation&DataID=' + id, 
+                    // contentType: "application/json;charset=utf-8",
+                    success: function(data){
                         activeList = data.DataList.map(function(ele) {
                             return ele.RoleID;
-                        });;
+                        });
                         addRole();
-                        $rolePanel.modal('show').data('id', id);
-                    }
-                });
+                        $rolePanel.modal('show').data('id', id);                                              
+                    },
+                    error:function(data){               
+                        console.log(data);
+                    }                 
+                }); 
             }
 
             // 添加角色
             $allRole.on('click', 'span', function() {
                 var id = $(this).data('id');
-                common.ajax({
-                    title: '添加角色',
-                    URL: '?Do=AddRole&DataID=' + $rolePanel.data('id') + '&RoleID=' + id,
-                    good: function (data) {
+                $.ajax({ 
+                    type: 'GET',
+                    url: 'Api/?Do=AddRole&DataID=' + $rolePanel.data('id') + '&RoleID=' + id, 
+                    success: function(data){
                         common.alert({
                             type: 'success',
                             title: '“添加角色”操作：',
                             msg: data.Message || '成功！'
                         });
                         activeList.push(id);
-                        addRole();
-                    }
-                });
+                        addRole();                                             
+                    },
+                    error:function(data){               
+                        console.log(data);
+                    }                 
+                }); 
             });
 
-            // 删除角色
-            $activeRole.on('click', 'span', function() {
-                var id = $(this).data('id');
-                common.ajax({
-                    title: '删除角色',
-                    URL: '?Do=CancelRole&DataID=' + $rolePanel.data('id') + '&RoleID=' + id,
-                    good: function (data) {
-                        common.alert({
-                            type: 'success',
-                            title: '“删除角色”操作：',
-                            msg: data.Message || '成功！'
-                        });
-                        activeList = activeList.filter(function(ele) {
-                            return ele !== id;
-                        });
-                        addRole();
-                    }
-                });
-            });
 
             // 编辑操作
             $dataList.on('click', '.btn-edit', function() {
-                common.ajax({
-                    title: '编辑',
-                    URL: '/user/API/?Do=Query&DataID=' + $(this).closest('tr').data('id'),
-                    good: function(data) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/user/API/?Do=Query&DataID=' + $(this).closest('tr').data('id'),
+                    success: function(data){
                         $addDataPanel.find('#DataID').val(data.DataID);
                         $addDataPanel.find('#UserName').val(data.UserName);
                         $addDataPanel.find('#TrueName').val(data.TrueName);
@@ -282,10 +282,33 @@
                         $addDataPanel.find('input[name="State"][value="' + data.State + '"]').prop('checked', true);
                         $addDataPanel.find('#Date').val(data.Date);
 
-                        $addDataPanel.modal('show');
-                    }
-                });
+                        $addDataPanel.modal('show');                                              
+                    },
+                    error:function(data){               
+                        console.log(data);
+                    }                 
+                }); 
             });
+
+            $('.nav a[href="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
+
+
+            //改变搜索条件时携带分页参数
+        
+            var url = ""
+            var paging = location.search.split('&');
+            if(paging.length>1){
+                for(var i=1; i<paging.length; i++){
+                    url += '&' + paging[i]; 
+                }
+            }
+            $('.nav-tabs li a').each(function(){
+                if($(this).attr("href").indexOf(url) === -1){
+                   $(this).attr("href",paging[0]+url) 
+                }
+            });
+
+    
 
             // 搜索框
             common.formSearch();
