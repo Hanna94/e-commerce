@@ -303,8 +303,9 @@
                 }
             }
             $('.nav-tabs li a').each(function(){
+                var oldUrl = $(this).attr("href")
                 if($(this).attr("href").indexOf(url) === -1){
-                   $(this).attr("href",paging[0]+url) 
+                   $(this).attr("href",oldUrl+url) 
                 }
             });
 
