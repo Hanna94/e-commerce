@@ -1566,7 +1566,7 @@ common.WebCommon = function(option) {
  * @param {number} pageSize  要传递的每页显示数据条数
  * @param {array} urlArr  需要增加ueryLimitNumber参数的a标签数组
  */
-common.thransPageSize = function(flag,pageSize,urlArr){
+common.transPageSize = function(flag,pageSize,urlArr){
     if(flag){
         for(var i=0; i<urlArr.length; i++){
             if(urlArr[i].href.indexOf('QueryLimitNumber') === -1){
