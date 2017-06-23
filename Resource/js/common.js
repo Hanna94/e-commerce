@@ -1559,3 +1559,20 @@ common.WebCommon = function(option) {
     option.Nav.find('a[href="?Do=' + option.Do + '"]').closest('li').addClass('active');
     option.Form.find('input[name="KeyWord"]').val(decodeURI((option.KeyWord || '').replace(/\++/g, ' ')));
 }
+
+/**
+ * 页面跳转传递每页数据条数QueryLimitNumber参数
+ * @param {boolean} flag 是否需要传递ueryLimitNumber参数
+ * @param {number} pageSize  要传递的每页显示数据条数
+ * @param {array} urlArr  需要增加ueryLimitNumber参数的a标签数组
+ */
+common.thransPageSize = function(flag,pageSize,urlArr){
+    if(flag){
+        for(var i=0; i<urlArr.length; i++){
+            if(urlArr[i].href.indexOf('QueryLimitNumber') === -1){
+                var oldUrl = urlArr[i].href;
+                urlArr[i].href =  oldUrl + '&QueryLimitNumber=' + pageSize ;
+            }
+        }
+    }
+ }
