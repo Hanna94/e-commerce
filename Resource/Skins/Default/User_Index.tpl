@@ -9,10 +9,6 @@
                 <li class=""><a href="?Do=InService">在职</a></li>
                 <li class=""><a href="?Do=TimeOff">离岗</a></li>
                 <li class=""><a href="?Do=Dimission">离职</a></li>
-                <!-- <li class="All"><a onclick="changePara('All')">全部</a></li>
-                <li class="InService"><a onclick="changePara('InService')">在职</a></li>
-                <li class="TimeOff"><a onclick="changePara('TimeOff')">离岗</a></li>
-                <li class="Dimission"><a onclick="changePara('Dimission')">离职</a></li> -->
             </ul>
             
         </header>
@@ -290,26 +286,11 @@
                 }); 
             });
 
+            //标签页定位
             $('.nav a[href="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
 
-
-            //改变搜索条件时携带分页参数
-        
-            var url = ""
-            var paging = location.search.split('&');
-            if(paging.length>1){
-                for(var i=1; i<paging.length; i++){
-                    url += '&' + paging[i]; 
-                }
-            }
-            $('.nav-tabs li a').each(function(){
-                var oldUrl = $(this).attr("href")
-                if($(this).attr("href").indexOf(url) === -1){
-                   $(this).attr("href",oldUrl+url) 
-                }
-            });
-
-    
+            //传递每页数据条数参数QueryLimitNumber
+            common.transPageSize(location.search.indexOf('QueryLimitNumber')>-1,common.cookie.getCookie('page-size'),$('.nav.nav-tabs>li>a'));  
 
             // 搜索框
             common.formSearch();

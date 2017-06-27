@@ -1350,6 +1350,9 @@
             // 标签页定位
             $('.nav a[href="' + location.search.split('&')[0] + '"]').closest('li').addClass('active');
 
+            //传递每页数据条数参数QueryLimitNumber
+            common.transPageSize(location.search.indexOf('QueryLimitNumber')>-1,common.cookie.getCookie('page-size'),$('.nav.nav-tabs>li>a')); 
+
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
             <!-- END 分页脚本 -->

@@ -10,10 +10,32 @@
             </div>
         </header>
 
+        <ul class="nav nav-tabs">
+            <li class=""><a href="?Do=All">All</a></li>
+            <li class=""><a href="?Do=OMS">OMS</a></li>
+            <li class=""><a href="?Do=Bank">Bank</a></li>
+            <li class=""><a href="?Do=Logistics">Logistics</a></li>
+            <li class=""><a href="?Do=Report">Report</a></li>
+            <li class=""><a href="?Do=Message">Message</a></li>
+            <li class=""><a href="?Do=Product">Product</a></li>
+            <li class=""><a href="?Do=Other">Other</a></li>
+        </ul>
+
         <!-- 数据列表-->
-        <form id="status-upload" method="post" action="javascript:;">
+        <div id="status-upload">
+        <!-- <form id="status-upload" method="post" action="javascript:;"> -->
             <table id="data-list" class="table table-hover table-bordered table-striped table-condensed">
-                <caption>调度计划列表</caption>
+                <caption>
+                    <!-- 调度计划列表 -->
+                    <form id="form-search" class="form-inline" action="?">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" placeholder="Search..." name="KeyWord">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+                            </span>
+                        </div>
+                    </form>
+                </caption>
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="callAll" value="none">&nbsp;&nbsp;计划编码</th>
@@ -43,14 +65,15 @@
                         <td>
                             <a class="btn-edit" href="javascript:;" title="编辑"><span class="glyphicon glyphicon-pencil"></span></a>
                             &nbsp;&nbsp;
-                            <a class="btn-del" href="javascript:;" title="删除"><span class="glyphicon glyphicon-remove text-danger"></span></a>
+                            <!-- <a class="btn-del" href="javascript:;" title="删除"><span class="glyphicon glyphicon-remove text-danger"></span></a> -->
                         </td>
     				</tr>
     				<!-- END 数据列表 -->
                 </tbody>
                 <tfoot><tr><td colspan="10"></td></tr></tfoot>
             </table>
-        </form>
+        <!-- </form> -->
+        </div>
     </article>
 
     <!-- 状态修改 -->
@@ -81,18 +104,18 @@
 	<div id="add-data" class="modal fade" tabIndex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<form  class="form-horizontal" method="post" action="?Do=Save">
+				<form  class="form-horizontal" method="post">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
 						<h4 class="modal-title">进行调度计划设置</h4>
 					</div>
 					<div class="modal-body">
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label class="col-sm-2 control-label">计划编码</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" name="DataID" ID="DataID" placeholder="计划编码，系统自动分配" readonly>
 							</div>
-						</div>
+						</div> -->
 						<div class="form-group">
 							<label class="col-sm-2 control-label">计划名称</label>
 							<div class="col-sm-10">
@@ -194,7 +217,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="submit" class="btn btn-primary">提交</button>
+						<button id="submit" type="button" class="btn btn-primary">提交</button>
 					</div>
 				</form>
 			</div>
@@ -238,10 +261,14 @@
             });
 
             // 编辑操作
+            var dataID
             $('#data-list').on('click', '.btn-edit', function() {
+                dataID = $(this).closest('tr').data('id');
                 common.ajax({
                     title: '编辑',
-                    URL: '?Do=Query&DataID=' + $(this).closest('tr').data('id'),
+                    // URL: '?Do=Query&DataID=' + $(this).closest('tr').data('id'),
+                    // URL: '/Control/API/?Do=Query&DataID=' + $(this).closest('tr').data('id'),
+                    URL: '/Control/API/?Do=Query&DataID=' + dataID,
                     good: function(data) {
 
                         $addDataPanel.find('#DataID').val(data.DataID);
@@ -261,6 +288,45 @@
                         $addDataPanel.find('#Date').val(data.Date);
                         
                         $addDataPanel.modal('show');
+                    }
+                });
+            });
+
+            //保存操作
+            $('#submit').on('click', function() {
+                if(!($("#Name").val())){
+                    common.alert({
+                        title: '“调度任务管理”操作：',
+                        msg: '请添加计划名称后再提交！'
+                    });
+                    return false;
+                }
+                $.ajax({
+                    url: '/Control/API/?Do=Save',
+                    type: 'post',
+                    traditional: true,
+                    data: {
+                        DataID: dataID,
+                        Name: $("#Name").val(),
+                        Model: $("#Model").val(),
+                        Level: $("input[name='Level']:checked").val(),
+                        ShopID: $("#ShopID").val(),
+                        Type: $("input[name='Type']:checked").val(),
+                        Status: $("input[name='Status']:checked").val(),
+                        DataStartTime: $("#DataStartTime").val(),
+                        DataEndTime: $("#DataEndTime").val(),
+                        DataSpace: $("#DataSpace").val(),
+                        RequestSpace: $("#RequestSpace").val(),
+                        ExecuteTime: $("#ExecuteTime").val(),
+                        Api: $("#Api").val(),
+                        Parameter: $("#Parameter").val()
+                    },
+                    success: function(data){
+                        common.alert({
+                            type: data.Ack?'success':'',
+                            title: '“调度任务管理”操作：',
+                            msg: data.Message || '成功！'
+                        });
                     }
                 });
             });
@@ -316,7 +382,7 @@
 
                     //提交数据
                     $.ajax({
-                        url: '/Control/?Do=SetStatus',
+                        url: '/Control/API/?Do=SetStatus',
                         type: 'post',
                         
                         traditional: true,
@@ -340,6 +406,16 @@
                     }
                 });
             })();
+
+            // 搜索框
+            common.formSearch();
+
+            //标签页定位
+            $('.nav a[href="' + location.search.split('&')[0] + '"]').closest('li').addClass('active'); 
+
+            //传递每页数据条数参数QueryLimitNumber
+            common.transPageSize(location.search.indexOf('QueryLimitNumber')>-1,common.cookie.getCookie('page-size'),$('.nav.nav-tabs>li>a'));
+
             <!-- BEGIN 分页脚本 ATTRIB= -->
             common.showPage({当前页}, {总条数}, {每页条数});
             <!-- END 分页脚本 -->
